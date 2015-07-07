@@ -134,7 +134,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 	do{
 		res=WhereIntersects(static_cast<Vec&&>(ph.coord),static_cast<Vec&&>(ph.dir));
 		if(res.Surface==IntersectionSearchResults::None)throw exception();
-		double length=Distance(res.Coordinates,ph.coord);
+		double length=Distance(static_cast<Vec&&>(res.Coordinates),static_cast<Vec&&>(ph.coord));
 		if(prob_(rand)>exp(-length*absorption)){
 			res.Surface=IntersectionSearchResults::None;
 			return res;
@@ -143,7 +143,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		ph.time+=length/(speed_of_light*n);
 		out=(prob_(rand)>ReflectionProbability(n,sqrt(1.0-cos_theta*cos_theta)));
 		if(out){
-			ph.dir=ph.dir*n;
+			ph.dir=static_cast<Vec&&>(ph.dir)*n;
 			ph.dir[res.SurfaceDimentionIndex]=0;//it will be deleted
 		}else
 			ph.dir[res.SurfaceDimentionIndex]*=-1.0;

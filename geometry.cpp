@@ -6,13 +6,13 @@
 #include "math_h/randomfunc.h"
 #include "geometry.h"
 using namespace std;
-Vec operator*(Vec&p,double c){
+Vec operator*(Vec&&p,double c){
 	Vec res;
 	for(double x:p)
 		res.push_back(x*c);
 	return res;
 }
-Vec operator+(Vec&p1,Vec&p2){
+Vec operator+(Vec&&p1,Vec&&p2){
 	if(p1.size()!=p2.size())
 		throw exception();
 	Vec res;
@@ -20,7 +20,7 @@ Vec operator+(Vec&p1,Vec&p2){
 		res.push_back(p1[i]+p2[i]);
 	return res;
 }
-double SqDistance(Vec&p1, Vec&p2){
+double SqDistance(Vec&&p1, Vec&&p2){
 	if(p1.size()!=p2.size())
 		throw exception();
 	double res=0;
@@ -28,8 +28,8 @@ double SqDistance(Vec&p1, Vec&p2){
 		res+=pow(p1[i]-p2[i],2);
 	return res;
 }
-double Distance(Vec&p1, Vec&p2){
-	return sqrt(SqDistance(p1,p2));
+double Distance(Vec&&p1,Vec&&p2){
+	return sqrt(SqDistance(static_cast<Vec&&>(p1),static_cast<Vec&&>(p2)));
 }
 RectDimensions::RectDimensions(){}
 RectDimensions::~RectDimensions(){}
@@ -79,8 +79,7 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		double endx=dim_order[i].first;
 		double k=(endx-point[dimension])/dir[dimension];
 		if(k<0)throw exception();
-		Vec K=(dir*k);
-		Vec endpoint=point+K;
+		Vec endpoint=static_cast<Vec&&>(point)+(static_cast<Vec&&>(dir)*k);
 		if(IsInside(static_cast<Vec&&>(endpoint))){
 			IntersectionSearchResults res;
 			if(dir[dimension]<0)
