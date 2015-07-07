@@ -25,7 +25,7 @@ public:
 	virtual ~PhotoSensitiveSurface();
 	PhotoSensitiveSurface&operator<<(std::shared_ptr<IPhotoSensitive>handler);
 protected:
-	void RegisterPhoton(Photon&photon);
+	void RegisterPhoton(Photon&photon);//changes photon
 private:
 	std::vector<std::shared_ptr<IPhotoSensitive>> m_handlers;
 };
@@ -40,8 +40,8 @@ public:
 	PhotoSensitiveSurface&Surface(unsigned int dimension,IntersectionSearchResults::Side side);
 	void RegisterGamma(Vec&&coord,unsigned int N);
 protected:
-	virtual Photon GeneratePhoton(Vec&&coord);
-	virtual IntersectionSearchResults TraceGeometry(Photon &ph);//Changes Photon
+	Photon GeneratePhoton(Vec&&coord);
+	IntersectionSearchResults TraceGeometry(Photon &ph);//Changes Photon
 private:
 	RandomValueGenerator<double> m_time_distribution;
 	RandomValueGenerator<double> m_lambda_distribution;
@@ -49,6 +49,7 @@ private:
 	Func m_absorption;//depends on lambda
 	typedef std::pair<PhotoSensitiveSurface,PhotoSensitiveSurface> SurfPair;
 	std::vector<SurfPair> m_edges;
+	std::default_random_engine rand;
 };
 
 #endif

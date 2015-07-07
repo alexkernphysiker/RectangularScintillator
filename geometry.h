@@ -6,8 +6,8 @@ typedef std::vector<double> Vec;
 typedef std::pair<double,double> Pair;
 Vec operator*(Vec&p,double c);
 Vec operator+(Vec&p1,Vec&p2);
-double SqDistance(Vec&&p1,Vec&&p2);
-double Distance(Vec&&p1,Vec&&p2);
+double SqDistance(Vec&p1,Vec&p2);
+double Distance(Vec&p1,Vec&p2);
 class RectDimensions{
 public:
 	struct IntersectionSearchResults{
@@ -27,5 +27,4 @@ public:
 private:
 	std::vector<Pair> m_dimensions;
 };
-Vec RandomIsotropic(unsigned int dimensions,double length);
 #endif
