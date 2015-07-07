@@ -1,3 +1,5 @@
+// this file is distributed under 
+// GPL v 3.0 license
 #include <exception>
 #include <math.h>
 #include "math_h/interpolate.h"
@@ -45,7 +47,7 @@ Pair&&RectDimensions::Dimension(unsigned int i){
 		throw exception();
 	return static_cast<Pair&&>(m_dimensions[i]);
 }
-bool RectDimensions::IsInside(Vec point){
+bool RectDimensions::IsInside(Vec&&point){
 	if(point.size()!=NumberOfDimensions())
 		throw exception();
 	for(unsigned int i=0,n=NumberOfDimensions();i<n;i++)
@@ -54,7 +56,7 @@ bool RectDimensions::IsInside(Vec point){
 	return true;
 }
 RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&point,Vec&&dir){
-	if(!IsInside(point)){
+	if(!IsInside(static_cast<Vec&&>(point))){
 		IntersectionSearchResults res;
 		res.Surface=IntersectionSearchResults::None;
 		return res;
@@ -79,7 +81,7 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		if(k<0)throw exception();
 		Vec K=(dir*k);
 		Vec endpoint=point+K;
-		if(IsInside(endpoint)){
+		if(IsInside(static_cast<Vec&&>(endpoint))){
 			IntersectionSearchResults res;
 			if(dir[dimension]<0)
 				res.Surface=IntersectionSearchResults::Left;

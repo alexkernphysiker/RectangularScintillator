@@ -1,3 +1,5 @@
+// this file is distributed under 
+// GPL v 3.0 license
 #ifndef WEXXxads
 #define WEXXxads
 #include <functional>
@@ -15,7 +17,9 @@ struct Photon{
 class IPhotoSensitive{
 public:
 	virtual ~IPhotoSensitive(){}
+	virtual void Start()=0;
 	virtual void RegisterPhoton(Photon&photon)=0;
+	virtual void End()=0;
 };
 class RectangularScintillator;
 class PhotoSensitiveSurface:protected virtual RectDimensions{
@@ -25,7 +29,9 @@ public:
 	virtual ~PhotoSensitiveSurface();
 	PhotoSensitiveSurface&operator<<(std::shared_ptr<IPhotoSensitive>handler);
 protected:
+	void Start();
 	void RegisterPhoton(Photon&photon);//changes photon
+	void End();
 private:
 	std::vector<std::shared_ptr<IPhotoSensitive>> m_handlers;
 };

@@ -1,3 +1,5 @@
+// this file is distributed under 
+// GPL v 3.0 license
 #ifndef rccNvDvy
 #define rccNvDvy
 #include <utility>
@@ -22,7 +24,7 @@ public:
 	RectDimensions &operator<<(Pair&&dimension);
 	unsigned int NumberOfDimensions();
 	Pair &&Dimension(unsigned int i);
-	bool IsInside(Vec point);
+	bool IsInside(Vec&&point);
 	IntersectionSearchResults WhereIntersects(Vec&&point,Vec&&dir);
 private:
 	std::vector<Pair> m_dimensions;

@@ -1,3 +1,5 @@
+// this file is distributed under 
+// GPL v 3.0 license
 #include <exception>
 #include "math_h/sympson.h"
 #include "rectscin.h"
@@ -8,10 +10,18 @@ PhotoSensitiveSurface& PhotoSensitiveSurface::operator<<(shared_ptr<IPhotoSensit
 	m_handlers.push_back(handler);
 	return *this;
 }
+void PhotoSensitiveSurface::Start(){
+	for(auto handler:m_handlers)
+		handler->Start();
+}
 void PhotoSensitiveSurface::RegisterPhoton(Photon& photon){
-	if(IsInside(photon.coord))
+	if(IsInside(static_cast<Vec&&>(photon.coord)))
 		for(auto handler:m_handlers)
 			handler->RegisterPhoton(photon);
+}
+void PhotoSensitiveSurface::End(){
+	for(auto handler:m_handlers)
+		handler->End();
 }
 RectangularScintillator::RectangularScintillator(
 	vector< Pair > dimensions, 
@@ -43,17 +53,24 @@ PhotoSensitiveSurface& RectangularScintillator::Surface(unsigned int dimension, 
 	if(side=IntersectionSearchResults::Right)return m_edges[dimension].second;
 	throw exception();
 }
-
-void RectangularScintillator::RegisterGamma(Vec&& coord, unsigned int N){
+typedef pair<Photon,PhotoSensitiveSurface*> PhotonReg;
+bool operator>(PhotonReg&a,PhotonReg&b){return a.first.time>b.first.time;}
+bool operator<(PhotonReg&a,PhotonReg&b){return a.first.time<b.first.time;}
+void RectangularScintillator::RegisterGamma(Vec&&coord,unsigned int N){
+	vector<PhotonReg> photons;
 	for(unsigned int i=0;i<N;i++){
 		Photon ph=GeneratePhoton(static_cast<Vec&&>(coord));
 		IntersectionSearchResults trace=TraceGeometry(ph);
 		if(trace.Surface!=IntersectionSearchResults::None){
 			ph.coord.erase(ph.coord.begin()+trace.SurfaceDimentionIndex);
 			ph.dir.erase(ph.dir.begin()+trace.SurfaceDimentionIndex);
-			Surface(trace.SurfaceDimentionIndex,trace.Surface).RegisterPhoton(ph);
+			PhotonReg reg=make_pair(ph,&Surface(trace.SurfaceDimentionIndex,trace.Surface));
+			InsertSorted(reg,photons,std_size(photons),std_insert(photons,PhotonReg));
 		}
 	}
+	
+	for(PhotonReg&reg:photons)
+		reg.second->RegisterPhoton(reg.first);
 }
 Photon RectangularScintillator::GeneratePhoton(Vec&&coord){
 	Photon res;
