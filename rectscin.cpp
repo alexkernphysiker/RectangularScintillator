@@ -143,17 +143,19 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		res=WhereIntersects(static_cast<Vec&&>(ph.coord),static_cast<Vec&&>(ph.dir));
 		if(res.Surface==IntersectionSearchResults::None)
 			return res;
-		ph.time+=res.K/(speed_of_light*n);
+		ph.time+=res.K*n/speed_of_light;
 		if(prob_(rand)>exp(-res.K*absorption)){
+			//Photon is absopbed
 			res.Surface=IntersectionSearchResults::None;
 			return res;
 		}
 		if(prob_(rand)>ReflectionProbability(ph.dir[res.SurfaceDimentionIndex])){
+			//Photon leaves the scintillator
 			ph.dir=static_cast<Vec&&>(ph.dir)*n;
 			ph.dir[res.SurfaceDimentionIndex]=0;//this dimension will be deleted
 			return res;
 		}else{
-			//just reflect back
+			//Photon reflects back
 			ph.dir[res.SurfaceDimentionIndex]=-ph.dir[res.SurfaceDimentionIndex];
 		}
 		cnt++;
@@ -165,7 +167,6 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 	}
 	
 }
-
 RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,double maxtime,double dt){
 	auto func=[sigma,decay,maxtime,dt](double t){
 		auto A=[sigma](double th){if(th<0)return 0.0;return Gaussian(th,2.5*sigma,sigma);};
