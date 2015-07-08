@@ -28,7 +28,7 @@ RectangularScintillator::RectangularScintillator(
 	std::vector<Pair>&&dimensions,
 	RandomValueGenerator<double>&&time_distribution,
 	RandomValueGenerator<double>&&lambda_distribution,
-	Func refraction,Func absorption
+	double refraction,Func absorption
 ):RectDimensions(),
 m_time_distribution(time_distribution),
 m_lambda_distribution(lambda_distribution){
@@ -46,6 +46,26 @@ m_lambda_distribution(lambda_distribution){
 			}
 		m_edges.push_back(surfaces);
 	}
+	auto ReflectionProbability=[this](double cos_){
+		double cos_phi=cos_;
+		if(cos_phi<0.0)cos_phi=-cos_phi;
+		if(cos_phi>1.0){
+			printf("\n\nCos(theta_refl)=%f\n\n",cos_phi);
+			throw RectScinException("Cos theta error");
+		}
+		double sin_phi=sqrt(1.0-cos_phi*cos_phi);
+		double squrt=sqrt(1-m_refraction*m_refraction*sin_phi*sin_phi);
+		double T_ort=(m_refraction*squrt-cos_phi)/(m_refraction*squrt+cos_phi);
+		double T_par=(m_refraction*cos_phi-squrt)/(m_refraction*cos_phi+squrt);
+		auto SubInt=[T_par,T_ort](double pol){
+			return sqrt(pow(sin(pol)*T_ort,2)+pow(cos(pol)*T_par,2));
+		};
+		double r=Sympson(SubInt,0.0,3.1415926*0.5,0.001);
+		if(r<1.0)return r;
+		return 1.0;
+	};
+	for(double x=0;x<=1;x+=0.05)
+		reflection_probability<<make_pair(x,ReflectionProbability(x));
 }
 RectangularScintillator::~RectangularScintillator(){}
 ScintillatorSurface& RectangularScintillator::Surface(unsigned int dimension, IntersectionSearchResults::Side side){
@@ -55,29 +75,20 @@ ScintillatorSurface& RectangularScintillator::Surface(unsigned int dimension, In
 	if(side==IntersectionSearchResults::Right)return *(m_edges[dimension].second);
 	throw RectScinException("RectangularScintillator: surface index out of range");
 }
-typedef pair<Photon,ScintillatorSurface*> PhotonReg;
-bool operator>(PhotonReg&a,PhotonReg&b){return a.first.time>b.first.time;}
-bool operator<(PhotonReg&a,PhotonReg&b){return a.first.time<b.first.time;}
 void RectangularScintillator::RegisterGamma(Vec&&coord,unsigned int N){
-	if(coord.size()!=NumberOfDimensions())
-		throw RectScinException("RectangularScintillator: wrong gamma interaction point vector size");
-	vector<PhotonReg> photons;
-	for(unsigned int i=0;i<N;i++){
-		Photon ph=GeneratePhoton(static_cast<Vec&&>(coord));
-		IntersectionSearchResults trace=TraceGeometry(ph);
-		if(trace.Surface!=IntersectionSearchResults::None){
-			ph.coord.erase(ph.coord.begin()+trace.SurfaceDimentionIndex);
-			ph.dir.erase(ph.dir.begin()+trace.SurfaceDimentionIndex);
-			PhotonReg reg=make_pair(ph,&Surface(trace.SurfaceDimentionIndex,trace.Surface));
-			InsertSorted(reg,photons,std_size(photons),std_insert(photons,PhotonReg));
-		}
-	}
 	for(SurfPair&sp:m_edges){
 		sp.first->Start();
 		sp.second->Start();
 	}
-	for(PhotonReg&reg:photons)
-		reg.second->RegisterPhoton(reg.first);
+	if(coord.size()!=NumberOfDimensions())
+		throw RectScinException("RectangularScintillator: wrong gamma interaction point vector size");
+	for(unsigned int i=0;i<N;i++){
+		Photon ph=GeneratePhoton(static_cast<Vec&&>(coord));
+		IntersectionSearchResults trace=TraceGeometry(ph);
+		if(trace.Surface!=IntersectionSearchResults::None){
+			Surface(trace.SurfaceDimentionIndex,trace.Surface).RegisterPhoton(ph);
+		}
+	}
 	for(SurfPair&sp:m_edges){
 		sp.first->End();
 		sp.second->End();
@@ -116,56 +127,46 @@ Photon RectangularScintillator::GeneratePhoton(Vec&&coord){
 	return res;
 }
 RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry(Photon&ph){
-	unsigned int cnt=0;
-	IntersectionSearchResults res;
 	uniform_real_distribution<double> prob_(-1,1);
-	double absorption=m_absorption(ph.lambda);
-	double n=m_refraction(ph.lambda);
-	auto ReflectionProbability=[n](double cos_){
-		double cos_phi=cos_;
-		if(cos_phi<0.0)cos_phi=-cos_phi;
-		if(cos_phi>1.0){
-			printf("\n\nCos(theta_refl)=%f\n\n",cos_phi);
-			throw RectScinException("Cos theta error");
-		}
-		double sin_phi=sqrt(1.0-cos_phi*cos_phi);
-		double squrt=sqrt(1-n*n*sin_phi*sin_phi);
-		double T_ort=(n*squrt-cos_phi)/(n*squrt+cos_phi);
-		double T_par=(n*cos_phi-squrt)/(n*cos_phi+squrt);
-		auto SubInt=[T_par,T_ort](double pol){
-			return sqrt(pow(sin(pol)*T_ort,2)+pow(cos(pol)*T_par,2));
-		};
-		double r=Sympson(SubInt,0.0,3.1415926*0.5,0.01);
-		if(r<1.0)return r;
-		return 1.0;
-	};
+	double absorption_coef=m_absorption(ph.lambda);
 	while(true){
-		res=WhereIntersects(static_cast<Vec&&>(ph.coord),static_cast<Vec&&>(ph.dir));
+		IntersectionSearchResults res=
+			WhereIntersects(static_cast<Vec&&>(ph.coord),static_cast<Vec&&>(ph.dir));
 		if(res.Surface==IntersectionSearchResults::None)
 			return res;
-		ph.time+=res.K*n/speed_of_light;
-		if(prob_(rand)>exp(-res.K*absorption)){
+		unsigned int dimension=res.SurfaceDimentionIndex;
+		double path_length=res.K;
+		//update kinematic parameters
+		ph.coord=res.Coordinates;
+		ph.time+=path_length*m_refraction/speed_of_light;
+		//correct if small errors caused that were a little bit outside
+		if(ph.coord[dimension]<Dimension(dimension).first)
+			ph.coord[dimension]=Dimension(dimension).first;
+		if(ph.coord[dimension]>Dimension(dimension).second)
+			ph.coord[dimension]=Dimension(dimension).second;
+		//check for other effects
+		double absorption_prob=1.0-exp(-path_length*absorption_coef);
+		if(prob_(rand)<absorption_prob){
 			//Photon is absopbed
 			res.Surface=IntersectionSearchResults::None;
 			return res;
 		}
-		if(prob_(rand)>ReflectionProbability(ph.dir[res.SurfaceDimentionIndex])){
-			//Photon leaves the scintillator
-			ph.dir=static_cast<Vec&&>(ph.dir)*n;
-			ph.dir[res.SurfaceDimentionIndex]=0;//this dimension will be deleted
-			return res;
+		double cos_angle=ph.dir[dimension];
+		if(cos_angle<0.0)
+			cos_angle=-cos_angle;
+		if(cos_angle>1.0)
+			throw RectScinException("Trace: cosine error");
+		if(false){//(prob_(rand)<reflection_probability(cos_angle)){
+			//Photon is reflected back
+			ph.dir[dimension]=-ph.dir[dimension];
 		}else{
-			//Photon reflects back
-			ph.dir[res.SurfaceDimentionIndex]=-ph.dir[res.SurfaceDimentionIndex];
-		}
-		cnt++;
-		if(cnt>10000){
-			printf("\n A photon existed too long time\n");
-			res.Surface=IntersectionSearchResults::None;
+			//Photon leaves the scintillator
+			ph.dir=static_cast<Vec&&>(ph.dir)*m_refraction;
+			ph.coord.erase(ph.coord.begin()+dimension);
+			ph.dir.erase(ph.dir.begin()+dimension);
 			return res;
 		}
 	}
-	
 }
 RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,double maxtime,double dt){
 	auto func=[sigma,decay,maxtime,dt](double t){

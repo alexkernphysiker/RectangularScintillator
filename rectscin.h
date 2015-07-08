@@ -5,6 +5,7 @@
 #include <functional>
 #include <memory>
 #include "math_h/randomfunc.h"
+#include "math_h/interpolate.h"
 #include "geometry.h"
 const double speed_of_light=300;//mm/ns
 typedef std::function<double(double)> Func;
@@ -41,7 +42,7 @@ public:
 		std::vector<Pair>&&dimensions,
 		RandomValueGenerator<double>&&time_distribution,
 		RandomValueGenerator<double>&&lambda_distribution,
-		Func refraction,Func absorption
+		double refraction,Func absorption
 	);
 	virtual ~RectangularScintillator();
 	ScintillatorSurface&Surface(unsigned int dimension,IntersectionSearchResults::Side side);
@@ -52,8 +53,9 @@ protected:
 private:
 	RandomValueGenerator<double> m_time_distribution;
 	RandomValueGenerator<double> m_lambda_distribution;
-	Func m_refraction;//depends on lambda
+	double m_refraction;
 	Func m_absorption;//depends on lambda
+	LinearInterpolation<double> reflection_probability;
 	typedef std::pair<std::shared_ptr<ScintillatorSurface>,std::shared_ptr<ScintillatorSurface>> SurfPair;
 	std::vector<SurfPair> m_edges;
 	std::default_random_engine rand;
