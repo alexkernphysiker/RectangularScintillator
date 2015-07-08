@@ -127,7 +127,7 @@ Photon RectangularScintillator::GeneratePhoton(Vec&&coord){
 	return res;
 }
 RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry(Photon&ph){
-	uniform_real_distribution<double> prob_(-1,1);
+	uniform_real_distribution<double> prob_(0,1);
 	double absorption_coef=m_absorption(ph.lambda);
 	while(true){
 		IntersectionSearchResults res=
