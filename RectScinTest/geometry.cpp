@@ -97,3 +97,93 @@ TEST(VecOpr,Distances){
 	B.push_back(uniform(rnd));
 	EXPECT_TRUE(SqDistance(static_cast<Vec&&>(A),static_cast<Vec&&>(B))==pow(A[0]-B[0],2));
 }
+
+TEST(RectDimensions,Dimensions){
+	RectDimensions A;
+	EXPECT_TRUE(A.NumberOfDimensions()==0);
+	EXPECT_THROW(A.Dimension(0),exception);
+	EXPECT_THROW(A.Dimension(1),exception);
+	EXPECT_THROW(A.Dimension(2),exception);
+	for(unsigned int i=1;i<10;i++){
+		EXPECT_TRUE(&A==&(A<<make_pair(i,2*i)));
+		EXPECT_TRUE(A.NumberOfDimensions()==i);
+		for(unsigned int j=1;j<=i;j++){
+			EXPECT_TRUE(A.Dimension(j-1).first==j);
+			EXPECT_TRUE(A.Dimension(j-1).second==2*j);
+		}
+		EXPECT_THROW(A.Dimension(i),exception);
+		EXPECT_THROW(A.Dimension(i+1),exception);
+		EXPECT_THROW(A.Dimension(i+2),exception);
+	}
+}
+TEST(RectDimensions,IsInside){
+	RectDimensions A;
+	for(unsigned int i=1;i<10;i++){
+		A<<make_pair(-10.0+i,double(i));
+		for(unsigned int cnt=0;cnt<(500*i);cnt++){
+			bool test=true;
+			Vec v;
+			for(unsigned int j=0,n=A.NumberOfDimensions();j<n;j++){
+				double x=uniform(rnd);
+				test&=(x>=A.Dimension(j).first)&&(x<=A.Dimension(j).second);
+				EXPECT_THROW(A.IsInside(static_cast<Vec&&>(v)),exception);
+				v.push_back(x);
+			}
+			EXPECT_TRUE(A.IsInside(static_cast<Vec&&>(v))==test);
+		}
+	}
+}
+TEST(RectDimensions,WhereIntersects_throwing1){
+	RectDimensions A;
+	Vec O;Vec D;
+	for(unsigned int i=1;i<10;i++){
+		A<<make_pair(-10.0+i,double(i));
+		EXPECT_THROW(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)),exception);
+		O.push_back(0);
+		EXPECT_THROW(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)),exception);
+		D.push_back(0);
+		EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::IntersectionSearchResults::None);
+	}
+}
+TEST(RectDimensions,WhereIntersects_throwing2){
+	RectDimensions A;
+	Vec O;Vec D;
+	for(unsigned int i=1;i<10;i++){
+		A<<make_pair(-10.0+i,double(i));
+		EXPECT_THROW(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)),exception);
+		D.push_back(0);
+		EXPECT_THROW(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)),exception);
+		O.push_back(0);
+		EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::IntersectionSearchResults::None);
+	}
+}
+TEST(RectDimensions,WhereIntersects){
+	for(unsigned int cnt=0;cnt<10000;cnt++){
+		RectDimensions A;
+		Vec O, Outside,D;
+		for(unsigned int i=1;i<10;i++){
+			A<<make_pair(-10.0+i,double(i));
+			uniform_real_distribution<double> coord(-10.0+i,i);
+			O.push_back(coord(rnd));
+			Outside.push_back(100);
+			D.push_back(uniform(rnd));
+			EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(Outside),static_cast<Vec&&>(D)).Surface==RectDimensions::IntersectionSearchResults::None);
+			if(Abs(static_cast<Vec&&>(D))>0){
+				RectDimensions::IntersectionSearchResults res=A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D));
+				if(res.Surface!=RectDimensions::IntersectionSearchResults::None){
+					EXPECT_TRUE(res.SurfaceDimentionIndex<A.NumberOfDimensions());
+					EXPECT_TRUE(res.K>=0);
+					double diff;
+					if(res.Surface==RectDimensions::IntersectionSearchResults::Left)
+						diff=pow(res.Coordinates[res.SurfaceDimentionIndex]-A.Dimension(res.SurfaceDimentionIndex).first,2);
+					else
+						diff=pow(res.Coordinates[res.SurfaceDimentionIndex]-A.Dimension(res.SurfaceDimentionIndex).second,2);
+					EXPECT_TRUE(diff<0.00000001);
+					EXPECT_FALSE(diff<0);
+				}
+			}else{
+				EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::IntersectionSearchResults::None);
+			}
+		}
+	}
+}

@@ -67,6 +67,8 @@ bool RectDimensions::IsInside(Vec&&point){
 	return true;
 }
 RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&point,Vec&&dir){
+	if(NumberOfDimensions()!=dir.size())
+		throw exception();
 	if(!IsInside(static_cast<Vec&&>(point))){
 		IntersectionSearchResults res;
 		res.Surface=IntersectionSearchResults::None;
@@ -76,7 +78,7 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 	vector<dist_dim> dim_order;
 	for(unsigned int i=0,n=NumberOfDimensions();i<n;i++){
 		if(dir[i]<0)
-			InsertSorted(make_pair(point[i]-m_dimensions[i].first,i),dim_order,std_size(dim_order),std_insert(dim_order,dist_dim));
+			InsertSorted(make_pair(m_dimensions[i].first-point[i],i),dim_order,std_size(dim_order),std_insert(dim_order,dist_dim));
 		if(dir[i]>0)
 			InsertSorted(make_pair(m_dimensions[i].second-point[i],i),dim_order,std_size(dim_order),std_insert(dim_order,dist_dim));
 	}
@@ -88,7 +90,7 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 	for(unsigned int i=0,n=dim_order.size();i<n;i++){
 		unsigned int dimension=dim_order[i].second;
 		double endx=dim_order[i].first;
-		double k=(endx-point[dimension])/dir[dimension];
+		double k=endx/dir[dimension];
 		if(k<0)throw exception();
 		Vec endpoint=static_cast<Vec&&>(point)+(static_cast<Vec&&>(dir)*k);
 		if(IsInside(static_cast<Vec&&>(endpoint))){
@@ -103,5 +105,7 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 			return res;
 		}
 	}
-	throw exception();
+	IntersectionSearchResults res;
+	res.Surface=IntersectionSearchResults::None;
+	return res;
 }
