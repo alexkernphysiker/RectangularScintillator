@@ -1,12 +1,11 @@
 #include "sensitive.h"
 using namespace std;
-PhotoSensitiveSurface::PhotoSensitiveSurface(vector< Pair >&&dimensions, Func efficiency, double tts):
-RectDimensions(),m_tts(0.0,tts){
+PhotoSensitiveSurface::PhotoSensitiveSurface(vector< Pair >&&dimensions, Func efficiency):RectDimensions(){
 	for(Pair&D:dimensions)RectDimensions::operator<<(static_cast<Pair&&>(D));
 	m_efficiency=efficiency;
 }
-shared_ptr<PhotoSensitiveSurface> Photosensor(vector< Pair >&& dimensions, Func efficiency, double tts){
-	PhotoSensitiveSurface *surf=new PhotoSensitiveSurface(static_cast<vector<Pair>&&>(dimensions),efficiency,tts);
+shared_ptr<PhotoSensitiveSurface> Photosensor(vector< Pair >&& dimensions, Func efficiency){
+	PhotoSensitiveSurface *surf=new PhotoSensitiveSurface(static_cast<vector<Pair>&&>(dimensions),efficiency);
 	return shared_ptr<PhotoSensitiveSurface>(surf);
 }
 
@@ -27,9 +26,12 @@ void PhotoSensitiveSurface::RegisterPhoton(Photon& photon){
 	if(IsInside(static_cast<Vec&&>(photon.coord))){
 		uniform_real_distribution<double> P(0,1);
 		if(P(rand)<m_efficiency(photon.lambda))
-			for(auto sig:m_signal)
-				sig->Photon(photon.time+m_tts(rand));
+			PhotonTimeAccepted(photon.time);
 	}
+}
+void PhotoSensitiveSurface::PhotonTimeAccepted(double time){
+	for(auto sig:m_signal)
+		sig->Photon(time);
 }
 void PhotoSensitiveSurface::End(){
 	for(auto sig:m_signal)

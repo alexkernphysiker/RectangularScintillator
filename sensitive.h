@@ -10,18 +10,19 @@ public:
 };
 class PhotoSensitiveSurface:public IPhotoSensitive,protected RectDimensions{
 public:
-	PhotoSensitiveSurface(std::vector<Pair>&&dimensions,Func efficiency,double tts);
+	PhotoSensitiveSurface(std::vector<Pair>&&dimensions,Func efficiency);
 	virtual ~PhotoSensitiveSurface();
 	virtual void Start()override;
-	virtual void RegisterPhoton(Photon&photon)override;
+	virtual void RegisterPhoton(Photon&photon)override final;
 	virtual void End()override;
 	PhotoSensitiveSurface&operator<<(std::shared_ptr<ISignal>);
+protected:
+	virtual void PhotonTimeAccepted(double time);
 private:
-	std::normal_distribution<double> m_tts;
 	Func m_efficiency;//depends on lambda
 	std::vector<std::shared_ptr<ISignal>> m_signal;
 	std::default_random_engine rand;
 };
 std::shared_ptr<PhotoSensitiveSurface> operator<<(std::shared_ptr<PhotoSensitiveSurface>,std::shared_ptr<ISignal>);
-std::shared_ptr<PhotoSensitiveSurface> Photosensor(std::vector<Pair>&&dimensions,Func efficiency,double tts=0);
+std::shared_ptr<PhotoSensitiveSurface> Photosensor(std::vector<Pair>&&dimensions,Func efficiency);
 #endif
