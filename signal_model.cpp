@@ -17,6 +17,22 @@ void Counter::Photon(double){
 void Counter::End(){
 	m_count.AddValue(current);
 }
-
-
-
+Timer::Timer(unsigned int photon_threshold){
+	m_photon_threshold=photon_threshold;
+}
+Timer::~Timer(){}
+double Timer::average(){
+	return m_time.getAverage();
+}
+double Timer::sigma(){
+	return m_time.getSigma();
+}
+void Timer::Start(){
+	current=0;
+}
+void Timer::Photon(double time){
+	if(current==m_photon_threshold)
+		m_time.AddValue(time);
+	current++;
+}
+void Timer::End(){}
