@@ -21,7 +21,7 @@ int main(int , char **){
 	scintillator.Surface(0,RectDimensions::Right)<<(
 		Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency)<<rightcnt
 	);
-	for(unsigned int cnt=0;cnt<100;cnt++)
+	for(unsigned int cnt=0;cnt<1000;cnt++)
 		scintillator.RegisterGamma({0,0,0},3000);
 	printf("Photons number left: %f+/-%f\n",leftcnt->average(),leftcnt->sigma());
 	printf("Photons number right: %f+/-%f\n",rightcnt->average(),rightcnt->sigma());
