@@ -121,52 +121,44 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 	uniform_real_distribution<double> prob_(-1,1);
 	double absorption=m_absorption(ph.lambda);
 	double n=m_refraction(ph.lambda);
-	auto ReflectionProbability=[n](double sin_phi){
-		double r;
-		try{
-		auto T_ort=[n](double sin_phi){
-			double ssq=sin_phi*sin_phi;
-			double cos_phi=::sqrt(1-ssq);
-			double squrt=::sqrt(1-n*n*ssq);
-			return (n*squrt-cos_phi)/(n*squrt+cos_phi);
-		};
-		auto T_par=[n](double sin_phi){
-			double ssq=sin_phi*sin_phi;
-			double cos_phi=::sqrt(1-ssq);
-			double squrt=::sqrt(1-n*n*ssq);
-			return (n*cos_phi-squrt)/(n*cos_phi+squrt);
-		};
-		auto SubInt=[sin_phi,T_par,T_ort](double pol){
-			return ::sqrt(::pow(sin(pol)*T_ort(sin_phi),2)+::pow(cos(pol)*T_par(sin_phi),2));
-		};
-		r=Sympson(SubInt,0.0,3.1415926*0.5,0.001);
-		}catch(exception){
-			throw RectScinException("Reflection probability");
+	auto ReflectionProbability=[n](double cos_){
+		double cos_phi=cos_;
+		if(cos_phi<0.0)cos_phi=-cos_phi;
+		if(cos_phi>1.0){
+			printf("\n\nCos(theta_refl)=%f\n\n",cos_phi);
+			throw RectScinException("Cos theta error");
 		}
+		double sin_phi=sqrt(1.0-cos_phi*cos_phi);
+		double squrt=sqrt(1-n*n*sin_phi*sin_phi);
+		double T_ort=(n*squrt-cos_phi)/(n*squrt+cos_phi);
+		double T_par=(n*cos_phi-squrt)/(n*cos_phi+squrt);
+		auto SubInt=[T_par,T_ort](double pol){
+			return sqrt(pow(sin(pol)*T_ort,2)+pow(cos(pol)*T_par,2));
+		};
+		double r=Sympson(SubInt,0.0,3.1415926*0.5,0.01);
 		if(r<1.0)return r;
 		return 1.0;
 	};
 	while(true){
 		res=WhereIntersects(static_cast<Vec&&>(ph.coord),static_cast<Vec&&>(ph.dir));
-		if(res.Surface==IntersectionSearchResults::None){
+		if(res.Surface==IntersectionSearchResults::None)
+			return res;
+		ph.time+=res.K/(speed_of_light*n);
+		if(prob_(rand)>exp(-res.K*absorption)){
 			res.Surface=IntersectionSearchResults::None;
 			return res;
 		}
-		double length=Distance(static_cast<Vec&&>(res.Coordinates),static_cast<Vec&&>(ph.coord));
-		if(prob_(rand)>exp(-length*absorption)){
-			res.Surface=IntersectionSearchResults::None;
-			return res;
-		}
-		ph.time+=length/(speed_of_light*n);
-		bool out=(prob_(rand)>ReflectionProbability(sqrt(1.0-pow(ph.dir[res.SurfaceDimentionIndex],2))));
-		if(out){
+		if(prob_(rand)>ReflectionProbability(ph.dir[res.SurfaceDimentionIndex])){
 			ph.dir=static_cast<Vec&&>(ph.dir)*n;
 			ph.dir[res.SurfaceDimentionIndex]=0;//this dimension will be deleted
 			return res;
-		}else
-			ph.dir[res.SurfaceDimentionIndex]*=-1.0;
+		}else{
+			//just reflect back
+			ph.dir[res.SurfaceDimentionIndex]=-ph.dir[res.SurfaceDimentionIndex];
+		}
 		cnt++;
-		if(cnt>50){
+		if(cnt>10000){
+			printf("\n A photon existed too long time\n");
 			res.Surface=IntersectionSearchResults::None;
 			return res;
 		}
