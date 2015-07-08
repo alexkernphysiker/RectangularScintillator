@@ -1,5 +1,5 @@
 #include <iostream>
-#include "signal.h"
+#include "signal_model.h"
 Counter::Counter(){}
 Counter::~Counter(){}
 double Counter::average(){
@@ -10,14 +10,12 @@ double Counter::sigma(){
 }
 void Counter::Start(){
 	current=0;
-	printf("START\n");
 }
 void Counter::Photon(double){
 	current++;
 }
 void Counter::End(){
 	m_count.AddValue(current);
-	printf("STOP\n");
 }
 
 

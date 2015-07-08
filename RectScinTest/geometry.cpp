@@ -1,8 +1,8 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include <exception>
-#include <random>
 #include <gtest/gtest.h>
+#include <random>
+#include <rectscinexception.h>
 #include <geometry.h>
 using namespace std;
 default_random_engine rnd;
@@ -13,10 +13,10 @@ TEST(VecOpr,throwtest){
 	Vec B;
 	for(int i=0;i<10;i++){
 		A.push_back(uniform(rnd));
-		EXPECT_THROW(static_cast<Vec&&>(A)+static_cast<Vec&&>(B),exception);
-		EXPECT_THROW(static_cast<Vec&&>(A)-static_cast<Vec&&>(B),exception);
-		EXPECT_THROW(SqDistance(static_cast<Vec&&>(A),static_cast<Vec&&>(B)),exception);
-		EXPECT_THROW(Distance(static_cast<Vec&&>(A),static_cast<Vec&&>(B)),exception);
+		EXPECT_THROW(static_cast<Vec&&>(A)+static_cast<Vec&&>(B),RectScinException);
+		EXPECT_THROW(static_cast<Vec&&>(A)-static_cast<Vec&&>(B),RectScinException);
+		EXPECT_THROW(SqDistance(static_cast<Vec&&>(A),static_cast<Vec&&>(B)),RectScinException);
+		EXPECT_THROW(Distance(static_cast<Vec&&>(A),static_cast<Vec&&>(B)),RectScinException);
 		B.push_back(uniform(rnd));
 		EXPECT_NO_THROW(static_cast<Vec&&>(A)+static_cast<Vec&&>(B));
 		EXPECT_NO_THROW(static_cast<Vec&&>(A)-static_cast<Vec&&>(B));
@@ -26,8 +26,8 @@ TEST(VecOpr,throwtest){
 	A.clear();B.clear();
 	for(int i=0;i<10;i++){
 		B.push_back(uniform(rnd));
-		EXPECT_THROW(static_cast<Vec&&>(A)+static_cast<Vec&&>(B),exception);
-		EXPECT_THROW(static_cast<Vec&&>(A)-static_cast<Vec&&>(B),exception);
+		EXPECT_THROW(static_cast<Vec&&>(A)+static_cast<Vec&&>(B),RectScinException);
+		EXPECT_THROW(static_cast<Vec&&>(A)-static_cast<Vec&&>(B),RectScinException);
 		A.push_back(uniform(rnd));
 		EXPECT_NO_THROW(static_cast<Vec&&>(A)+static_cast<Vec&&>(B));
 		EXPECT_NO_THROW(static_cast<Vec&&>(A)-static_cast<Vec&&>(B));
@@ -101,9 +101,9 @@ TEST(VecOpr,Distances){
 TEST(RectDimensions,Dimensions){
 	RectDimensions A;
 	EXPECT_TRUE(A.NumberOfDimensions()==0);
-	EXPECT_THROW(A.Dimension(0),exception);
-	EXPECT_THROW(A.Dimension(1),exception);
-	EXPECT_THROW(A.Dimension(2),exception);
+	EXPECT_THROW(A.Dimension(0),RectScinException);
+	EXPECT_THROW(A.Dimension(1),RectScinException);
+	EXPECT_THROW(A.Dimension(2),RectScinException);
 	for(unsigned int i=1;i<10;i++){
 		EXPECT_TRUE(&A==&(A<<make_pair(i,2*i)));
 		EXPECT_TRUE(A.NumberOfDimensions()==i);
@@ -111,9 +111,9 @@ TEST(RectDimensions,Dimensions){
 			EXPECT_TRUE(A.Dimension(j-1).first==j);
 			EXPECT_TRUE(A.Dimension(j-1).second==2*j);
 		}
-		EXPECT_THROW(A.Dimension(i),exception);
-		EXPECT_THROW(A.Dimension(i+1),exception);
-		EXPECT_THROW(A.Dimension(i+2),exception);
+		EXPECT_THROW(A.Dimension(i),RectScinException);
+		EXPECT_THROW(A.Dimension(i+1),RectScinException);
+		EXPECT_THROW(A.Dimension(i+2),RectScinException);
 	}
 }
 TEST(RectDimensions,IsInside){
@@ -126,7 +126,7 @@ TEST(RectDimensions,IsInside){
 			for(unsigned int j=0,n=A.NumberOfDimensions();j<n;j++){
 				double x=uniform(rnd);
 				test&=(x>=A.Dimension(j).first)&&(x<=A.Dimension(j).second);
-				EXPECT_THROW(A.IsInside(static_cast<Vec&&>(v)),exception);
+				EXPECT_THROW(A.IsInside(static_cast<Vec&&>(v)),RectScinException);
 				v.push_back(x);
 			}
 			EXPECT_TRUE(A.IsInside(static_cast<Vec&&>(v))==test);

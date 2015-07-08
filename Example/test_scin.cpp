@@ -3,7 +3,7 @@
 #include <iostream>
 #include <rectscin.h>
 #include <sensitive.h>
-#include <signal.h>
+#include <signal_model.h>
 using namespace std;
 int main(int , char **){
 	RectangularScintillator scintillator(
@@ -21,10 +21,10 @@ int main(int , char **){
 	scintillator.Surface(0,RectDimensions::IntersectionSearchResults::Right)<<(
 		Photosensor({make_pair(0,14),make_pair(0,14)},[](double l){return 0.3;},0.68)<<rightcnt
 	);
-	//for(unsigned int cnt=0;cnt<5000;cnt++)
+	for(unsigned int cnt=0;cnt<50;cnt++)
 		scintillator.RegisterGamma({15,7,7},3000);
-	//printf("Photons number left: %f +/- %f \n",leftcnt->average(),leftcnt->sigma());
-	//printf("Photons number right: %f +/- %f \n",rightcnt->average(),rightcnt->sigma());
+	printf("Photons number left: %f +/- %f \n",leftcnt->average(),leftcnt->sigma());
+	printf("Photons number right: %f +/- %f \n",rightcnt->average(),rightcnt->sigma());
 	//printf("Time resolution left: %f [ns] \n",0);
 	//printf("Time resolution right: %f [ns] \n",0);
 	return 0;

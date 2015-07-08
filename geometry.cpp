@@ -1,9 +1,9 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include <exception>
 #include <math.h>
 #include "math_h/interpolate.h"
 #include "math_h/randomfunc.h"
+#include "rectscinexception.h"
 #include "geometry.h"
 using namespace std;
 Vec operator*(Vec&&p,double c){
@@ -14,7 +14,7 @@ Vec operator*(Vec&&p,double c){
 }
 Vec operator+(Vec&&p1,Vec&&p2){
 	if(p1.size()!=p2.size())
-		throw exception();
+		throw RectScinException("A+B: vector sizes differ");
 	Vec res;
 	for(unsigned int i=0,n=p1.size();i<n;i++)
 		res.push_back(p1[i]+p2[i]);
@@ -22,7 +22,7 @@ Vec operator+(Vec&&p1,Vec&&p2){
 }
 Vec operator-(Vec&&p1,Vec&&p2){
 	if(p1.size()!=p2.size())
-		throw exception();
+		throw RectScinException("A-B: vector sizes differ");
 	Vec res;
 	for(unsigned int i=0,n=p1.size();i<n;i++)
 		res.push_back(p1[i]-p2[i]);
@@ -46,7 +46,7 @@ RectDimensions::RectDimensions(){}
 RectDimensions::~RectDimensions(){}
 RectDimensions& RectDimensions::operator<<(Pair&&dimension){
 	if(dimension.first>dimension.second)
-		throw exception();
+		throw RectScinException("RectDimensions: wrong dimension left>right");
 	m_dimensions.push_back(dimension);
 	return *this;
 }
@@ -55,12 +55,12 @@ unsigned int RectDimensions::NumberOfDimensions(){
 }
 Pair&&RectDimensions::Dimension(unsigned int i){
 	if(i>=NumberOfDimensions())
-		throw exception();
+		throw RectScinException("RectDimensions: dimension index out of range");
 	return static_cast<Pair&&>(m_dimensions[i]);
 }
 bool RectDimensions::IsInside(Vec&&point){
 	if(point.size()!=NumberOfDimensions())
-		throw exception();
+		throw RectScinException("RectDimensions::IsInside: wrong point size");
 	for(unsigned int i=0,n=NumberOfDimensions();i<n;i++)
 		if((point[i]<Dimension(i).first)||(point[i]>Dimension(i).second))
 			return false;
@@ -68,7 +68,7 @@ bool RectDimensions::IsInside(Vec&&point){
 }
 RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&point,Vec&&dir){
 	if(NumberOfDimensions()!=dir.size())
-		throw exception();
+		throw RectScinException("RectDimensions trace: wrong direction vector size");
 	if(!IsInside(static_cast<Vec&&>(point))){
 		IntersectionSearchResults res;
 		res.Surface=IntersectionSearchResults::None;
@@ -91,7 +91,8 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		unsigned int dimension=dim_order[i].second;
 		double endx=dim_order[i].first;
 		double k=endx/dir[dimension];
-		if(k<0)throw exception();
+		if(k<0) 
+			throw RectScinException("RectDimensions trace: k<0");
 		Vec endpoint=static_cast<Vec&&>(point)+(static_cast<Vec&&>(dir)*k);
 		if(IsInside(static_cast<Vec&&>(endpoint))){
 			IntersectionSearchResults res;

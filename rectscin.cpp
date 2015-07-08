@@ -1,8 +1,8 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include <exception>
 #include "math_h/sympson.h"
 #include "math_h/functions.h"
+#include "rectscinexception.h"
 #include "rectscin.h"
 using namespace std;
 ScintillatorSurface::ScintillatorSurface(){}
@@ -32,7 +32,8 @@ RectangularScintillator::RectangularScintillator(
 ):RectDimensions(),
 m_time_distribution(time_distribution),
 m_lambda_distribution(lambda_distribution){
-	if(dimensions.size()==0)throw exception();
+	if(dimensions.size()==0)
+		throw RectScinException("Cannot create scintillator with no dimensions");
 	for(Pair D:dimensions)RectDimensions::operator<<(static_cast<Pair&&>(D));
 	m_refraction=refraction;
 	m_absorption=absorption;
@@ -49,17 +50,17 @@ m_lambda_distribution(lambda_distribution){
 RectangularScintillator::~RectangularScintillator(){}
 ScintillatorSurface& RectangularScintillator::Surface(unsigned int dimension, IntersectionSearchResults::Side side){
 	if(dimension>=NumberOfDimensions())
-		throw exception();
+		throw RectScinException("RectangularScintillator: dimension index out of range");
 	if(side==IntersectionSearchResults::Left)return *(m_edges[dimension].first);
 	if(side==IntersectionSearchResults::Right)return *(m_edges[dimension].second);
-	throw exception();
+	throw RectScinException("RectangularScintillator: surface index out of range");
 }
 typedef pair<Photon,ScintillatorSurface*> PhotonReg;
 bool operator>(PhotonReg&a,PhotonReg&b){return a.first.time>b.first.time;}
 bool operator<(PhotonReg&a,PhotonReg&b){return a.first.time<b.first.time;}
 void RectangularScintillator::RegisterGamma(Vec&&coord,unsigned int N){
 	if(coord.size()!=NumberOfDimensions())
-		throw exception();
+		throw RectScinException("RectangularScintillator: wrong gamma interaction point vector size");
 	vector<PhotonReg> photons;
 	for(unsigned int i=0;i<N;i++){
 		Photon ph=GeneratePhoton(static_cast<Vec&&>(coord));
@@ -109,7 +110,7 @@ Photon RectangularScintillator::GeneratePhoton(Vec&&coord){
 		res.dir.push_back(sin_theta*cos(phi));
 	}
 	if(NumberOfDimensions()>=4)
-		throw exception();//not implemented
+		throw RectScinException("RectangularScintillator: isotropic 4D random directions not implemented");
 	res.time=m_time_distribution();
 	res.lambda=m_lambda_distribution();
 	return res;
@@ -121,6 +122,8 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 	double absorption=m_absorption(ph.lambda);
 	double n=m_refraction(ph.lambda);
 	auto ReflectionProbability=[n](double sin_phi){
+		double r;
+		try{
 		auto T_ort=[n](double sin_phi){
 			double ssq=sin_phi*sin_phi;
 			double cos_phi=::sqrt(1-ssq);
@@ -136,21 +139,26 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		auto SubInt=[sin_phi,T_par,T_ort](double pol){
 			return ::sqrt(::pow(sin(pol)*T_ort(sin_phi),2)+::pow(cos(pol)*T_par(sin_phi),2));
 		};
-		double r=Sympson(SubInt,0.0,3.1415926*0.5,0.001);
-		if(r<1)return r;
+		r=Sympson(SubInt,0.0,3.1415926*0.5,0.001);
+		}catch(exception){
+			throw RectScinException("Reflection probability");
+		}
+		if(r<1.0)return r;
 		return 1.0;
 	};
 	while(true){
 		res=WhereIntersects(static_cast<Vec&&>(ph.coord),static_cast<Vec&&>(ph.dir));
-		if(res.Surface==IntersectionSearchResults::None)throw exception();
+		if(res.Surface==IntersectionSearchResults::None){
+			res.Surface=IntersectionSearchResults::None;
+			return res;
+		}
 		double length=Distance(static_cast<Vec&&>(res.Coordinates),static_cast<Vec&&>(ph.coord));
 		if(prob_(rand)>exp(-length*absorption)){
 			res.Surface=IntersectionSearchResults::None;
 			return res;
 		}
-		double cos_theta=ph.dir[res.SurfaceDimentionIndex];
 		ph.time+=length/(speed_of_light*n);
-		bool out=(prob_(rand)>ReflectionProbability(sqrt(1.0-cos_theta*cos_theta)));
+		bool out=(prob_(rand)>ReflectionProbability(sqrt(1.0-pow(ph.dir[res.SurfaceDimentionIndex],2))));
 		if(out){
 			ph.dir=static_cast<Vec&&>(ph.dir)*n;
 			ph.dir[res.SurfaceDimentionIndex]=0;//this dimension will be deleted
@@ -158,7 +166,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		}else
 			ph.dir[res.SurfaceDimentionIndex]*=-1.0;
 		cnt++;
-		if(cnt>500){
+		if(cnt>50){
 			res.Surface=IntersectionSearchResults::None;
 			return res;
 		}
