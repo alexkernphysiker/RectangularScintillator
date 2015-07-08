@@ -45,8 +45,9 @@ public:
 		double refraction,Func absorption
 	);
 	virtual ~RectangularScintillator();
-	ScintillatorSurface&Surface(unsigned int dimension,IntersectionSearchResults::Side side);
+	ScintillatorSurface&Surface(unsigned int dimension,Side side);
 	void RegisterGamma(Vec&&coord,unsigned int N);
+	LinearInterpolation<double>&&ReflectionProbabilityFunction();
 protected:
 	Photon GeneratePhoton(Vec&&coord);
 	IntersectionSearchResults TraceGeometry(Photon &ph);//Changes Photon

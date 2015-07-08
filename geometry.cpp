@@ -71,7 +71,7 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		throw RectScinException("RectDimensions trace: wrong direction vector size");
 	if(!IsInside(static_cast<Vec&&>(point))){
 		IntersectionSearchResults res;
-		res.Surface=IntersectionSearchResults::None;
+		res.Surface=None;
 		return res;
 	}
 	// Distance to the corresponding edge, dimension index
@@ -89,14 +89,13 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 	}
 	if(dim_order.size()==0){
 		IntersectionSearchResults res;
-		res.Surface=IntersectionSearchResults::None;
+		res.Surface=None;
 		return res;
 	}
 	for(unsigned int i=0,n=dim_order.size();i<n;i++){
 		unsigned int dimension=dim_order[i].second;
 		double k=dim_order[i].first/dir[dimension];
 		if(k<0) k=-k;
-			//throw RectScinException("RectDimensions trace: k<0");
 		Vec endpoint=static_cast<Vec&&>(point)+(static_cast<Vec&&>(dir)*k);
 		bool Belong_to_surface=true;
 		for(unsigned int i=0,n=NumberOfDimensions();i<n;i++)
@@ -107,9 +106,9 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		if(Belong_to_surface){
 			IntersectionSearchResults res;
 			if(dir[dimension]<0)
-				res.Surface=IntersectionSearchResults::Left;
+				res.Surface=Left;
 			else
-				res.Surface=IntersectionSearchResults::Right;
+				res.Surface=Right;
 			res.SurfaceDimentionIndex=dimension;
 			res.K=k;
 			res.Coordinates=endpoint;
@@ -117,6 +116,6 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		}
 	}
 	IntersectionSearchResults res;
-	res.Surface=IntersectionSearchResults::None;
+	res.Surface=None;
 	return res;
 }

@@ -49,10 +49,7 @@ m_lambda_distribution(lambda_distribution){
 	auto ReflectionProbability=[this](double cos_){
 		double cos_phi=cos_;
 		if(cos_phi<0.0)cos_phi=-cos_phi;
-		if(cos_phi>1.0){
-			printf("\n\nCos(theta_refl)=%f\n\n",cos_phi);
-			throw RectScinException("Cos theta error");
-		}
+		if(cos_phi>1.0)cos_phi=1;
 		double sin_phi=sqrt(1.0-cos_phi*cos_phi);
 		double squrt=sqrt(1-m_refraction*m_refraction*sin_phi*sin_phi);
 		double T_ort=(m_refraction*squrt-cos_phi)/(m_refraction*squrt+cos_phi);
@@ -64,15 +61,18 @@ m_lambda_distribution(lambda_distribution){
 		if(r<1.0)return r;
 		return 1.0;
 	};
-	for(double x=0;x<=1;x+=0.05)
+	for(double x=-0.01;x<=1.01;x+=0.01)
 		reflection_probability<<make_pair(x,ReflectionProbability(x));
 }
 RectangularScintillator::~RectangularScintillator(){}
-ScintillatorSurface& RectangularScintillator::Surface(unsigned int dimension, IntersectionSearchResults::Side side){
+LinearInterpolation< double >&& RectangularScintillator::ReflectionProbabilityFunction(){
+	return static_cast<LinearInterpolation<double>&&>(reflection_probability);
+}
+ScintillatorSurface& RectangularScintillator::Surface(unsigned int dimension, Side side){
 	if(dimension>=NumberOfDimensions())
 		throw RectScinException("RectangularScintillator: dimension index out of range");
-	if(side==IntersectionSearchResults::Left)return *(m_edges[dimension].first);
-	if(side==IntersectionSearchResults::Right)return *(m_edges[dimension].second);
+	if(side==Left)return *(m_edges[dimension].first);
+	if(side==Right)return *(m_edges[dimension].second);
 	throw RectScinException("RectangularScintillator: surface index out of range");
 }
 void RectangularScintillator::RegisterGamma(Vec&&coord,unsigned int N){
@@ -85,7 +85,7 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,unsigned int N){
 	for(unsigned int i=0;i<N;i++){
 		Photon ph=GeneratePhoton(static_cast<Vec&&>(coord));
 		IntersectionSearchResults trace=TraceGeometry(ph);
-		if(trace.Surface!=IntersectionSearchResults::None){
+		if(trace.Surface!=None){
 			Surface(trace.SurfaceDimentionIndex,trace.Surface).RegisterPhoton(ph);
 		}
 	}
@@ -128,11 +128,10 @@ Photon RectangularScintillator::GeneratePhoton(Vec&&coord){
 }
 RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry(Photon&ph){
 	uniform_real_distribution<double> prob_(0,1);
-	double absorption_coef=m_absorption(ph.lambda);
 	while(true){
 		IntersectionSearchResults res=
 			WhereIntersects(static_cast<Vec&&>(ph.coord),static_cast<Vec&&>(ph.dir));
-		if(res.Surface==IntersectionSearchResults::None)
+		if(res.Surface==None)
 			return res;
 		unsigned int dimension=res.SurfaceDimentionIndex;
 		double path_length=res.K;
@@ -145,10 +144,10 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		if(ph.coord[dimension]>Dimension(dimension).second)
 			ph.coord[dimension]=Dimension(dimension).second;
 		//check for other effects
-		double absorption_prob=1.0-exp(-path_length*absorption_coef);
+		double absorption_prob=1.0-exp(-path_length*m_absorption(ph.lambda));
 		if(prob_(rand)<absorption_prob){
 			//Photon is absopbed
-			res.Surface=IntersectionSearchResults::None;
+			res.Surface=None;
 			return res;
 		}
 		double cos_angle=ph.dir[dimension];
@@ -156,7 +155,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 			cos_angle=-cos_angle;
 		if(cos_angle>1.0)
 			throw RectScinException("Trace: cosine error");
-		if(false){//(prob_(rand)<reflection_probability(cos_angle)){
+		if(prob_(rand)<reflection_probability(cos_angle)){
 			//Photon is reflected back
 			ph.dir[dimension]=-ph.dir[dimension];
 		}else{

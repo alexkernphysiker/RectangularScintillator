@@ -142,7 +142,7 @@ TEST(RectDimensions,WhereIntersects_throwing1){
 		O.push_back(0);
 		EXPECT_THROW(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)),exception);
 		D.push_back(0);
-		EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::IntersectionSearchResults::None);
+		EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::None);
 	}
 }
 TEST(RectDimensions,WhereIntersects_throwing2){
@@ -154,7 +154,7 @@ TEST(RectDimensions,WhereIntersects_throwing2){
 		D.push_back(0);
 		EXPECT_THROW(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)),exception);
 		O.push_back(0);
-		EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::IntersectionSearchResults::None);
+		EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::None);
 	}
 }
 TEST(RectDimensions,WhereIntersects){
@@ -167,15 +167,15 @@ TEST(RectDimensions,WhereIntersects){
 			O.push_back(coord(rnd));
 			Outside.push_back(100);
 			D.push_back(uniform(rnd));
-			EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(Outside),static_cast<Vec&&>(D)).Surface==RectDimensions::IntersectionSearchResults::None);
+			EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(Outside),static_cast<Vec&&>(D)).Surface==RectDimensions::None);
 			if(Abs(static_cast<Vec&&>(D))>0){
 				RectDimensions::IntersectionSearchResults res=A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D));
-				if(res.Surface!=RectDimensions::IntersectionSearchResults::None){
+				if(res.Surface!=RectDimensions::None){
 					//Condition for found exit point
 					EXPECT_TRUE(res.SurfaceDimentionIndex<A.NumberOfDimensions());
 					EXPECT_TRUE(res.K>=0);//path length/direction vector length
 					double diff;
-					if(res.Surface==RectDimensions::IntersectionSearchResults::Left)
+					if(res.Surface==RectDimensions::Left)
 						diff=pow(res.Coordinates[res.SurfaceDimentionIndex]-A.Dimension(res.SurfaceDimentionIndex).first,2);
 					else
 						diff=pow(res.Coordinates[res.SurfaceDimentionIndex]-A.Dimension(res.SurfaceDimentionIndex).second,2);
@@ -190,7 +190,7 @@ TEST(RectDimensions,WhereIntersects){
 					EXPECT_TRUE(false);
 				}
 			}else{
-				EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::IntersectionSearchResults::None);
+				EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::None);
 			}
 		}
 	}
