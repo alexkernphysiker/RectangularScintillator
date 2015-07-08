@@ -9,6 +9,7 @@ public:
 	virtual void Start()override;
 	virtual void Photon(double time)override;
 	virtual void End()override;
+	unsigned int count();
 	double average();
 	double sigma();
 private:

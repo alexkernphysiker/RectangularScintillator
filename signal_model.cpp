@@ -8,6 +8,9 @@ double Counter::average(){
 double Counter::sigma(){
 	return m_count.getSigma();
 }
+unsigned int Counter::count(){
+	return current;
+}
 void Counter::Start(){
 	current=0;
 }
