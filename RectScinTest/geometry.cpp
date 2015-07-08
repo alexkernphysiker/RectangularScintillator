@@ -15,9 +15,13 @@ TEST(VecOpr,throwtest){
 		A.push_back(uniform(rnd));
 		EXPECT_THROW(static_cast<Vec&&>(A)+static_cast<Vec&&>(B),exception);
 		EXPECT_THROW(static_cast<Vec&&>(A)-static_cast<Vec&&>(B),exception);
+		EXPECT_THROW(SqDistance(static_cast<Vec&&>(A),static_cast<Vec&&>(B)),exception);
+		EXPECT_THROW(Distance(static_cast<Vec&&>(A),static_cast<Vec&&>(B)),exception);
 		B.push_back(uniform(rnd));
 		EXPECT_NO_THROW(static_cast<Vec&&>(A)+static_cast<Vec&&>(B));
 		EXPECT_NO_THROW(static_cast<Vec&&>(A)-static_cast<Vec&&>(B));
+		EXPECT_NO_THROW(SqDistance(static_cast<Vec&&>(A),static_cast<Vec&&>(B)));
+		EXPECT_NO_THROW(Distance(static_cast<Vec&&>(A),static_cast<Vec&&>(B)));
 	}
 	A.clear();B.clear();
 	for(int i=0;i<10;i++){
@@ -74,4 +78,22 @@ TEST(VecOpr,Add_Sub){
 		A.push_back(uniform(rnd));
 		B.push_back(uniform(rnd));
 	}
+}
+TEST(VecOpr,Distances){
+	Vec A;
+	Vec B;
+	for(int i=0;i<10;i++){
+		for(double c=-10;c<=10;c+=1){
+			double d=Distance(static_cast<Vec&&>(A),static_cast<Vec&&>(B));
+			EXPECT_TRUE(d>=0);
+			EXPECT_TRUE(sqrt(SqDistance(static_cast<Vec&&>(A),static_cast<Vec&&>(B)))==d);
+		}
+		A.push_back(uniform(rnd));
+		B.push_back(uniform(rnd));
+	}
+	A.clear();
+	B.clear();
+	A.push_back(uniform(rnd));
+	B.push_back(uniform(rnd));
+	EXPECT_TRUE(SqDistance(static_cast<Vec&&>(A),static_cast<Vec&&>(B))==pow(A[0]-B[0],2));
 }
