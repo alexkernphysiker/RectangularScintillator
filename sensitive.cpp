@@ -7,6 +7,7 @@ Photosensor::Photosensor(vector< Pair > dimensions, Func efficiency, double tts)
 Photosensor::~Photosensor(){}
 Photosensor& Photosensor::operator<<(shared_ptr<ISignal> sig){
 	m_signal.push_back(sig);
+	return *this;
 }
 void Photosensor::Start(){
 	for(auto sig:m_signal)

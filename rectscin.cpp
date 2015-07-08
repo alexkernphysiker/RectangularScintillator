@@ -49,8 +49,8 @@ RectangularScintillator::~RectangularScintillator(){}
 PhotoSensitiveSurface& RectangularScintillator::Surface(unsigned int dimension, IntersectionSearchResults::Side side){
 	if(dimension>=NumberOfDimensions())
 		throw exception();
-	if(side=IntersectionSearchResults::Left)return m_edges[dimension].first;
-	if(side=IntersectionSearchResults::Right)return m_edges[dimension].second;
+	if(side==IntersectionSearchResults::Left)return m_edges[dimension].first;
+	if(side==IntersectionSearchResults::Right)return m_edges[dimension].second;
 	throw exception();
 }
 typedef pair<Photon,PhotoSensitiveSurface*> PhotonReg;
@@ -137,8 +137,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 	uniform_real_distribution<double> prob_(-1,1);
 	double absorption=m_absorption(ph.lambda);
 	double n=m_refraction(ph.lambda);
-	bool out=false;
-	do{
+	while(true){
 		res=WhereIntersects(static_cast<Vec&&>(ph.coord),static_cast<Vec&&>(ph.dir));
 		if(res.Surface==IntersectionSearchResults::None)throw exception();
 		double length=Distance(static_cast<Vec&&>(res.Coordinates),static_cast<Vec&&>(ph.coord));
@@ -148,16 +147,18 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		}
 		double cos_theta=ph.dir[res.SurfaceDimentionIndex];
 		ph.time+=length/(speed_of_light*n);
-		out=(prob_(rand)>ReflectionProbability(n,sqrt(1.0-cos_theta*cos_theta)));
+		bool out=(prob_(rand)>ReflectionProbability(n,sqrt(1.0-cos_theta*cos_theta)));
 		if(out){
 			ph.dir=static_cast<Vec&&>(ph.dir)*n;
-			ph.dir[res.SurfaceDimentionIndex]=0;//it will be deleted
+			ph.dir[res.SurfaceDimentionIndex]=0;//this dimension will be deleted
+			return res;
 		}else
 			ph.dir[res.SurfaceDimentionIndex]*=-1.0;
 		cnt++;
-		if(cnt>50){
+		if(cnt>100){
 			res.Surface=IntersectionSearchResults::None;
 			return res;
 		}
-	}while(!out);
+	}
+	
 }
