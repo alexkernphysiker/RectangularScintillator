@@ -8,6 +8,9 @@ typedef std::vector<double> Vec;
 typedef std::pair<double,double> Pair;
 Vec operator*(Vec&&p,double c);
 Vec operator+(Vec&&p1,Vec&&p2);
+Vec operator-(Vec&&p1,Vec&&p2);
+double SqAbs(Vec&&p);
+double Abs(Vec&&p);
 double SqDistance(Vec&&p1,Vec&&p2);
 double Distance(Vec&&p1,Vec&&p2);
 class RectDimensions{

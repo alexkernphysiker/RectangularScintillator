@@ -20,16 +20,27 @@ Vec operator+(Vec&&p1,Vec&&p2){
 		res.push_back(p1[i]+p2[i]);
 	return res;
 }
-double SqDistance(Vec&&p1, Vec&&p2){
+Vec operator-(Vec&&p1,Vec&&p2){
 	if(p1.size()!=p2.size())
 		throw exception();
-	double res=0;
+	Vec res;
 	for(unsigned int i=0,n=p1.size();i<n;i++)
-		res+=pow(p1[i]-p2[i],2);
+		res.push_back(p1[i]-p2[i]);
 	return res;
 }
+double SqAbs(Vec&&p){
+	double res=0;
+	for(double x:p)res+=x*x;
+	return res;
+}
+double Abs(Vec&& p){
+	return sqrt(SqAbs(static_cast<Vec&&>(p)));
+}
+double SqDistance(Vec&&p1, Vec&&p2){
+	return SqAbs(static_cast<Vec&&>(p1)-static_cast<Vec&&>(p2));
+}
 double Distance(Vec&&p1,Vec&&p2){
-	return sqrt(SqDistance(static_cast<Vec&&>(p1),static_cast<Vec&&>(p2)));
+	return Abs(static_cast<Vec&&>(p1)-static_cast<Vec&&>(p2));
 }
 RectDimensions::RectDimensions(){}
 RectDimensions::~RectDimensions(){}

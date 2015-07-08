@@ -68,9 +68,16 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,unsigned int N){
 			InsertSorted(reg,photons,std_size(photons),std_insert(photons,PhotonReg));
 		}
 	}
-	
+	for(SurfPair&sp:m_edges){
+		sp.first.Start();
+		sp.second.Start();
+	}
 	for(PhotonReg&reg:photons)
 		reg.second->RegisterPhoton(reg.first);
+	for(SurfPair&sp:m_edges){
+		sp.first.End();
+		sp.second.End();
+	}
 }
 Photon RectangularScintillator::GeneratePhoton(Vec&&coord){
 	Photon res;
