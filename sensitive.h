@@ -8,18 +8,20 @@ public:
 	virtual void Photon(double time)=0;
 	virtual void End()=0;
 };
-class Photosensor:public virtual IPhotoSensitive,protected virtual RectDimensions{
+class PhotoSensitiveSurface:public IPhotoSensitive,protected RectDimensions{
 public:
-	Photosensor(std::vector<Pair> dimensions,Func efficiency,double tts);
-    virtual ~Photosensor();
+	PhotoSensitiveSurface(std::vector<Pair>&&dimensions,Func efficiency,double tts);
+	virtual ~PhotoSensitiveSurface();
 	virtual void Start()override;
 	virtual void RegisterPhoton(Photon&photon)override;
 	virtual void End()override;
-    Photosensor&operator<<(std::shared_ptr<ISignal>);
+	PhotoSensitiveSurface&operator<<(std::shared_ptr<ISignal>);
 private:
 	std::normal_distribution<double> m_tts;
 	Func m_efficiency;//depends on lambda
 	std::vector<std::shared_ptr<ISignal>> m_signal;
 	std::default_random_engine rand;
 };
+std::shared_ptr<PhotoSensitiveSurface> operator<<(std::shared_ptr<PhotoSensitiveSurface>,std::shared_ptr<ISignal>);
+std::shared_ptr<PhotoSensitiveSurface> Photosensor(std::vector<Pair>&&dimensions,Func efficiency,double tts);
 #endif

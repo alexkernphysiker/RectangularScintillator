@@ -22,12 +22,12 @@ public:
 	virtual void End()=0;
 };
 class RectangularScintillator;
-class PhotoSensitiveSurface:protected virtual RectDimensions{
+class ScintillatorSurface:protected RectDimensions{
 	friend class RectangularScintillator;
 public:
-	PhotoSensitiveSurface();
-	virtual ~PhotoSensitiveSurface();
-	PhotoSensitiveSurface&operator<<(std::shared_ptr<IPhotoSensitive>handler);
+	ScintillatorSurface();
+	virtual ~ScintillatorSurface();
+	ScintillatorSurface&operator<<(std::shared_ptr<IPhotoSensitive>handler);
 protected:
 	void Start();
 	void RegisterPhoton(Photon&photon);//changes photon
@@ -35,15 +35,16 @@ protected:
 private:
 	std::vector<std::shared_ptr<IPhotoSensitive>> m_handlers;
 };
-class RectangularScintillator:protected virtual RectDimensions{
+class RectangularScintillator:protected RectDimensions{
 public:
-	RectangularScintillator(std::vector<Pair> dimensions,
-					Func time_distribution,double tmax,unsigned int tbins,
-					Func lambda_distribution,double lmin,double lmax,unsigned int lbins,
-					Func refraction,Func absorption
+	RectangularScintillator(
+		std::vector<Pair>&&dimensions,
+		RandomValueGenerator<double>&&time_distribution,
+		RandomValueGenerator<double>&&lambda_distribution,
+		Func refraction,Func absorption
 	);
 	virtual ~RectangularScintillator();
-	PhotoSensitiveSurface&Surface(unsigned int dimension,IntersectionSearchResults::Side side);
+	ScintillatorSurface&Surface(unsigned int dimension,IntersectionSearchResults::Side side);
 	void RegisterGamma(Vec&&coord,unsigned int N);
 protected:
 	Photon GeneratePhoton(Vec&&coord);
@@ -53,9 +54,12 @@ private:
 	RandomValueGenerator<double> m_lambda_distribution;
 	Func m_refraction;//depends on lambda
 	Func m_absorption;//depends on lambda
-	typedef std::pair<PhotoSensitiveSurface,PhotoSensitiveSurface> SurfPair;
+	typedef std::pair<std::shared_ptr<ScintillatorSurface>,std::shared_ptr<ScintillatorSurface>> SurfPair;
 	std::vector<SurfPair> m_edges;
 	std::default_random_engine rand;
 };
-
+const double max_emission_time=20;
+const double emission_time_binwidth=0.01;
+RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,double maxtime=max_emission_time,double dt=emission_time_binwidth);
+RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay,double maxtime=max_emission_time,double dt=emission_time_binwidth);
 #endif
