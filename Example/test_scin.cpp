@@ -9,7 +9,7 @@ int main(int , char **){
 	RectangularScintillator scintillator(
 		{make_pair(0,30),make_pair(-7,7),make_pair(-7,7)},
 		TimeDistribution2(0.005,0.2,1.5),
-		RandomValueGenerator<double>([](double l){return 1.0;},360,480,120),
+		RandomValueGenerator<double>([](double l){return 1.0;},360,480,2),
 		[](double l){return 1.58;},
 		[](double l){return 0.08;}
 	);
