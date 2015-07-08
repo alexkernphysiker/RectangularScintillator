@@ -158,7 +158,7 @@ TEST(RectDimensions,WhereIntersects_throwing2){
 	}
 }
 TEST(RectDimensions,WhereIntersects){
-	for(unsigned int cnt=0;cnt<10000;cnt++){
+	for(unsigned int cnt=0;cnt<100000;cnt++){
 		RectDimensions A;
 		Vec O, Outside,D;
 		for(unsigned int i=1;i<10;i++){
@@ -171,8 +171,9 @@ TEST(RectDimensions,WhereIntersects){
 			if(Abs(static_cast<Vec&&>(D))>0){
 				RectDimensions::IntersectionSearchResults res=A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D));
 				if(res.Surface!=RectDimensions::IntersectionSearchResults::None){
+					//Condition for found exit point
 					EXPECT_TRUE(res.SurfaceDimentionIndex<A.NumberOfDimensions());
-					EXPECT_TRUE(res.K>=0);
+					EXPECT_TRUE(res.K>=0);//path length/direction vector length
 					double diff;
 					if(res.Surface==RectDimensions::IntersectionSearchResults::Left)
 						diff=pow(res.Coordinates[res.SurfaceDimentionIndex]-A.Dimension(res.SurfaceDimentionIndex).first,2);
@@ -180,6 +181,13 @@ TEST(RectDimensions,WhereIntersects){
 						diff=pow(res.Coordinates[res.SurfaceDimentionIndex]-A.Dimension(res.SurfaceDimentionIndex).second,2);
 					EXPECT_TRUE(diff<0.00000001);
 					EXPECT_FALSE(diff<0);
+					double actual_dist=Distance(static_cast<Vec&&>(res.Coordinates),static_cast<Vec&&>(O));
+					double expected_dist=Abs(static_cast<Vec&&>(D))*res.K;
+					diff=pow(actual_dist-expected_dist,2);
+					EXPECT_TRUE(diff<0.00000001);
+				}else{
+					//if source point is inside and direction is not zero there should be an exit point
+					EXPECT_TRUE(false);
 				}
 			}else{
 				EXPECT_TRUE(A.WhereIntersects(static_cast<Vec&&>(O),static_cast<Vec&&>(D)).Surface==RectDimensions::IntersectionSearchResults::None);
