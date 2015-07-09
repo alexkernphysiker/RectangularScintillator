@@ -1,6 +1,7 @@
 #ifndef CilPeTQJ
 #define CilPeTQJ
 #include "math_h/sigma.h"
+#include "math_h/interpolate.h"
 #include "sensitive.h"
 class Counter:public ISignal{
 public:
@@ -32,5 +33,16 @@ private:
 	unsigned int current,m_photon_count;
 	double m_time;
 	Sigma<double> m_count;
+};
+class TimeDistribution:public ISignal{
+public:
+	TimeDistribution(double from,double to, int bins);
+	virtual ~TimeDistribution();
+	virtual void Start()override;
+	virtual void Photon(double t)override;
+	virtual void End()override;
+	Distribution<double>&&GetDistribution();
+private:
+	Distribution<double> m_distr;
 };
 #endif
