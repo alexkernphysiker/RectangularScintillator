@@ -1,6 +1,8 @@
+#include "math_h/interpolate.h"
+#include "rectscinexception.h"
 #include "sensitive.h"
 using namespace std;
-PhotoSensitiveSurface::PhotoSensitiveSurface(vector< Pair >&&dimensions, Func efficiency):RectDimensions(){
+PhotoSensitiveSurface::PhotoSensitiveSurface(vector< Pair >&&dimensions, Func efficiency):RectDimensions(),P(0,1){
 	for(Pair&D:dimensions)RectDimensions::operator<<(static_cast<Pair&&>(D));
 	m_efficiency=efficiency;
 }
@@ -21,19 +23,21 @@ shared_ptr<PhotoSensitiveSurface> operator<<(shared_ptr<PhotoSensitiveSurface> A
 void PhotoSensitiveSurface::Start(){
 	for(auto sig:m_signal)
 		sig->Start();
+	times.clear();
 }
 void PhotoSensitiveSurface::RegisterPhoton(Photon& photon){
 	if(IsInside(static_cast<Vec&&>(photon.coord))){
-		uniform_real_distribution<double> P(0,1);
 		if(P(rand)<m_efficiency(photon.lambda))
 			PhotonTimeAccepted(photon.time);
 	}
 }
 void PhotoSensitiveSurface::PhotonTimeAccepted(double time){
-	for(auto sig:m_signal)
-		sig->Photon(time);
+	InsertSorted(time,times,field_size(times),field_insert(times,double));
 }
 void PhotoSensitiveSurface::End(){
+	for(double time:times)
+		for(auto sig:m_signal)
+			sig->Photon(time);
 	for(auto sig:m_signal)
 		sig->End();
 }
