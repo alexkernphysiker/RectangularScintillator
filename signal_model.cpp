@@ -1,5 +1,6 @@
 #include <iostream>
 #include "signal_model.h"
+using namespace std;
 Counter::Counter(){}
 Counter::~Counter(){}
 double Counter::average(){
@@ -20,3 +21,37 @@ void Counter::Photon(double){
 void Counter::End(){
 	m_count.AddValue(current);
 }
+void Counter::Reset(){
+	m_count=Sigma<double>();
+}
+
+Timer::Timer(unsigned int photon_count){
+	m_photon_count=photon_count;
+	current=0;
+}
+Timer::~Timer(){}
+void Timer::Start(){
+	current=0;
+	m_time=INFINITY;
+}
+void Timer::Photon(double t){
+	if(current==m_photon_count)
+		m_time=t;
+	current++;
+}
+void Timer::End(){
+	if(isfinite(m_time))m_count.AddValue(m_time);
+}
+unsigned int Timer::time(){
+	return m_time;
+}
+double Timer::average(){
+	return m_count.getAverage();
+}
+double Timer::sigma(){
+	return m_count.getSigma();
+}
+void Timer::Reset(){
+	m_count=Sigma<double>();
+}
+
