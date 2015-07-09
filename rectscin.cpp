@@ -7,10 +7,6 @@
 using namespace std;
 ScintillatorSurface::ScintillatorSurface(){}
 ScintillatorSurface::~ScintillatorSurface(){}
-ScintillatorSurface& ScintillatorSurface::operator<<(shared_ptr<IPhotoSensitive> handler){
-	m_handlers.push_back(handler);
-	return *this;
-}
 void ScintillatorSurface::Start(){
 	for(auto handler:m_handlers)
 		handler->Start();
@@ -24,20 +20,18 @@ void ScintillatorSurface::End(){
 	for(auto handler:m_handlers)
 		handler->End();
 }
-ScintillatorSurface& ScintillatorSurface::Glue(vector< Pair >&& glue,double eff){
-	if((eff<0)||(eff>1))
-		throw RectScinException("Attempt to set optical glue efficiency outside the range [0;1]");
-	auto glued=make_shared<RectDimensions>();
-	for(Pair p:glue)glued->operator<<(static_cast<Pair&&>(p));
-	if(glued->NumberOfDimensions()!=NumberOfDimensions())
-		throw RectScinException("Glued area dimensions number does not match");
-	m_glue.push_back(make_pair(glued,eff));
+ScintillatorSurface& ScintillatorSurface::operator<<(shared_ptr<IPhotoSensitive> sensor){
+	m_handlers.push_back(sensor);
 	return *this;
 }
 double ScintillatorSurface::ReflectionProbabilityCoeff(Vec&& point){
-	for(auto glued:m_glue)
-		if(glued.first->IsInside(static_cast<Vec&&>(point)))
-			return 1.0-glued.second;
+	for(auto sensor:m_handlers)
+		if(sensor->Dimensions().IsInside(static_cast<Vec&&>(point))){
+			double eff=sensor->GlueEfficiency();
+			if((eff<0)||(eff>1))
+				throw RectScinException("Optical glue efficiency must be in the range [0;1]");
+			return 1.0-eff;
+		}
 	return 1.0;
 }
 

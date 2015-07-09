@@ -21,6 +21,8 @@ public:
 	virtual void Start()=0;
 	virtual void RegisterPhoton(Photon&photon)=0;
 	virtual void End()=0;
+	virtual RectDimensions&&Dimensions()=0;
+	virtual double GlueEfficiency()=0;
 };
 class RectangularScintillator;
 class ScintillatorSurface:protected RectDimensions{
@@ -28,8 +30,7 @@ class ScintillatorSurface:protected RectDimensions{
 public:
 	ScintillatorSurface();
 	virtual ~ScintillatorSurface();
-	ScintillatorSurface&operator<<(std::shared_ptr<IPhotoSensitive>handler);
-	ScintillatorSurface&Glue(std::vector<Pair>&&glue,double glue_eff=1);
+	ScintillatorSurface&operator<<(std::shared_ptr<IPhotoSensitive>sensor);
 protected:
 	void Start();
 	void RegisterPhoton(Photon&photon);//changes photon
@@ -37,7 +38,6 @@ protected:
 	double ReflectionProbabilityCoeff(Vec&&point);
 private:
 	std::vector<std::shared_ptr<IPhotoSensitive>> m_handlers;
-	std::vector<std::pair<std::shared_ptr<RectDimensions>,double>> m_glue;
 };
 class RectangularScintillator:protected RectDimensions{
 public:

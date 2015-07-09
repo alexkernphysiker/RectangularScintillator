@@ -7,6 +7,12 @@ PhotoSensitiveSurface::PhotoSensitiveSurface(vector< Pair >&&dimensions, Func ef
 	m_efficiency=efficiency;
 }
 PhotoSensitiveSurface::~PhotoSensitiveSurface(){}
+RectDimensions&& PhotoSensitiveSurface::Dimensions(){
+	return static_cast<RectDimensions&&>(*this);
+}
+double PhotoSensitiveSurface::GlueEfficiency(){
+	return 1;
+}
 PhotoSensitiveSurface& PhotoSensitiveSurface::operator<<(shared_ptr<ISignal> sig){
 	m_signal.push_back(sig);
 	return *this;

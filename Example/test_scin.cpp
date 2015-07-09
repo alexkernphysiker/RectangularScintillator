@@ -17,10 +17,8 @@ int main(int , char **){
 	auto rightcnt=make_shared<Counter>();
 	auto lefttime=make_shared<Timer>(0);
 	auto righttime=make_shared<Timer>(0);
-	scintillator.Surface(0,RectDimensions::Left).Glue({make_pair(-7,7),make_pair(-7,7)})
-		<<(Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency,0.68)<<leftcnt<<lefttime);
-	scintillator.Surface(0,RectDimensions::Right).Glue({make_pair(-7,7),make_pair(-7,7)})
-		<<(Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency,0.68)<<rightcnt<<righttime);
+	scintillator.Surface(0,RectDimensions::Left)<<(Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency,0.68)<<leftcnt<<lefttime);
+	scintillator.Surface(0,RectDimensions::Right)<<(Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency,0.68)<<rightcnt<<righttime);
 	for(unsigned int cnt=0;cnt<1000;cnt++)
 		scintillator.RegisterGamma({0,0,0},3000);
 	printf("Photons number left: %f+/-%f\n",leftcnt->average(),leftcnt->sigma());

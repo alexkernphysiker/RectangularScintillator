@@ -15,6 +15,8 @@ public:
 	virtual void Start()override;
 	virtual void RegisterPhoton(Photon&photon)override;
 	virtual void End()override;
+    virtual RectDimensions&& Dimensions()override;
+    virtual double GlueEfficiency()override;
 	PhotoSensitiveSurface&operator<<(std::shared_ptr<ISignal>);
 protected:
 	virtual void PhotonTimeAccepted(double time);
