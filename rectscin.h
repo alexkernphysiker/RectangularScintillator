@@ -29,12 +29,15 @@ public:
 	ScintillatorSurface();
 	virtual ~ScintillatorSurface();
 	ScintillatorSurface&operator<<(std::shared_ptr<IPhotoSensitive>handler);
+	ScintillatorSurface&Glue(std::vector<Pair>&&glue);
 protected:
 	void Start();
 	void RegisterPhoton(Photon&photon);//changes photon
 	void End();
+	bool IsGlued(Vec&&point);
 private:
 	std::vector<std::shared_ptr<IPhotoSensitive>> m_handlers;
+	std::vector<std::shared_ptr<RectDimensions>> m_glue;
 };
 class RectangularScintillator:protected RectDimensions{
 public:

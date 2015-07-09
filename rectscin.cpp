@@ -24,6 +24,21 @@ void ScintillatorSurface::End(){
 	for(auto handler:m_handlers)
 		handler->End();
 }
+ScintillatorSurface& ScintillatorSurface::Glue(vector< Pair >&& glue){
+	auto glued=make_shared<RectDimensions>();
+	for(Pair p:glue)glued->operator<<(static_cast<Pair&&>(p));
+	if(glued->NumberOfDimensions()!=NumberOfDimensions())
+		throw RectScinException("Glued area dimensions number does not match");
+	m_glue.push_back(glued);
+	return *this;
+}
+bool ScintillatorSurface::IsGlued(Vec&&point){
+	for(auto glued:m_glue)
+		if(glued->IsInside(static_cast<Vec&&>(point)))
+			return true;
+	return false;
+}
+
 RectangularScintillator::RectangularScintillator(
 	std::vector<Pair>&&dimensions,
 	RandomValueGenerator<double>&&time_distribution,
@@ -155,7 +170,16 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 			cos_angle=-cos_angle;
 		if(cos_angle>1.0)
 			throw RectScinException("Trace: cosine error");
-		if(prob_(rand)<reflection_probability(cos_angle)){
+		double refl_prob=0;
+		{//check if photon reached a glued area of surface
+			auto surface=Surface(dimension,res.Surface);
+			Vec point=ph.coord;
+			point.erase(point.begin()+dimension);
+			if(!surface.IsGlued(static_cast<Vec&&>(point)))
+				//if not it can be reflected back
+				refl_prob=reflection_probability(cos_angle);
+		}
+		if(prob_(rand)<refl_prob){
 			//Photon is reflected back
 			ph.dir[dimension]=-ph.dir[dimension];
 		}else{

@@ -15,12 +15,10 @@ int main(int , char **){
 	auto efficiency=[](double l){return 0.3;};
 	auto leftcnt=make_shared<Counter>();
 	auto rightcnt=make_shared<Counter>();
-	scintillator.Surface(0,RectDimensions::Left)<<(
-		Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency)<<leftcnt
-	);
-	scintillator.Surface(0,RectDimensions::Right)<<(
-		Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency)<<rightcnt
-	);
+	scintillator.Surface(0,RectDimensions::Left).Glue({make_pair(-7,7),make_pair(-7,7)})
+		<<(Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency)<<leftcnt);
+	scintillator.Surface(0,RectDimensions::Right).Glue({make_pair(-7,7),make_pair(-7,7)})
+		<<(Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency)<<rightcnt);
 	for(unsigned int cnt=0;cnt<1000;cnt++)
 		scintillator.RegisterGamma({0,0,0},3000);
 	printf("Photons number left: %f+/-%f\n",leftcnt->average(),leftcnt->sigma());
