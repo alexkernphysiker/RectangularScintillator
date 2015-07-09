@@ -24,19 +24,21 @@ void ScintillatorSurface::End(){
 	for(auto handler:m_handlers)
 		handler->End();
 }
-ScintillatorSurface& ScintillatorSurface::Glue(vector< Pair >&& glue){
+ScintillatorSurface& ScintillatorSurface::Glue(vector< Pair >&& glue,double eff){
+	if((eff<0)||(eff>1))
+		throw RectScinException("Attempt to set optical glue efficiency outside the range [0;1]");
 	auto glued=make_shared<RectDimensions>();
 	for(Pair p:glue)glued->operator<<(static_cast<Pair&&>(p));
 	if(glued->NumberOfDimensions()!=NumberOfDimensions())
 		throw RectScinException("Glued area dimensions number does not match");
-	m_glue.push_back(glued);
+	m_glue.push_back(make_pair(glued,eff));
 	return *this;
 }
-bool ScintillatorSurface::IsGlued(Vec&&point){
+double ScintillatorSurface::ReflectionProbabilityCoeff(Vec&& point){
 	for(auto glued:m_glue)
-		if(glued->IsInside(static_cast<Vec&&>(point)))
-			return true;
-	return false;
+		if(glued.first->IsInside(static_cast<Vec&&>(point)))
+			return 1.0-glued.second;
+	return 1.0;
 }
 
 RectangularScintillator::RectangularScintillator(
@@ -143,6 +145,16 @@ Photon RectangularScintillator::GeneratePhoton(Vec&&coord){
 }
 RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry(Photon&ph){
 	uniform_real_distribution<double> prob_(0,1);
+	double absorption=m_absorption(ph.lambda);
+	double refl_p[NumberOfDimensions()];
+	for(unsigned int dimension=0,n=NumberOfDimensions();dimension<n;dimension++){
+		double cos_angle=ph.dir[dimension];
+		if(cos_angle<0.0)
+			cos_angle=-cos_angle;
+		if(cos_angle>1.0)
+			throw RectScinException("Trace: cosine error");
+		refl_p[dimension]=reflection_probability(cos_angle);
+	}
 	while(true){
 		IntersectionSearchResults res=
 			WhereIntersects(static_cast<Vec&&>(ph.coord),static_cast<Vec&&>(ph.dir));
@@ -159,25 +171,18 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		if(ph.coord[dimension]>Dimension(dimension).second)
 			ph.coord[dimension]=Dimension(dimension).second;
 		//check for other effects
-		double absorption_prob=1.0-exp(-path_length*m_absorption(ph.lambda));
+		double absorption_prob=1.0-exp(-path_length*absorption);
 		if(prob_(rand)<absorption_prob){
 			//Photon is absopbed
 			res.Surface=None;
 			return res;
 		}
-		double cos_angle=ph.dir[dimension];
-		if(cos_angle<0.0)
-			cos_angle=-cos_angle;
-		if(cos_angle>1.0)
-			throw RectScinException("Trace: cosine error");
-		double refl_prob=0;
+		double refl_prob=refl_p[dimension];
 		{//check if photon reached a glued area of surface
 			auto surface=Surface(dimension,res.Surface);
 			Vec point=ph.coord;
 			point.erase(point.begin()+dimension);
-			if(!surface.IsGlued(static_cast<Vec&&>(point)))
-				//if not it can be reflected back
-				refl_prob=reflection_probability(cos_angle);
+			refl_prob*=surface.ReflectionProbabilityCoeff(static_cast<Vec&&>(point));
 		}
 		if(prob_(rand)<refl_prob){
 			//Photon is reflected back
