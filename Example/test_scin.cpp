@@ -21,8 +21,8 @@ int main(int , char **){
 	auto rightcnt=make_shared<Counter>();
 	auto lefttime=make_shared<Timer>(0);
 	auto righttime=make_shared<Timer>(0);
-	auto leftdistr=make_shared<TimeDistribution>(-5,20,200);
-	auto rightdistr=make_shared<TimeDistribution>(-5,20,200);
+	auto leftdistr=make_shared<TimeDistribution>(-2,10,120);
+	auto rightdistr=make_shared<TimeDistribution>(-2,10,120);
 	scintillator.Surface(0,RectDimensions::Left)<<(
 		LightGuide({make_pair(-7,7),make_pair(-7,7)},0,1,10)<<(
 			Photosensor({make_pair(-7,7),make_pair(-7,7)},efficiency,0.68)<<leftcnt<<lefttime<<leftdistr

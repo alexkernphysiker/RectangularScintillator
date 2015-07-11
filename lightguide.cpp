@@ -5,7 +5,8 @@ ScintillatorSurface(){
 	g_eff=glue_eff;
 	refr=n;
 	height=H;
-	for(Pair D:dimensions)RectDimensions::operator<<(static_cast<Pair&&>(D));
+	for(Pair D:dimensions)
+		RectDimensions::operator<<(static_cast<Pair&&>(D));
 }
 FlatLightguide::~FlatLightguide(){}
 FlatLightguide& FlatLightguide::operator<<(shared_ptr< IPhotoSensitive > sensor){

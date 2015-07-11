@@ -34,7 +34,21 @@ double ScintillatorSurface::ReflectionProbabilityCoeff(Vec&& point){
 		}
 	return 1.0;
 }
-
+double ReflectionProbability(double refraction,double cos_){
+	double cos_phi=cos_;
+	if(cos_phi<0.0)cos_phi=-cos_phi;
+	if(cos_phi>1.0)cos_phi=1;
+	double sin_phi=sqrt(1.0-cos_phi*cos_phi);
+	double squrt=sqrt(1-refraction*refraction*sin_phi*sin_phi);
+	double T_ort=(refraction*squrt-cos_phi)/(refraction*squrt+cos_phi);
+	double T_par=(refraction*cos_phi-squrt)/(refraction*cos_phi+squrt);
+	auto SubInt=[T_par,T_ort](double pol){
+		return sqrt(pow(sin(pol)*T_ort,2)+pow(cos(pol)*T_par,2));
+	};
+	double r=Sympson(SubInt,0.0,3.1415926*0.5,0.001);
+	if(r<1.0)return r;
+	return 1.0;
+}
 RectangularScintillator::RectangularScintillator(
 	std::vector<Pair>&&dimensions,
 	RandomValueGenerator<double>&&time_distribution,
@@ -57,23 +71,8 @@ m_lambda_distribution(lambda_distribution){
 			}
 		m_edges.push_back(surfaces);
 	}
-	auto ReflectionProbability=[this](double cos_){
-		double cos_phi=cos_;
-		if(cos_phi<0.0)cos_phi=-cos_phi;
-		if(cos_phi>1.0)cos_phi=1;
-		double sin_phi=sqrt(1.0-cos_phi*cos_phi);
-		double squrt=sqrt(1-m_refraction*m_refraction*sin_phi*sin_phi);
-		double T_ort=(m_refraction*squrt-cos_phi)/(m_refraction*squrt+cos_phi);
-		double T_par=(m_refraction*cos_phi-squrt)/(m_refraction*cos_phi+squrt);
-		auto SubInt=[T_par,T_ort](double pol){
-			return sqrt(pow(sin(pol)*T_ort,2)+pow(cos(pol)*T_par,2));
-		};
-		double r=Sympson(SubInt,0.0,3.1415926*0.5,0.001);
-		if(r<1.0)return r;
-		return 1.0;
-	};
 	for(double x=-0.01;x<=1.01;x+=0.01)
-		reflection_probability<<make_pair(x,ReflectionProbability(x));
+		reflection_probability<<make_pair(x,ReflectionProbability(m_refraction,x));
 }
 RectangularScintillator::~RectangularScintillator(){}
 LinearInterpolation< double >&& RectangularScintillator::ReflectionProbabilityFunction(){

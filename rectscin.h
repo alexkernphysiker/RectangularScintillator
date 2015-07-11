@@ -39,6 +39,7 @@ protected:
 private:
 	std::vector<std::shared_ptr<IPhotoSensitive>> m_handlers;
 };
+double ReflectionProbability(double refraction,double cos_);
 class RectangularScintillator:protected RectDimensions{
 public:
 	RectangularScintillator(
