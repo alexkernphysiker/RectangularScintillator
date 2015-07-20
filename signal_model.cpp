@@ -21,6 +21,9 @@ void Counter::Photon(double){
 void Counter::End(){
 	m_count.AddValue(current);
 }
+unsigned int Counter::events_count(){
+	m_count.count();
+}
 void Counter::Reset(){
 	m_count=Sigma<double>();
 }
@@ -50,6 +53,9 @@ double Timer::average(){
 }
 double Timer::sigma(){
 	return m_count.getSigma();
+}
+unsigned int Timer::events_count(){
+	return m_count.count();
 }
 void Timer::Reset(){
 	m_count=Sigma<double>();

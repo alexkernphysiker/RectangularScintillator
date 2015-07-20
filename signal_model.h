@@ -13,6 +13,7 @@ public:
 	unsigned int count();
 	double average();
 	double sigma();
+	unsigned int events_count();
 	void Reset();
 private:
 	unsigned int current;
@@ -28,6 +29,7 @@ public:
 	unsigned int time();
 	double average();
 	double sigma();
+	unsigned int events_count();
 	void Reset();
 private:
 	unsigned int current,m_photon_count;
