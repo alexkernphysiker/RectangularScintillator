@@ -6,7 +6,7 @@ ScintillatorSurface(){
 	refr=n;
 	height=H;
 	for(Pair D:dimensions)
-		RectDimensions::operator<<(static_cast<Pair&&>(D));
+		RectDimensions::operator<<(static_left(D));
 }
 FlatLightguide::~FlatLightguide(){}
 FlatLightguide& FlatLightguide::operator<<(shared_ptr< IPhotoSensitive > sensor){
@@ -21,11 +21,11 @@ void FlatLightguide::Start(){
 	ScintillatorSurface::Start();
 }
 void FlatLightguide::RegisterPhoton(Photon& photon){
-	photon.dir=static_cast<Vec&&>(photon.dir)*(1.0/refr);
-	double horiz=Abs(static_cast<Vec&&>(photon.dir));
+	photon.dir=static_left(photon.dir)*(1.0/refr);
+	double horiz=Abs(static_left(photon.dir));
 	double vert=sqrt(1.0-horiz*horiz);
-	Vec offset=static_cast<Vec&&>(photon.dir)*(horiz*height/vert);
-	photon.coord=static_cast<Vec&&>(photon.coord)+static_cast<Vec&&>(offset);
+	Vec offset=static_left(photon.dir)*(horiz*height/vert);
+	photon.coord=static_left(photon.coord)+static_left(offset);
 	ScintillatorSurface::RegisterPhoton(photon);
 }
 void FlatLightguide::End(){
@@ -36,6 +36,6 @@ shared_ptr< FlatLightguide > operator<<(shared_ptr<FlatLightguide> A, shared_ptr
 	return A;
 }
 shared_ptr< FlatLightguide > LightGuide(vector< Pair >&& dimensions, double glue_eff, double n, double H){
-	FlatLightguide *res=new FlatLightguide(static_cast<vector<Pair>&&>(dimensions),glue_eff,n,H);
+	FlatLightguide *res=new FlatLightguide(static_left(dimensions),glue_eff,n,H);
 	return shared_ptr<FlatLightguide>(res);
 }

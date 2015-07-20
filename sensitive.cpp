@@ -27,7 +27,7 @@ void PhotoSensitiveSurface::Start(){
 	times.clear();
 }
 void PhotoSensitiveSurface::RegisterPhoton(Photon& photon){
-	if(IsInside(static_cast<Vec&&>(photon.coord))){
+	if(IsInside(static_left(photon.coord))){
 		if(P(rand)<m_efficiency(photon.lambda))
 			PhotonTimeAccepted(photon.time);
 	}
@@ -43,17 +43,17 @@ void PhotoSensitiveSurface::End(){
 		sig->End();
 }
 PhotoSensitiveSurfaceWithTTS::PhotoSensitiveSurfaceWithTTS(vector<Pair>&& dimensions,Func efficiency,double tts):
-	PhotoSensitiveSurface(static_cast<vector<Pair>&&>(dimensions),efficiency),m_tts(0,tts){}
+	PhotoSensitiveSurface(static_left(dimensions),efficiency),m_tts(0,tts){}
 PhotoSensitiveSurfaceWithTTS::~PhotoSensitiveSurfaceWithTTS(){}
 void PhotoSensitiveSurfaceWithTTS::PhotonTimeAccepted(double time){
     PhotoSensitiveSurface::PhotonTimeAccepted(time+m_tts(rand));
 }
 
 shared_ptr<PhotoSensitiveSurface> Photosensor(vector< Pair >&& dimensions, Func efficiency){
-	PhotoSensitiveSurface *surf=new PhotoSensitiveSurface(static_cast<vector<Pair>&&>(dimensions),efficiency);
+	PhotoSensitiveSurface *surf=new PhotoSensitiveSurface(static_left(dimensions),efficiency);
 	return shared_ptr<PhotoSensitiveSurface>(surf);
 }
 shared_ptr<PhotoSensitiveSurfaceWithTTS> Photosensor(vector< Pair >&& dimensions, Func efficiency, double tts){
-	PhotoSensitiveSurfaceWithTTS *surf=new PhotoSensitiveSurfaceWithTTS(static_cast<vector<Pair>&&>(dimensions),efficiency,tts);
+	PhotoSensitiveSurfaceWithTTS *surf=new PhotoSensitiveSurfaceWithTTS(static_left(dimensions),efficiency,tts);
 	return shared_ptr<PhotoSensitiveSurfaceWithTTS>(surf);
 }

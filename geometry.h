@@ -6,6 +6,7 @@
 #include <vector>
 typedef std::vector<double> Vec;
 typedef std::pair<double,double> Pair;
+#define static_left(A) (static_cast<decltype(A)&&>(A))
 Vec operator*(Vec&&p,double c);
 Vec operator+(Vec&&p1,Vec&&p2);
 Vec operator-(Vec&&p1,Vec&&p2);

@@ -34,13 +34,13 @@ double SqAbs(Vec&&p){
 	return res;
 }
 double Abs(Vec&& p){
-	return sqrt(SqAbs(static_cast<Vec&&>(p)));
+	return sqrt(SqAbs(static_left(p)));
 }
 double SqDistance(Vec&&p1, Vec&&p2){
-	return SqAbs(static_cast<Vec&&>(p1)-static_cast<Vec&&>(p2));
+	return SqAbs(static_left(p1)-static_left(p2));
 }
 double Distance(Vec&&p1,Vec&&p2){
-	return Abs(static_cast<Vec&&>(p1)-static_cast<Vec&&>(p2));
+	return Abs(static_left(p1)-static_left(p2));
 }
 RectDimensions::RectDimensions(){}
 RectDimensions::~RectDimensions(){}
@@ -69,7 +69,7 @@ bool RectDimensions::IsInside(Vec&&point){
 RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&point,Vec&&dir){
 	if(NumberOfDimensions()!=dir.size())
 		throw RectScinException("RectDimensions trace: wrong direction vector size");
-	if(!IsInside(static_cast<Vec&&>(point))){
+	if(!IsInside(static_left(point))){
 		IntersectionSearchResults res;
 		res.Surface=None;
 		return res;
@@ -96,7 +96,7 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		unsigned int dimension=dim_order[i].second;
 		double k=dim_order[i].first/dir[dimension];
 		if(k<0) k=-k;
-		Vec endpoint=static_cast<Vec&&>(point)+(static_cast<Vec&&>(dir)*k);
+		Vec endpoint=static_left(point)+(static_left(dir)*k);
 		bool Belong_to_surface=true;
 		for(unsigned int i=0,n=NumberOfDimensions();i<n;i++)
 			if(i!=dimension){
