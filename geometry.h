@@ -16,7 +16,7 @@ double SqDistance(Vec&&p1,Vec&&p2);
 double Distance(Vec&&p1,Vec&&p2);
 class RectDimensions{
 public:
-	enum Side{None,Left,Right};
+	enum Side{None=-1,Left=0,Right=1};
 	struct IntersectionSearchResults{
 		unsigned int SurfaceDimentionIndex;
 		Side Surface;
