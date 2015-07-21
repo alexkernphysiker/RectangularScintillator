@@ -1,14 +1,13 @@
 *~
 bin
 build
-example*
-*test
+test_*
 *cmake
 CMakeCache*
 CMakeFiles
 *kdev*
-output*.txt
-.plotscript.gp
+*.txt
+script.gnuplot
 *.cbp
 # Compiled Object files
 *.slo
