@@ -115,7 +115,7 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,unsigned int N){
 		unsigned int threads=thread::hardware_concurrency();if(threads==0)threads=1;
 		unsigned int part=N/threads,rest=N%threads;
 		vector<shared_ptr<thread>> thread_vector;
-		for(int i=1;i<threads;i++)
+		for(unsigned int i=1;i<threads;i++)
 			thread_vector.push_back(make_shared<thread>(process,part));
 		process(part+rest);
 		for(auto thr:thread_vector)thr->join();

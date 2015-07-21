@@ -47,7 +47,7 @@ void SortedChannels::Process(){
 		m_sigma[i].AddValue(m_times[i]);
 }
 
-void WeightedTimesSum::WeightedConfigure(vector< IVal >&& coefs){
+void WeightedTimesSum::WeightedConfigure(vector<IVal>&&coefs){
 	m_coefs=coefs;
 	m_sigma=Sigma<double>();
 }

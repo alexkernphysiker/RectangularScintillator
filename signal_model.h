@@ -20,13 +20,6 @@ private:
 	unsigned int current;
 	Sigma<double> m_count;
 };
-class ISignalChannel{
-public:
-	virtual void EventStarted()=0;
-	virtual void Press(double time)=0;
-	virtual void Release(double time)=0;
-	virtual void EventFinished()=0;
-};
 class TimeDistribution:public ISignal{
 public:
 	TimeDistribution(double from,double to, int bins);
@@ -37,6 +30,26 @@ public:
 	Distribution<double>&&GetDistribution();
 private:
 	Distribution<double> m_distr;
+};
+class OrderStatistics:public ISignal{
+public:
+	OrderStatistics(unsigned int size);
+    virtual ~OrderStatistics();
+	virtual void Start()override;
+	virtual void Photon(double t)override;
+	virtual void End()override;
+	unsigned int Count();
+	Sigma<double>&&ByNumber(unsigned int i);
+private:
+	unsigned int m_count;
+	std::vector<Sigma<double>> m_stat;
+};
+class ISignalChannel{
+public:
+	virtual void EventStarted()=0;
+	virtual void Press(double time)=0;
+	virtual void Release(double time)=0;
+	virtual void EventFinished()=0;
 };
 class AbstractSignalProducer{
 public:
@@ -50,15 +63,29 @@ protected:
 private:
 	std::vector<std::shared_ptr<ISignalChannel>> m_channels;
 };
-class TimeSignal:public ISignal, public AbstractSignalProducer{
+std::shared_ptr<AbstractSignalProducer> operator<<(std::shared_ptr<AbstractSignalProducer>,std::shared_ptr<ISignalChannel>);
+
+class StartTimeSignal:public ISignal, public AbstractSignalProducer{
 public:
-	TimeSignal(unsigned int photon_count=0);
-	virtual ~TimeSignal();
+	StartTimeSignal(unsigned int photon_count=0);
+	virtual ~StartTimeSignal();
 	virtual void Start()override;
 	virtual void Photon(double t)override;
 	virtual void End()override;
 private:
 	unsigned int current,m_photon_count;
+};
+class WeightedTimeSignal:public ISignal, public AbstractSignalProducer{
+public:
+	WeightedTimeSignal(Vec&&weights);
+    virtual ~WeightedTimeSignal();
+	virtual void Start()override;
+	virtual void Photon(double t)override;
+	virtual void End()override;
+private:
+	Vec m_weights;
+	unsigned int m_count;
+	double m_w_time;
 };
 typedef std::function<void()> Achtung;
 class TimeSignalChannel:public ISignalChannel{
