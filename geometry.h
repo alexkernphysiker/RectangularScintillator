@@ -37,5 +37,5 @@ private:
 	std::vector<Pair> m_dimensions;
 	std::mutex geom_mutex;
 };
-RectDimensions::Side&operator++(RectDimensions::Side&val);
+RectDimensions::Side&inc(RectDimensions::Side&val);
 #endif
