@@ -23,28 +23,21 @@ bool SlotsByNumber::Condition(){
 	return true;
 }
 
-void SortedChannels::ConfigureSortedChannels(unsigned int count){
-	m_sigma.clear();
-	for(unsigned int i=0;i<count;i++)
-		m_sigma.push_back(Sigma<double>());
-}
-unsigned int SortedChannels::SortedCount(){
-	return m_sigma.size();
-}
-Sigma<double>&& SortedChannels::SortedSigma(unsigned int index){
-	if(index>=SortedCount())throw RectScinException("SortedChannels: range check error");
-	return static_cast<Sigma<double>&&>(m_sigma[index]);
+void SortedChannels::SetChannelOrderStatistics(unsigned int count){
+	m_count=count;
 }
 Vec&& SortedChannels::LastSortedTime(){
 	return static_right(m_times);
 }
 void SortedChannels::Process(){
 	m_times.clear();
+	EventStarted();
 	for(unsigned int i=0,n=Count();i<n;i++)
 		if(LastActive(i))
 			InsertSorted(LastTime(i).first,m_times,field_size(m_times),field_insert(m_times,double));
-	for(unsigned int i=0,n=m_times.size(),N=SortedCount();(i<n)&&(i<N);i++)
-		m_sigma[i].AddValue(m_times[i]);
+	if(m_times.size()>=m_count)
+		Press(m_times[m_count]);
+	EventFinished();
 }
 
 void WeightedTimesSum::WeightedConfigure(vector<IVal>&&coefs){

@@ -50,19 +50,17 @@ protected:
 private:
 	std::vector<unsigned int> m_slot_numbers;
 };
-class SortedChannels:public virtual AbstractTimeScheme{
+class SortedChannels:public virtual AbstractTimeScheme,public virtual AbstractSignalProducer{
 public:
     SortedChannels(){}
     virtual ~SortedChannels(){}
-    void ConfigureSortedChannels(unsigned int count);
-	unsigned int SortedCount();
+    void SetChannelOrderStatistics(unsigned int count);
 	Vec&&LastSortedTime();
-	Sigma<double>&&SortedSigma(unsigned int index);
 protected:
 	virtual void Process()override;
 private:
 	Vec m_times;
-	std::vector<Sigma<double>> m_sigma;
+	unsigned int m_count;
 };
 typedef std::pair<unsigned int,double> IVal;
 class WeightedTimesSum:public virtual AbstractTimeScheme{
