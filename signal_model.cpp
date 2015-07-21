@@ -64,7 +64,7 @@ void Timer::Reset(){
 TimeDistribution::TimeDistribution(double from, double to, int bins):m_distr(from,to,bins){}
 TimeDistribution::~TimeDistribution(){}
 Distribution< double >&&TimeDistribution::GetDistribution(){
-	return static_left(m_distr);
+	return static_right(m_distr);
 }
 void TimeDistribution::Start(){}
 void TimeDistribution::Photon(double t){

@@ -1,5 +1,6 @@
 // this file is distributed under 
 // GPL v 3.0 license
+#include <mutex>
 #include <math.h>
 #include "math_h/interpolate.h"
 #include "math_h/randomfunc.h"
@@ -34,28 +35,31 @@ double SqAbs(Vec&&p){
 	return res;
 }
 double Abs(Vec&& p){
-	return sqrt(SqAbs(static_left(p)));
+	return sqrt(SqAbs(static_right(p)));
 }
 double SqDistance(Vec&&p1, Vec&&p2){
-	return SqAbs(static_left(p1)-static_left(p2));
+	return SqAbs(static_right(p1)-static_right(p2));
 }
 double Distance(Vec&&p1,Vec&&p2){
-	return Abs(static_left(p1)-static_left(p2));
+	return Abs(static_right(p1)-static_right(p2));
 }
 RectDimensions::RectDimensions(){}
 RectDimensions::~RectDimensions(){}
 RectDimensions& RectDimensions::operator<<(Pair&&dimension){
 	if(dimension.first>dimension.second)
 		throw RectScinException("RectDimensions: wrong dimension left>right");
+	Lock lock(geom_mutex);
 	m_dimensions.push_back(dimension);
 	return *this;
 }
 unsigned int RectDimensions::NumberOfDimensions(){
+	Lock lock(geom_mutex);
 	return m_dimensions.size();
 }
 Pair&&RectDimensions::Dimension(unsigned int i){
 	if(i>=NumberOfDimensions())
 		throw RectScinException("RectDimensions: dimension index out of range");
+	Lock lock(geom_mutex);
 	return static_cast<Pair&&>(m_dimensions[i]);
 }
 bool RectDimensions::IsInside(Vec&&point){
@@ -69,9 +73,9 @@ bool RectDimensions::IsInside(Vec&&point){
 RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&point,Vec&&dir){
 	if(NumberOfDimensions()!=dir.size())
 		throw RectScinException("RectDimensions trace: wrong direction vector size");
-	if(!IsInside(static_left(point))){
+	if(!IsInside(static_right(point))){
 		IntersectionSearchResults res;
-		res.Surface=None;
+		res.surface=None;
 		return res;
 	}
 	// Distance to the corresponding edge, dimension index
@@ -79,6 +83,7 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 	vector<dist_dim> dim_order;
 	for(unsigned int i=0,n=NumberOfDimensions();i<n;i++){
 		dist_dim newdim;
+		Lock lock(geom_mutex);
 		newdim.second=i;
 		if(dir[i]<0)
 			newdim.first=point[i]-m_dimensions[i].first;
@@ -89,14 +94,14 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 	}
 	if(dim_order.size()==0){
 		IntersectionSearchResults res;
-		res.Surface=None;
+		res.surface=None;
 		return res;
 	}
 	for(unsigned int i=0,n=dim_order.size();i<n;i++){
 		unsigned int dimension=dim_order[i].second;
 		double k=dim_order[i].first/dir[dimension];
 		if(k<0) k=-k;
-		Vec endpoint=static_left(point)+(static_left(dir)*k);
+		Vec endpoint=static_right(point)+(static_right(dir)*k);
 		bool Belong_to_surface=true;
 		for(unsigned int i=0,n=NumberOfDimensions();i<n;i++)
 			if(i!=dimension){
@@ -106,16 +111,16 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		if(Belong_to_surface){
 			IntersectionSearchResults res;
 			if(dir[dimension]<0)
-				res.Surface=Left;
+				res.surface=Left;
 			else
-				res.Surface=Right;
-			res.SurfaceDimentionIndex=dimension;
-			res.K=k;
-			res.Coordinates=endpoint;
+				res.surface=Right;
+			res.surfaceDimentionIndex=dimension;
+			res.k=k;
+			res.coordinates=endpoint;
 			return res;
 		}
 	}
 	IntersectionSearchResults res;
-	res.Surface=None;
+	res.surface=None;
 	return res;
 }

@@ -38,6 +38,7 @@ protected:
 	double ReflectionProbabilityCoeff(Vec&&point);
 private:
 	std::vector<std::shared_ptr<IPhotoSensitive>> m_handlers;
+	std::mutex surface_mutex;
 };
 double ReflectionProbability(double refraction,double cos_);
 class RectangularScintillator:protected RectDimensions{
@@ -64,6 +65,7 @@ private:
 	typedef std::pair<std::shared_ptr<ScintillatorSurface>,std::shared_ptr<ScintillatorSurface>> SurfPair;
 	std::vector<SurfPair> m_edges;
 	std::default_random_engine rand;
+	std::mutex trace_mutex;
 };
 const double max_emission_time=20;
 const double emission_time_binwidth=0.01;
