@@ -43,7 +43,7 @@ double SqDistance(Vec&&p1, Vec&&p2){
 double Distance(Vec&&p1,Vec&&p2){
 	return Abs(static_right(p1)-static_right(p2));
 }
-RectDimensions::Side& operator++(RectDimensions::Side& val){
+RectDimensions::Side& inc(RectDimensions::Side& val){
 	val=static_cast<RectDimensions::Side>(val+1);
 	return val;
 }
