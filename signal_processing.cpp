@@ -17,12 +17,14 @@ void SignalPolinomialDistort::AcceptSignalValue(double time){
 }
 void SignalPolinomialDistort::AcceptEventEnd(){SendEventEnd();}
 
-AbstractMultiInput::AbstractMultiInput(){m_state=0;}
+AbstractMultiInput::AbstractMultiInput(){m_state=0;me=shared_ptr<AbstractMultiInput>(this);}
 AbstractMultiInput::~AbstractMultiInput(){}
+shared_ptr< AbstractMultiInput > AbstractMultiInput::shared_from_this(){return me;}
 AbstractMultiInput& AbstractMultiInput::operator<<(shared_ptr< SignalProducent > input){
-	auto slot=make_shared<Slot>(this);
+	auto slot=make_shared<Slot>(shared_from_this());
 	input>>slot;
 	m_input_slots.push_back(slot);
+	m_state=0;
 	return *this;
 }
 void AbstractMultiInput::OneChannelBegin(){
@@ -44,19 +46,11 @@ void AbstractMultiInput::OneChannelEnd(){
 	if(m_state<0)
 		throw RectScinException("MultiInput error: state changed to an invalid value.");
 }
-AbstractMultiInput::Slot::Slot(AbstractMultiInput* father){
-	master=father;
-}
+AbstractMultiInput::Slot::Slot(std::shared_ptr<AbstractMultiInput>father){master=father;}
 AbstractMultiInput::Slot::~Slot(){}
-void AbstractMultiInput::Slot::AcceptEventStart(){
-	master->OneChannelBegin();
-}
-void AbstractMultiInput::Slot::AcceptSignalValue(double time){
-	m_value=time;
-}
-void AbstractMultiInput::Slot::AcceptEventEnd(){
-	master->OneChannelEnd();
-}
+void AbstractMultiInput::Slot::AcceptEventStart(){master->OneChannelBegin();}
+void AbstractMultiInput::Slot::AcceptSignalValue(double time){m_value=time;}
+void AbstractMultiInput::Slot::AcceptEventEnd(){master->OneChannelEnd();}
 double AbstractMultiInput::Slot::Value(){return m_value;}
 
 Multi2SingleSignal::Multi2SingleSignal(){}

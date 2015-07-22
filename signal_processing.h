@@ -24,6 +24,7 @@ public:
 	AbstractMultiInput();
 	virtual ~AbstractMultiInput();
 	AbstractMultiInput&operator<<(std::shared_ptr<SignalProducent> input);
+	std::shared_ptr<AbstractMultiInput> shared_from_this();
 protected:
 	virtual void Start()=0;
 	virtual void Process(Vec&&signals)=0;
@@ -33,18 +34,19 @@ protected:
 private:
 	class Slot:public SignalAcceptor{
 	public:
-		Slot(AbstractMultiInput*father);
+		Slot(std::shared_ptr<AbstractMultiInput>father);
         virtual ~Slot();
 		virtual void AcceptEventStart()final;
 		virtual void AcceptSignalValue(double time)final;
 		virtual void AcceptEventEnd()final;
 		double Value();
 	private:
-		AbstractMultiInput *master;
+		std::shared_ptr<AbstractMultiInput>master;
 		double m_value;
 	};
 	std::vector<std::shared_ptr<Slot>> m_input_slots;
 	int m_state;
+	std::shared_ptr<AbstractMultiInput> me;
 };
 class Multi2SingleSignal:public AbstractMultiInput,public SignalProducent{
 public:
@@ -63,6 +65,10 @@ protected:
 private:
 	Vec m_weights;
 };
+//All shared pointers for instances of AbstractMultiInput are created such way
+inline std::shared_ptr<SumWithWeights> SignalSum(Vec&&config){
+	return std::dynamic_pointer_cast<SumWithWeights>((new SumWithWeights(static_right(config)))->shared_from_this());
+}
 class ProductWithPowers:public Multi2SingleSignal{
 public:
 	ProductWithPowers(Vec&&powers);
@@ -72,6 +78,10 @@ protected:
 private:
 	Vec m_powers;
 };
+//All shared pointers for instances of AbstractMultiInput are created such way
+inline std::shared_ptr<ProductWithPowers> SignalProduct(Vec&&config){
+	return std::dynamic_pointer_cast<ProductWithPowers>((new ProductWithPowers(static_right(config)))->shared_from_this());
+}
 class AbstractMultiOutput{
 public:
 	AbstractMultiOutput();

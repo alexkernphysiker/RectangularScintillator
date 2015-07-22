@@ -16,6 +16,7 @@ int main(int , char **){
 	);
 	auto Phm=[](){return Photosensor({make_pair(-7,7),make_pair(-7,7)},1,[](double l){return 0.3;});};
 	vector<shared_ptr<SignalStatictics>> left_time;
+	vector<shared_ptr<SignalStatictics>> diff_time;
 	auto left_count=make_shared<SignalStatictics>();
 	{
 		auto lphm=Phm(),rphm=Phm();
@@ -23,9 +24,14 @@ int main(int , char **){
 		scintillator.Surface(0,RectDimensions::Right)>>rphm;
 		for(size_t i=0;i<10;i++){
 			left_time.push_back(make_shared<SignalStatictics>());
-			auto signal=make_shared<WeightedTimeSignal>();
-			signal->AddSummand(i,1);
-			lphm>>dynamic_pointer_cast<PhotonTimeAcceptor>(signal>>left_time[i]);
+			diff_time.push_back(make_shared<SignalStatictics>());
+			auto s_left=make_shared<WeightedTimeSignal>();
+			s_left->AddSummand(i,1);
+			lphm>>(s_left>>left_time[i]);
+			auto s_right=make_shared<WeightedTimeSignal>();
+			s_right->AddSummand(i,1);
+			rphm>>s_right;
+			(SignalSum({1,-1})<<s_left<<s_right)>>diff_time[i];
 		}
 	}
 	printf("Simulation...\n");
@@ -33,6 +39,8 @@ int main(int , char **){
 	printf("done.\n");
 	for(unsigned int i=0,n=left_time.size();i<n;i++)
 		printf("Photoelectron Time(%i): %f+/-%f [%i]\n",i,left_time[i]->getAverage(),left_time[i]->getSigma(),left_time[i]->count());
+	for(unsigned int i=0,n=diff_time.size();i<n;i++)
+		printf("Time Difference(%i): %f+/-%f [%i]\n",i,diff_time[i]->getAverage(),diff_time[i]->getSigma(),diff_time[i]->count());
 	printf("Photoelectron count: %f+/-%f [%i]\n",left_count->getAverage(),left_count->getSigma(),left_count->count());
 	
 	return 0;
