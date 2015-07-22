@@ -17,26 +17,25 @@ private:
 	size_t m_count;
 	std::vector<Sigma<double>> m_stat;
 };
-class TimeSignalAcceptor{
+class SignalAcceptor{
 public:
-	virtual ~TimeSignalAcceptor(){}
+	virtual ~SignalAcceptor(){}
 	virtual void AcceptEventStart()=0;
-	virtual void AcceptSignalTime(double time)=0;
+	virtual void AcceptSignalValue(double time)=0;
 	virtual void AcceptEventEnd()=0;
 };
-class TimeSignalProducent{
+class SignalProducent{
 public:
-	virtual ~TimeSignalProducent(){}
-	TimeSignalProducent&operator>>(std::shared_ptr<TimeSignalAcceptor>);
+	virtual ~SignalProducent(){}
+	SignalProducent&operator>>(std::shared_ptr<SignalAcceptor>);
 protected:
 	void SendEventStart();
-	void SendSignalTime(double time);
+	void SendSignalValue(double time);
 	void SendEventEnd();
 private:
-	std::vector<std::shared_ptr<TimeSignalAcceptor>> m_out_slots;
+	std::vector<std::shared_ptr<SignalAcceptor>> m_out_slots;
 };
-std::shared_ptr<TimeSignalProducent> operator>>(std::shared_ptr<TimeSignalProducent>,std::shared_ptr<TimeSignalAcceptor>);
-class WeightedTimeSignal:public PhotonTimeAcceptor,public TimeSignalProducent{
+class WeightedTimeSignal:public PhotonTimeAcceptor,public SignalProducent{
 public:
 	WeightedTimeSignal();
 	virtual ~WeightedTimeSignal();
@@ -48,5 +47,15 @@ private:
 	std::vector<std::pair<size_t,double>> m_config;
 	size_t m_count;
 	double m_sum;
+};
+class AmplitudeSignal:public PhotonTimeAcceptor,public SignalProducent{
+public:
+	AmplitudeSignal();
+	virtual ~AmplitudeSignal();
+	virtual void AcceptEventStart()override;
+	virtual void AcceptPhotonTime(double time)override;
+	virtual void AcceptEventEnd()override;
+private:
+	size_t m_count;
 };
 #endif 

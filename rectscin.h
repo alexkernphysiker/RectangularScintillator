@@ -15,6 +15,16 @@ struct Photon{
 	Vec dir;
 	double lambda;
 };
+template<class source,class dest>
+std::shared_ptr<source> operator<<(std::shared_ptr<source> s,std::shared_ptr<dest> d){
+	s->operator<<(d);
+	return s;
+}
+template<class source,class dest>
+std::shared_ptr<source> operator>>(std::shared_ptr<source> s,std::shared_ptr<dest> d){
+	s->operator>>(d);
+	return s;
+}
 class IPhotoSensitive{
 public:
 	virtual ~IPhotoSensitive(){}

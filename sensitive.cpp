@@ -18,10 +18,6 @@ PhotoSensitiveSurface& PhotoSensitiveSurface::operator>>(shared_ptr<PhotonTimeAc
 	m_signal.push_back(sig);
 	return *this;
 }
-shared_ptr<PhotoSensitiveSurface> operator>>(shared_ptr<PhotoSensitiveSurface> A, shared_ptr<PhotonTimeAcceptor> b){
-	A->operator>>(b);
-	return A;
-}
 void PhotoSensitiveSurface::Start(){
 	for(auto sig:m_signal)
 		sig->AcceptEventStart();
@@ -43,17 +39,7 @@ void PhotoSensitiveSurface::End(){
 	for(auto sig:m_signal)
 		sig->AcceptEventEnd();
 }
-PhotoSensitiveSurfaceWithTTS::PhotoSensitiveSurfaceWithTTS(vector<Pair>&& dimensions,double glue,Func efficiency,double tts):
-	PhotoSensitiveSurface(static_right(dimensions),glue,efficiency),m_tts(0,tts){}
-PhotoSensitiveSurfaceWithTTS::~PhotoSensitiveSurfaceWithTTS(){}
-void PhotoSensitiveSurfaceWithTTS::PhotonTimeAccepted(double time){
-    PhotoSensitiveSurface::PhotonTimeAccepted(time+m_tts(rand));
-}
 shared_ptr<PhotoSensitiveSurface> Photosensor(vector< Pair >&& dimensions,double glue,Func efficiency){
 	PhotoSensitiveSurface *surf=new PhotoSensitiveSurface(static_right(dimensions),glue,efficiency);
 	return shared_ptr<PhotoSensitiveSurface>(surf);
-}
-shared_ptr<PhotoSensitiveSurfaceWithTTS> Photosensor(vector< Pair >&& dimensions,double glue,Func efficiency, double tts){
-	PhotoSensitiveSurfaceWithTTS *surf=new PhotoSensitiveSurfaceWithTTS(static_right(dimensions),glue,efficiency,tts);
-	return shared_ptr<PhotoSensitiveSurfaceWithTTS>(surf);
 }

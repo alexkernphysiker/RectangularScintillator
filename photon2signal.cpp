@@ -27,23 +27,19 @@ void OrderStatistics::AcceptPhotonTime(double time){
 }
 void OrderStatistics::AcceptEventEnd(){}
 
-TimeSignalProducent& TimeSignalProducent::operator>>(shared_ptr<TimeSignalAcceptor> out){
+SignalProducent& SignalProducent::operator>>(shared_ptr<SignalAcceptor> out){
 	m_out_slots.push_back(out);
 	return *this;
 }
-shared_ptr<TimeSignalProducent> operator>>(shared_ptr< TimeSignalProducent > source, shared_ptr< TimeSignalAcceptor > out){
-	source->operator>>(out);
-	return source;
-}
-void TimeSignalProducent::SendEventStart(){
+void SignalProducent::SendEventStart(){
 	for(auto out:m_out_slots)
 		out->AcceptEventStart();
 }
-void TimeSignalProducent::SendSignalTime(double time){
+void SignalProducent::SendSignalValue(double time){
 	for(auto out:m_out_slots)
-		out->AcceptSignalTime(time);
+		out->AcceptSignalValue(time);
 }
-void TimeSignalProducent::SendEventEnd(){
+void SignalProducent::SendEventEnd(){
 	for(auto out:m_out_slots)
 		out->AcceptEventEnd();
 }
@@ -65,7 +61,20 @@ void WeightedTimeSignal::AcceptPhotonTime(double time){
 	m_count++;
 }
 void WeightedTimeSignal::AcceptEventEnd(){
-	SendSignalTime(m_sum);
+	SendSignalValue(m_sum);
+	SendEventEnd();
+}
+AmplitudeSignal::AmplitudeSignal(){}
+AmplitudeSignal::~AmplitudeSignal(){}
+void AmplitudeSignal::AcceptEventStart(){
+	m_count=0;
+	SendEventStart();
+}
+void AmplitudeSignal::AcceptPhotonTime(double time){
+	m_count++;
+}
+void AmplitudeSignal::AcceptEventEnd(){
+	SendSignalValue(m_count);
 	SendEventEnd();
 }
 

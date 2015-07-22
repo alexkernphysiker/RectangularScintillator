@@ -4,12 +4,12 @@
 #define mxhvHUgn
 #include "math_h/sigma.h"
 #include "photon2signal.h"
-class TimeSignalStatictics:public TimeSignalAcceptor,public Sigma<double>{
+class SignalStatictics:public SignalAcceptor,public Sigma<double>{
 public:
-    TimeSignalStatictics();
-    virtual ~TimeSignalStatictics();
+    SignalStatictics();
+    virtual ~SignalStatictics();
 	virtual void AcceptEventStart()override;
-	virtual void AcceptSignalTime(double time)override;
+	virtual void AcceptSignalValue(double time)override;
 	virtual void AcceptEventEnd()override;
 };
 #endif 

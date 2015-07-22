@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(RectangleScintillator)
 set(CMAKE_CXX_FLAGS "-pthread -std=gnu++11")
-add_library(rectscin SHARED rectscinexception.cpp geometry.cpp rectscin.cpp lightguide.cpp sensitive.cpp photon2signal.cpp signal_statistics.cpp multi_signal.cpp)
+add_library(rectscin SHARED rectscinexception.cpp geometry.cpp rectscin.cpp lightguide.cpp sensitive.cpp photon2signal.cpp signal_statistics.cpp signal_processing.cpp)
 include_directories(.)
 add_executable(test_scin Example/test_scin.cpp)
 target_link_libraries(test_scin rectscin)

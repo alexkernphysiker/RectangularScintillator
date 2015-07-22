@@ -1,10 +1,10 @@
 // this file is distributed under 
 // GPL v 3.0 license
 #include "signal_statistics.h"
-TimeSignalStatictics::TimeSignalStatictics(){}
-TimeSignalStatictics::~TimeSignalStatictics(){}
-void TimeSignalStatictics::AcceptEventStart(){}
-void TimeSignalStatictics::AcceptSignalTime(double time){
+SignalStatictics::SignalStatictics(){}
+SignalStatictics::~SignalStatictics(){}
+void SignalStatictics::AcceptEventStart(){}
+void SignalStatictics::AcceptSignalValue(double time){
 	AddValue(time);
 }
-void TimeSignalStatictics::AcceptEventEnd(){}
+void SignalStatictics::AcceptEventEnd(){}
