@@ -31,7 +31,7 @@ TimeSignalProducent& TimeSignalProducent::operator>>(shared_ptr<TimeSignalAccept
 	m_out_slots.push_back(out);
 	return *this;
 }
-shared_ptr< TimeSignalProducent > operator<<(shared_ptr< TimeSignalProducent > source, shared_ptr< TimeSignalAcceptor > out){
+shared_ptr<TimeSignalProducent> operator>>(shared_ptr< TimeSignalProducent > source, shared_ptr< TimeSignalAcceptor > out){
 	source->operator>>(out);
 	return source;
 }
@@ -48,5 +48,25 @@ void TimeSignalProducent::SendEventEnd(){
 		out->AcceptEventEnd();
 }
 
+WeightedTimeSignal::WeightedTimeSignal(){}
+WeightedTimeSignal::~WeightedTimeSignal(){}
+WeightedTimeSignal& WeightedTimeSignal::AddSummand(size_t order_statistics, double weight){
+	m_config.push_back(make_pair(order_statistics,weight));
+}
+void WeightedTimeSignal::AcceptEventStart(){
+	m_count=0;
+	m_sum=0;
+	SendEventStart();
+}
+void WeightedTimeSignal::AcceptPhotonTime(double time){
+	for(auto p:m_config)
+		if(p.first==m_count)
+			m_sum+=p.second*time;
+	m_count++;
+}
+void WeightedTimeSignal::AcceptEventEnd(){
+	SendSignalTime(m_sum);
+	SendEventEnd();
+}
 
 

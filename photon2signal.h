@@ -36,6 +36,17 @@ private:
 	std::vector<std::shared_ptr<TimeSignalAcceptor>> m_out_slots;
 };
 std::shared_ptr<TimeSignalProducent> operator>>(std::shared_ptr<TimeSignalProducent>,std::shared_ptr<TimeSignalAcceptor>);
-class MultiTimeSignalAcceptor;
-
+class WeightedTimeSignal:public PhotonTimeAcceptor,public TimeSignalProducent{
+public:
+	WeightedTimeSignal();
+	virtual ~WeightedTimeSignal();
+	WeightedTimeSignal&AddSummand(size_t order_statistics,double weight);
+	virtual void AcceptEventStart()override;
+	virtual void AcceptPhotonTime(double time)override;
+	virtual void AcceptEventEnd()override;
+private:
+	std::vector<std::pair<size_t,double>> m_config;
+	size_t m_count;
+	double m_sum;
+};
 #endif 
