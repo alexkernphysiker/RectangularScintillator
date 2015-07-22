@@ -39,7 +39,3 @@ void PhotoSensitiveSurface::End(){
 	for(auto sig:m_signal)
 		sig->AcceptEventEnd();
 }
-shared_ptr<PhotoSensitiveSurface> Photosensor(vector< Pair >&& dimensions,double glue,Func efficiency){
-	PhotoSensitiveSurface *surf=new PhotoSensitiveSurface(static_right(dimensions),glue,efficiency);
-	return shared_ptr<PhotoSensitiveSurface>(surf);
-}

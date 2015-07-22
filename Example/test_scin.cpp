@@ -4,6 +4,7 @@
 #include <rectscin.h>
 #include <sensitive.h>
 #include <photon2signal.h>
+#include <signal_processing.h>
 #include <signal_statistics.h>
 using namespace std;
 int main(int , char **){
