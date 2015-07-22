@@ -30,7 +30,6 @@ private:
 	Vec times;
 };
 inline std::shared_ptr<PhotoSensitiveSurface> Photosensor(std::vector<Pair>&&dimensions,double glue,Func efficiency){
-	PhotoSensitiveSurface *surf=new PhotoSensitiveSurface(static_right(dimensions),glue,efficiency);
-	return std::shared_ptr<PhotoSensitiveSurface>(surf);
+	return std::shared_ptr<PhotoSensitiveSurface>(new PhotoSensitiveSurface(static_right(dimensions),glue,efficiency));
 }
 #endif

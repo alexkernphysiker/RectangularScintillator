@@ -17,14 +17,13 @@ inline std::shared_ptr<SignalPolinomialDistort> Distortion(Vec&&coefs){
 	SignalPolinomialDistort *res=new SignalPolinomialDistort(static_right(coefs));
 	return std::shared_ptr<SignalPolinomialDistort>(res);
 }
-class AbstractMultiInput{
+class AbstractMultiInput:public std::enable_shared_from_this<AbstractMultiInput>{
 	class Slot;
 	friend class Slot;
 public:
 	AbstractMultiInput();
 	virtual ~AbstractMultiInput();
 	AbstractMultiInput&operator<<(std::shared_ptr<SignalProducent> input);
-	std::shared_ptr<AbstractMultiInput> shared_from_this();
 protected:
 	virtual void Start()=0;
 	virtual void Process(Vec&&signals)=0;
@@ -65,9 +64,8 @@ protected:
 private:
 	Vec m_weights;
 };
-//All shared pointers for instances of AbstractMultiInput are created such way
 inline std::shared_ptr<SumWithWeights> SignalSum(Vec&&config){
-	return std::dynamic_pointer_cast<SumWithWeights>((new SumWithWeights(static_right(config)))->shared_from_this());
+	return std::shared_ptr<SumWithWeights>(new SumWithWeights(static_right(config)));
 }
 class ProductWithPowers:public Multi2SingleSignal{
 public:
@@ -78,9 +76,8 @@ protected:
 private:
 	Vec m_powers;
 };
-//All shared pointers for instances of AbstractMultiInput are created such way
 inline std::shared_ptr<ProductWithPowers> SignalProduct(Vec&&config){
-	return std::dynamic_pointer_cast<ProductWithPowers>((new ProductWithPowers(static_right(config)))->shared_from_this());
+	return std::shared_ptr<ProductWithPowers>(new ProductWithPowers(static_right(config)));
 }
 class AbstractMultiOutput{
 public:

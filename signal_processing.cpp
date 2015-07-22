@@ -19,7 +19,6 @@ void SignalPolinomialDistort::AcceptEventEnd(){SendEventEnd();}
 
 AbstractMultiInput::AbstractMultiInput(){m_state=0;me=shared_ptr<AbstractMultiInput>(this);}
 AbstractMultiInput::~AbstractMultiInput(){}
-shared_ptr< AbstractMultiInput > AbstractMultiInput::shared_from_this(){return me;}
 AbstractMultiInput& AbstractMultiInput::operator<<(shared_ptr< SignalProducent > input){
 	auto slot=make_shared<Slot>(shared_from_this());
 	input>>slot;
