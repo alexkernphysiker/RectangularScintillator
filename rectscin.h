@@ -30,7 +30,7 @@ class ScintillatorSurface:protected RectDimensions{
 public:
 	ScintillatorSurface();
 	virtual ~ScintillatorSurface();
-	ScintillatorSurface&operator<<(std::shared_ptr<IPhotoSensitive>sensor);
+	ScintillatorSurface&operator>>(std::shared_ptr<IPhotoSensitive>sensor);
 protected:
 	void Start();
 	void RegisterPhoton(Photon&photon);//changes photon
@@ -50,8 +50,8 @@ public:
 		double refraction,Func absorption
 	);
 	virtual ~RectangularScintillator();
-	ScintillatorSurface&Surface(unsigned int dimension,Side side);
-	void RegisterGamma(Vec&&coord,unsigned int N);
+	ScintillatorSurface&Surface(size_t dimension,Side side);
+	void RegisterGamma(Vec&&coord,size_t N);
 	LinearInterpolation<double>&&ReflectionProbabilityFunction();
 protected:
 	Photon GeneratePhoton(Vec&&coord);

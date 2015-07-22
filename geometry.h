@@ -21,7 +21,7 @@ class RectDimensions{
 public:
 	enum Side{None=-1,Left=0,Right=1};
 	struct IntersectionSearchResults{
-		unsigned int surfaceDimentionIndex;
+		size_t surfaceDimentionIndex;
 		Side surface;
 		double k;
 		Vec coordinates;
@@ -29,8 +29,8 @@ public:
 	RectDimensions();
 	virtual ~RectDimensions();
 	RectDimensions &operator<<(Pair&&dimension);
-	unsigned int NumberOfDimensions();
-	Pair &&Dimension(unsigned int i);
+	size_t NumberOfDimensions();
+	Pair &&Dimension(size_t i);
 	bool IsInside(Vec&&point);
 	IntersectionSearchResults WhereIntersects(Vec&&point,Vec&&dir);
 private:

@@ -26,7 +26,7 @@ void ScintillatorSurface::End(){
 	for(auto handler:m_handlers)
 		handler->End();
 }
-ScintillatorSurface& ScintillatorSurface::operator<<(shared_ptr<IPhotoSensitive> sensor){
+ScintillatorSurface& ScintillatorSurface::operator>>(shared_ptr<IPhotoSensitive> sensor){
 	Lock lock(surface_mutex);
 	m_handlers.push_back(sensor);
 	return *this;
@@ -70,9 +70,9 @@ m_lambda_distribution(lambda_distribution){
 	for(Pair D:dimensions)RectDimensions::operator<<(static_right(D));
 	m_refraction=refraction;
 	m_absorption=absorption;
-	for(unsigned int i=0,n=NumberOfDimensions();i<n;i++){
+	for(size_t i=0,n=NumberOfDimensions();i<n;i++){
 		SurfPair surfaces=make_pair(make_shared<ScintillatorSurface>(),make_shared<ScintillatorSurface>());
-		for(unsigned int j=0,n=NumberOfDimensions();j<n;j++)
+		for(size_t j=0,n=NumberOfDimensions();j<n;j++)
 			if(j!=i){
 				static_cast<RectDimensions&>(*(surfaces.first))<<Dimension(i);
 				static_cast<RectDimensions&>(*(surfaces.second))<<Dimension(i);
@@ -87,7 +87,7 @@ LinearInterpolation< double >&& RectangularScintillator::ReflectionProbabilityFu
 	Lock lock(trace_mutex);
 	return static_right(reflection_probability);
 }
-ScintillatorSurface& RectangularScintillator::Surface(unsigned int dimension, Side side){
+ScintillatorSurface& RectangularScintillator::Surface(size_t dimension, Side side){
 	if(dimension>=NumberOfDimensions())
 		throw RectScinException("RectangularScintillator: dimension index out of range");
 	Lock lock(trace_mutex);
@@ -95,15 +95,15 @@ ScintillatorSurface& RectangularScintillator::Surface(unsigned int dimension, Si
 	if(side==Right)return *(m_edges[dimension].second);
 	throw RectScinException("RectangularScintillator: surface index out of range");
 }
-void RectangularScintillator::RegisterGamma(Vec&&coord,unsigned int N){
+void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N){
 	for(SurfPair&sp:m_edges){
 		sp.first->Start();
 		sp.second->Start();
 	}
 	if(coord.size()!=NumberOfDimensions())
 		throw RectScinException("RectangularScintillator: wrong gamma interaction point vector size");
-	auto process=[this,&coord](unsigned int n){
-		for(unsigned int i=0;i<n;i++){
+	auto process=[this,&coord](size_t n){
+		for(size_t i=0;i<n;i++){
 			Photon ph=GeneratePhoton(static_right(coord));
 			IntersectionSearchResults trace=TraceGeometry(ph);
 			if(trace.surface!=None){
@@ -112,10 +112,10 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,unsigned int N){
 		}
 	};
 	{
-		unsigned int threads=thread::hardware_concurrency();if(threads==0)threads=1;
-		unsigned int part=N/threads,rest=N%threads;
+		size_t threads=thread::hardware_concurrency();if(threads==0)threads=1;
+		size_t part=N/threads,rest=N%threads;
 		vector<shared_ptr<thread>> thread_vector;
-		for(unsigned int i=1;i<threads;i++)
+		for(size_t i=1;i<threads;i++)
 			thread_vector.push_back(make_shared<thread>(process,part));
 		process(part+rest);
 		for(auto thr:thread_vector)thr->join();
@@ -167,7 +167,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		absorption=m_absorption(ph.lambda);
 	}
 	double refl_p[NumberOfDimensions()];
-	for(unsigned int dimension=0,n=NumberOfDimensions();dimension<n;dimension++){
+	for(size_t dimension=0,n=NumberOfDimensions();dimension<n;dimension++){
 		double cos_angle=ph.dir[dimension];
 		if(cos_angle<0.0)
 			cos_angle=-cos_angle;
@@ -181,7 +181,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 			WhereIntersects(static_right(ph.coord),static_right(ph.dir));
 		if(res.surface==None)
 			return res;
-		unsigned int dimension=res.surfaceDimentionIndex;
+		size_t dimension=res.surfaceDimentionIndex;
 		double path_length=res.k;
 		//update kinematic parameters
 		ph.coord=res.coordinates;

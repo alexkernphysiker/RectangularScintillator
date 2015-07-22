@@ -17,7 +17,7 @@ Vec operator+(Vec&&p1,Vec&&p2){
 	if(p1.size()!=p2.size())
 		throw RectScinException("A+B: vector sizes differ");
 	Vec res;
-	for(unsigned int i=0,n=p1.size();i<n;i++)
+	for(size_t i=0,n=p1.size();i<n;i++)
 		res.push_back(p1[i]+p2[i]);
 	return res;
 }
@@ -25,7 +25,7 @@ Vec operator-(Vec&&p1,Vec&&p2){
 	if(p1.size()!=p2.size())
 		throw RectScinException("A-B: vector sizes differ");
 	Vec res;
-	for(unsigned int i=0,n=p1.size();i<n;i++)
+	for(size_t i=0,n=p1.size();i<n;i++)
 		res.push_back(p1[i]-p2[i]);
 	return res;
 }
@@ -56,11 +56,11 @@ RectDimensions& RectDimensions::operator<<(Pair&&dimension){
 	m_dimensions.push_back(dimension);
 	return *this;
 }
-unsigned int RectDimensions::NumberOfDimensions(){
+size_t RectDimensions::NumberOfDimensions(){
 	Lock lock(geom_mutex);
 	return m_dimensions.size();
 }
-Pair&&RectDimensions::Dimension(unsigned int i){
+Pair&&RectDimensions::Dimension(size_t i){
 	if(i>=NumberOfDimensions())
 		throw RectScinException("RectDimensions: dimension index out of range");
 	Lock lock(geom_mutex);
@@ -69,7 +69,7 @@ Pair&&RectDimensions::Dimension(unsigned int i){
 bool RectDimensions::IsInside(Vec&&point){
 	if(point.size()!=NumberOfDimensions())
 		throw RectScinException("RectDimensions::IsInside: wrong point size");
-	for(unsigned int i=0,n=NumberOfDimensions();i<n;i++)
+	for(size_t i=0,n=NumberOfDimensions();i<n;i++)
 		if((point[i]<Dimension(i).first)||(point[i]>Dimension(i).second))
 			return false;
 	return true;
@@ -83,9 +83,9 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		return res;
 	}
 	// Distance to the corresponding edge, dimension index
-	typedef pair<double,unsigned int> dist_dim;
+	typedef pair<double,size_t> dist_dim;
 	vector<dist_dim> dim_order;
-	for(unsigned int i=0,n=NumberOfDimensions();i<n;i++){
+	for(size_t i=0,n=NumberOfDimensions();i<n;i++){
 		dist_dim newdim;
 		Lock lock(geom_mutex);
 		newdim.second=i;
@@ -101,13 +101,13 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		res.surface=None;
 		return res;
 	}
-	for(unsigned int i=0,n=dim_order.size();i<n;i++){
-		unsigned int dimension=dim_order[i].second;
+	for(size_t i=0,n=dim_order.size();i<n;i++){
+		size_t dimension=dim_order[i].second;
 		double k=dim_order[i].first/dir[dimension];
 		if(k<0) k=-k;
 		Vec endpoint=static_right(point)+(static_right(dir)*k);
 		bool Belong_to_surface=true;
-		for(unsigned int i=0,n=NumberOfDimensions();i<n;i++)
+		for(size_t i=0,n=NumberOfDimensions();i<n;i++)
 			if(i!=dimension){
 				Belong_to_surface &= endpoint[i]>=Dimension(i).first;
 				Belong_to_surface &= endpoint[i]<=Dimension(i).second;

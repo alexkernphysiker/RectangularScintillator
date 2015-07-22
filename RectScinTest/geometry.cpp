@@ -45,7 +45,7 @@ TEST(VecOpr,Mul){
 		for(double c=-9.5;c<10;c+=1){//escape zero
 			Vec B=static_right(A)*c;
 			Vec C=static_right(B)*(1.0/c);
-			for(unsigned int i=0,n=A.size();i<n;i++){
+			for(size_t i=0,n=A.size();i<n;i++){
 				EXPECT_TRUE(C[i]==A[i]);
 				EXPECT_TRUE(B[i]==(A[i]*c));
 			}
@@ -70,7 +70,7 @@ TEST(VecOpr,Add_Sub){
 		for(double c=-10;c<=10;c+=1){
 			Vec C=static_right(A)+static_right(B);
 			Vec D=static_right(C)-static_right(B);
-			for(unsigned int i=0,n=A.size();i<n;i++){
+			for(size_t i=0,n=A.size();i<n;i++){
 				EXPECT_TRUE(D[i]==A[i]);
 				EXPECT_TRUE(C[i]==(A[i]+B[i]));
 			}
@@ -104,10 +104,10 @@ TEST(RectDimensions,Dimensions){
 	EXPECT_THROW(A.Dimension(0),RectScinException);
 	EXPECT_THROW(A.Dimension(1),RectScinException);
 	EXPECT_THROW(A.Dimension(2),RectScinException);
-	for(unsigned int i=1;i<10;i++){
+	for(size_t i=1;i<10;i++){
 		EXPECT_TRUE(&A==&(A<<make_pair(i,2*i)));
 		EXPECT_TRUE(A.NumberOfDimensions()==i);
-		for(unsigned int j=1;j<=i;j++){
+		for(size_t j=1;j<=i;j++){
 			EXPECT_TRUE(A.Dimension(j-1).first==j);
 			EXPECT_TRUE(A.Dimension(j-1).second==2*j);
 		}
@@ -118,12 +118,12 @@ TEST(RectDimensions,Dimensions){
 }
 TEST(RectDimensions,IsInside){
 	RectDimensions A;
-	for(unsigned int i=1;i<10;i++){
+	for(size_t i=1;i<10;i++){
 		A<<make_pair(-10.0+i,double(i));
-		for(unsigned int cnt=0;cnt<(500*i);cnt++){
+		for(size_t cnt=0;cnt<(500*i);cnt++){
 			bool test=true;
 			Vec v;
-			for(unsigned int j=0,n=A.NumberOfDimensions();j<n;j++){
+			for(size_t j=0,n=A.NumberOfDimensions();j<n;j++){
 				double x=uniform(rnd);
 				test&=(x>=A.Dimension(j).first)&&(x<=A.Dimension(j).second);
 				EXPECT_THROW(A.IsInside(static_right(v)),RectScinException);
@@ -136,7 +136,7 @@ TEST(RectDimensions,IsInside){
 TEST(RectDimensions,WhereIntersects_throwing1){
 	RectDimensions A;
 	Vec O;Vec D;
-	for(unsigned int i=1;i<10;i++){
+	for(size_t i=1;i<10;i++){
 		A<<make_pair(-10.0+i,double(i));
 		EXPECT_THROW(A.WhereIntersects(static_right(O),static_right(D)),exception);
 		O.push_back(0);
@@ -148,7 +148,7 @@ TEST(RectDimensions,WhereIntersects_throwing1){
 TEST(RectDimensions,WhereIntersects_throwing2){
 	RectDimensions A;
 	Vec O;Vec D;
-	for(unsigned int i=1;i<10;i++){
+	for(size_t i=1;i<10;i++){
 		A<<make_pair(-10.0+i,double(i));
 		EXPECT_THROW(A.WhereIntersects(static_right(O),static_right(D)),exception);
 		D.push_back(0);
@@ -158,10 +158,10 @@ TEST(RectDimensions,WhereIntersects_throwing2){
 	}
 }
 TEST(RectDimensions,WhereIntersects){
-	for(unsigned int cnt=0;cnt<100000;cnt++){
+	for(size_t cnt=0;cnt<100000;cnt++){
 		RectDimensions A;
 		Vec O, Outside,D;
-		for(unsigned int i=1;i<10;i++){
+		for(size_t i=1;i<10;i++){
 			A<<make_pair(-10.0+i,double(i));
 			uniform_real_distribution<double> coord(-10.0+i,i);
 			O.push_back(coord(rnd));
