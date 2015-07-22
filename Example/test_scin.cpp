@@ -3,7 +3,7 @@
 #include <iostream>
 #include <rectscin.h>
 #include <sensitive.h>
-#include <photon_accept.h>
+#include <photon2signal.h>
 using namespace std;
 int main(int , char **){
 	RectangularScintillator scintillator(

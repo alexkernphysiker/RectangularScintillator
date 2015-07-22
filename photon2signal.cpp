@@ -1,6 +1,6 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include "photon_accept.h"
+#include "photon2signal.h"
 #include "rectscinexception.h"
 using namespace std;
 OrderStatistics::OrderStatistics(size_t count){
