@@ -43,5 +43,12 @@ TEST(Signal2DCorrelation,Base){
 	}
 }
 TEST(Signal2DCorrelation,Throw){
-	
+	auto test=make_shared<Signal2DCorrelation>();
+	SignalSender sig;
+	sig.Connect2MultiInput(test,1);
+	EXPECT_THROW(sig.send({rand()}),RectScinException);
+	sig.Connect2MultiInput(test,1);
+	EXPECT_NO_THROW(sig.send({rand(),rand()}));
+	sig.Connect2MultiInput(test,1);
+	EXPECT_THROW(sig.send({rand(),rand(),rand()}),RectScinException);
 }
