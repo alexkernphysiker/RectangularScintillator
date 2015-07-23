@@ -8,6 +8,8 @@ CMakeFiles
 *kdev*
 *.txt
 script.gnuplot
+*.png
+Example*
 *.cbp
 # Compiled Object files
 *.slo
