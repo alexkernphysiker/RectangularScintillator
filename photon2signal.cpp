@@ -48,6 +48,7 @@ WeightedTimeSignal::WeightedTimeSignal(){}
 WeightedTimeSignal::~WeightedTimeSignal(){}
 WeightedTimeSignal& WeightedTimeSignal::AddSummand(size_t order_statistics, double weight){
 	m_config.push_back(make_pair(order_statistics,weight));
+	return *this;
 }
 void WeightedTimeSignal::AcceptEventStart(){
 	m_count=0;

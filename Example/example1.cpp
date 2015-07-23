@@ -1,6 +1,7 @@
 // this file is distributed under
 // GPL v 3.0 license
 #include <iostream>
+#include <sstream>
 #include <rectscin.h>
 #include <sensitive.h>
 #include <photon2signal.h>
@@ -18,6 +19,7 @@ int main(int , char **){
 	vector<shared_ptr<SignalStatictics>> left_time;
 	vector<shared_ptr<SignalStatictics>> diff_time;
 	auto left_count=make_shared<SignalStatictics>();
+	auto diff_distr=make_shared<SignalDistribution>(-0.4,0.4,20);
 	{
 		auto lphm=Phm(),rphm=Phm();
 		scintillator.Surface(0,RectDimensions::Left)>>(lphm>>(make_shared<AmplitudeSignal>()>>left_count));
@@ -31,7 +33,8 @@ int main(int , char **){
 			auto s_right=make_shared<WeightedTimeSignal>();
 			s_right->AddSummand(i,1);
 			rphm>>s_right;
-			(SignalSum({1,-1})<<s_left<<s_right)>>diff_time[i];
+			auto diff=(SignalSum({1,-1})<<s_left<<s_right)>>diff_time[i];
+			if(i==0)diff>>diff_distr;
 		}
 	}
 	printf("Simulation...\n");
@@ -42,6 +45,8 @@ int main(int , char **){
 	for(unsigned int i=0,n=diff_time.size();i<n;i++)
 		printf("Time Difference(%i): %f+/-%f [%i]\n",i,diff_time[i]->getAverage(),diff_time[i]->getSigma(),diff_time[i]->count());
 	printf("Photoelectron count: %f+/-%f [%i]\n",left_count->getAverage(),left_count->getSigma(),left_count->count());
-	
+	printf("=================================\n");
+	for(size_t i=0,n=diff_distr->size();i<n;i++)
+		printf("[%f > %f\n",diff_distr->getX(i),diff_distr->getY(i));
 	return 0;
 }

@@ -8,7 +8,7 @@ public:
 	SignalPolinomialDistort(Vec&&coefs);
 	virtual ~SignalPolinomialDistort();
 	virtual void AcceptEventStart()final;
-	virtual void AcceptSignalValue(double time)final;
+	virtual void AcceptSignalValue(double signal)final;
 	virtual void AcceptEventEnd()final;
 private:
 	Vec m_coefs;
@@ -36,7 +36,7 @@ private:
 		Slot(std::shared_ptr<AbstractMultiInput>father);
         virtual ~Slot();
 		virtual void AcceptEventStart()final;
-		virtual void AcceptSignalValue(double time)final;
+		virtual void AcceptSignalValue(double signal)final;
 		virtual void AcceptEventEnd()final;
 		double Value();
 	private:
@@ -45,7 +45,6 @@ private:
 	};
 	std::vector<std::shared_ptr<Slot>> m_input_slots;
 	int m_state;
-	std::shared_ptr<AbstractMultiInput> me;
 };
 class Multi2SingleSignal:public AbstractMultiInput,public SignalProducent{
 public:
@@ -87,7 +86,7 @@ public:
 protected:
 	void SendEventStart();
 	size_t GetOutSlotsCount();
-	void SendSignalValue(size_t i,double time);
+	void SendSignalValue(size_t i,double signal);
 	void SendEventEnd();
 private:
 	class Slot:public SignalProducent{
@@ -95,7 +94,7 @@ private:
 		Slot();
 		virtual ~Slot();
 		void Start();
-		void Value(double time);
+		void Value(double signal);
 		void End();
 	};
 	std::vector<std::shared_ptr<Slot>> m_output_slots;
@@ -117,19 +116,12 @@ protected:
 	virtual void Process(Vec&&signals)=0;
 	virtual void Finish()final;
 };
-class SignalSorter:public Multi2MultiSignal{
+class SignalSortAndSelect:public Multi2SingleSignal{
 public:
-    SignalSorter();
-    virtual ~SignalSorter();
+	SignalSortAndSelect(size_t number);
+	virtual ~SignalSortAndSelect();
 protected:
-    virtual void Process(Vec&& signals)final;
-};
-class SignalSortedAndSelect:public Multi2SingleSignal{
-public:
-	SignalSortedAndSelect(size_t number);
-	virtual ~SignalSortedAndSelect();
-protected:
-	virtual void Process(Vec&& signals)final;
+	virtual void Process(Vec&&signals)final;
 private:
 	size_t m_number;
 };

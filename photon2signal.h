@@ -21,7 +21,7 @@ class SignalAcceptor{
 public:
 	virtual ~SignalAcceptor(){}
 	virtual void AcceptEventStart()=0;
-	virtual void AcceptSignalValue(double time)=0;
+	virtual void AcceptSignalValue(double signal)=0;
 	virtual void AcceptEventEnd()=0;
 };
 class SignalProducent{
@@ -48,6 +48,12 @@ private:
 	size_t m_count;
 	double m_sum;
 };
+inline std::shared_ptr<WeightedTimeSignal> TimeSignal(std::vector<std::pair<size_t,double>>&&params){
+	auto res=std::make_shared<WeightedTimeSignal>();
+	for(auto p:params)
+		res->AddSummand(p.first,p.second);
+	return res;
+}
 class AmplitudeSignal:public PhotonTimeAcceptor,public SignalProducent{
 public:
 	AmplitudeSignal();

@@ -12,14 +12,14 @@ SignalPolinomialDistort::SignalPolinomialDistort(Vec&& coefs){
 }
 SignalPolinomialDistort::~SignalPolinomialDistort(){}
 void SignalPolinomialDistort::AcceptEventStart(){SendEventStart();}
-void SignalPolinomialDistort::AcceptSignalValue(double time){
-	SendSignalValue(Polynom(time,m_coefs,m_coefs.size()-1));
+void SignalPolinomialDistort::AcceptSignalValue(double signal){
+	SendSignalValue(Polynom(signal,m_coefs,m_coefs.size()-1));
 }
 void SignalPolinomialDistort::AcceptEventEnd(){SendEventEnd();}
 
-AbstractMultiInput::AbstractMultiInput(){m_state=0;me=shared_ptr<AbstractMultiInput>(this);}
+AbstractMultiInput::AbstractMultiInput(){m_state=0;}
 AbstractMultiInput::~AbstractMultiInput(){}
-AbstractMultiInput& AbstractMultiInput::operator<<(shared_ptr< SignalProducent > input){
+AbstractMultiInput& AbstractMultiInput::operator<<(shared_ptr<SignalProducent> input){
 	auto slot=make_shared<Slot>(shared_from_this());
 	input>>slot;
 	m_input_slots.push_back(slot);
@@ -48,7 +48,7 @@ void AbstractMultiInput::OneChannelEnd(){
 AbstractMultiInput::Slot::Slot(std::shared_ptr<AbstractMultiInput>father){master=father;}
 AbstractMultiInput::Slot::~Slot(){}
 void AbstractMultiInput::Slot::AcceptEventStart(){master->OneChannelBegin();m_value=INFINITY;}
-void AbstractMultiInput::Slot::AcceptSignalValue(double time){m_value=time;}
+void AbstractMultiInput::Slot::AcceptSignalValue(double signal){m_value=signal;}
 void AbstractMultiInput::Slot::AcceptEventEnd(){master->OneChannelEnd();}
 double AbstractMultiInput::Slot::Value(){return m_value;}
 
@@ -65,7 +65,9 @@ void SumWithWeights::Process(Vec&& signals){
 		n=m_weights.size();
 	double val=0;
 	for(size_t i=0;i<n;i++)
-		val+=m_weights[i]*signals[i];
+		if(isfinite(signals[i]))
+			val+=m_weights[i]*signals[i];
+		else return;
 	SendSignalValue(val);
 }
 ProductWithPowers::ProductWithPowers(Vec&& powers){m_powers=powers;}
@@ -76,7 +78,9 @@ void ProductWithPowers::Process(Vec&& signals){
 		n=m_powers.size();
 	double val=0;
 	for(size_t i=0;i<n;i++)
-		val+=pow(signals[i],m_powers[i]);
+		if(isfinite(signals[i]))
+			val+=pow(signals[i],m_powers[i]);
+		else return;
 	SendSignalValue(val);
 }
 
@@ -93,10 +97,10 @@ void AbstractMultiOutput::SendEventStart(){
 size_t AbstractMultiOutput::GetOutSlotsCount(){
 	return m_output_slots.size();
 }
-void AbstractMultiOutput::SendSignalValue(size_t i, double time){
+void AbstractMultiOutput::SendSignalValue(size_t i, double signal){
 	if(i>=m_output_slots.size())
 		throw RectScinException("Mutli output range check error.");
-	m_output_slots[i]->Value(time);
+	m_output_slots[i]->Value(signal);
 }
 void AbstractMultiOutput::SendEventEnd(){
 	for(auto slot:m_output_slots)
@@ -105,7 +109,7 @@ void AbstractMultiOutput::SendEventEnd(){
 AbstractMultiOutput::Slot::Slot(){}
 AbstractMultiOutput::Slot::~Slot(){}
 void AbstractMultiOutput::Slot::Start(){SendEventStart();}
-void AbstractMultiOutput::Slot::Value(double time){SendSignalValue(time);}
+void AbstractMultiOutput::Slot::Value(double signal){SendSignalValue(signal);}
 void AbstractMultiOutput::Slot::End(){SendEventEnd();}
 
 Single2MultiSignal::Single2MultiSignal(){}
@@ -118,24 +122,12 @@ Multi2MultiSignal::~Multi2MultiSignal(){}
 void Multi2MultiSignal::Start(){SendEventStart();}
 void Multi2MultiSignal::Finish(){SendEventEnd();}
 
-SignalSorter::SignalSorter(){}
-SignalSorter::~SignalSorter(){}
-void SignalSorter::Process(Vec&& signals){
+SignalSortAndSelect::SignalSortAndSelect(size_t number){m_number=number;}
+SignalSortAndSelect::~SignalSortAndSelect(){}
+void SignalSortAndSelect::Process(Vec&& signals){
 	Vec out;
 	for(double v:signals)if(isfinite(v))
 		InsertSorted(v,out,std_size(out),std_insert(out,double));
-	for(size_t i=0,n1=out.size(),n2=GetOutSlotsCount();(i<n1)&&(i<n2);i++)
-		SendSignalValue(i,out[i]);
-}
-
-SignalSortedAndSelect::SignalSortedAndSelect(size_t number){
-	m_number=number;
-}
-SignalSortedAndSelect::~SignalSortedAndSelect(){}
-void SignalSortedAndSelect::Process(Vec&& signals){
-	Vec out;
-	for(double v:signals)if(isfinite(v))
-		InsertSorted(v,out,std_size(out),std_insert(out,double));
-	if(out.size()>=m_number)
+	if(out.size()>m_number)
 		SendSignalValue(out[m_number]);
 }
