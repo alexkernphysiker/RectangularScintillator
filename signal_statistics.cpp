@@ -9,21 +9,20 @@ void SignalStatictics::AcceptEventStart(){}
 void SignalStatictics::AcceptSignalValue(double time){AddValue(time);}
 void SignalStatictics::AcceptEventEnd(){}
 
-SignalDistribution::SignalDistribution(string name, double from, double to, int bincount):
-	Distribution<double,double>(from,to,bincount){
-	m_name=name;
+SignalDistribution::SignalDistribution(double from, double to, int bincount):m_data(from,to,bincount){
+	f=from;t=to;cnt=bincount;
 }
-SignalDistribution::~SignalDistribution(){
-	m_plotter.HistWithStdError(m_name,static_cast<Distribution<double>&&>(*this));
+SignalDistribution::~SignalDistribution(){}
+void SignalDistribution::PlotAndClear(string name){
+	m_plotter.HistWithStdError(name,static_right(m_data));
+	m_data=Distribution<double>(f,t,cnt);
 }
 void SignalDistribution::AcceptEventStart(){}
-void SignalDistribution::AcceptSignalValue(double time){AddValue(time);}
+void SignalDistribution::AcceptSignalValue(double time){m_data.AddValue(time);}
 void SignalDistribution::AcceptEventEnd(){}
 
-Signal2DCorrelation::Signal2DCorrelation(string name){m_name=name;}
-Signal2DCorrelation::~Signal2DCorrelation(){
-	m_plotter.WithoutErrors(m_name,static_right(m_data));
-}
+Signal2DCorrelation::Signal2DCorrelation(){}
+Signal2DCorrelation::~Signal2DCorrelation(){}
 void Signal2DCorrelation::Start(){}
 void Signal2DCorrelation::Process(Vec&& signals){
 	if(signals.size()!=2)
@@ -31,3 +30,7 @@ void Signal2DCorrelation::Process(Vec&& signals){
 	m_data.push_back(make_pair(signals[0],signals[1]));
 }
 void Signal2DCorrelation::Finish(){}
+void Signal2DCorrelation::PlotAndClear(string name){
+	m_plotter.WithoutErrors(name,static_right(m_data));
+	m_data.clear();
+}

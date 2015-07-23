@@ -15,27 +15,30 @@ public:
 	virtual void AcceptSignalValue(double time)override;
 	virtual void AcceptEventEnd()override;
 };
-class SignalDistribution:public SignalAcceptor,Distribution<double>{
+class SignalDistribution:public SignalAcceptor{
 public:
-	SignalDistribution(std::string name, double from, double to, int bincount);
+	SignalDistribution(double from, double to, int bincount);
 	virtual ~SignalDistribution();
+	void PlotAndClear(std::string name);
 	virtual void AcceptEventStart()override;
 	virtual void AcceptSignalValue(double time)override;
 	virtual void AcceptEventEnd()override;
 private:
 	Plot<double> m_plotter;
-	std::string m_name;
+	Distribution<double> m_data;
+	double f,t;
+	int cnt;
 };
 class Signal2DCorrelation:public AbstractMultiInput{
 public:
-	Signal2DCorrelation(std::string name);
+	Signal2DCorrelation();
 	virtual ~Signal2DCorrelation();
+	void PlotAndClear(std::string name);
 protected:
 	virtual void Start()final;
 	virtual void Process(Vec&&signals)final;
 	virtual void Finish()final;
 private:
-	std::string m_name;
 	std::vector<Pair> m_data;
 	PlotPoints<double,decltype(m_data)> m_plotter;
 }; 
