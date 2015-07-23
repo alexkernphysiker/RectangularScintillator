@@ -26,7 +26,7 @@ class Signal2DCorrelation:public AbstractMultiInput{
 public:
 	Signal2DCorrelation();
 	virtual ~Signal2DCorrelation();
-	void Clear(std::string name);
+	void Clear();
 	std::vector<Pair>&&Points();
 protected:
 	virtual void Start()final;

@@ -17,7 +17,7 @@ void SignalDistribution::AcceptEventEnd(){}
 
 Signal2DCorrelation::Signal2DCorrelation(){}
 Signal2DCorrelation::~Signal2DCorrelation(){}
-void Signal2DCorrelation::Clear(string name){m_data.clear();}
+void Signal2DCorrelation::Clear(){m_data.clear();}
 vector< Pair >&& Signal2DCorrelation::Points(){
 	return static_right(m_data);
 }
