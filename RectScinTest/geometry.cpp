@@ -155,7 +155,7 @@ TEST(RectDimensions,WhereIntersects_throwing2){
 	}
 }
 TEST(RectDimensions,WhereIntersects){
-	for(size_t cnt=0;cnt<100000;cnt++){
+	for(size_t cnt=0;cnt<20000;cnt++){
 		RectDimensions A;
 		Vec O, Outside,D;
 		for(size_t i=1;i<10;i++){

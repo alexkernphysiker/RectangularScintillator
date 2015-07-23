@@ -25,3 +25,39 @@ TEST(SignalSmear,Base){
 			APROXIMATELY_CLOSE_VALUES(sig,out->data().getSigma());
 		}
 }
+TEST(SumWithWeights,Base){
+	for(size_t n=1;n<=10;n++){
+		Vec coefs,signals;
+		double expected=0;
+		for(size_t i=0;i<n;i++){
+			double c=rand(),s=rand();
+			coefs.push_back(c);
+			signals.push_back(s);
+			expected+=c*s;
+		}
+		auto test=SignalSum(static_right(coefs));
+		SignalSender sender;auto out=make_shared<Out>();
+		test>>out;
+		sender.Connect2MultiInput(test,n);
+		sender.send(static_right(signals));
+		EXPECT_CLOSE_VALUES(out->value(),expected);
+	}
+}
+TEST(ProductWithPowers,Base){
+	for(size_t n=1;n<=10;n++){
+		Vec coefs,signals;
+		double expected=1;
+		for(size_t i=0;i<n;i++){
+			double c=rand()%5+1,s=rand()%5+1;
+			coefs.push_back(c);
+			signals.push_back(s);
+			expected*=pow(s,c);
+		}
+		auto test=SignalProduct(static_right(coefs));
+		SignalSender sender;auto out=make_shared<Out>();
+		test>>out;
+		sender.Connect2MultiInput(test,n);
+		sender.send(static_right(signals));
+		EXPECT_CLOSE_VALUES(out->value(),expected);
+	}
+}

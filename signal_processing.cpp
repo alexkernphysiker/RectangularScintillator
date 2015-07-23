@@ -84,10 +84,10 @@ void ProductWithPowers::Process(Vec&& signals){
 	size_t n=signals.size();
 	if(n>m_powers.size())
 		n=m_powers.size();
-	double val=0;
+	double val=1;
 	for(size_t i=0;i<n;i++)
 		if(isfinite(signals[i]))
-			val+=pow(signals[i],m_powers[i]);
+			val*=pow(signals[i],m_powers[i]);
 		else return;
 	SendSignalValue(val);
 }
