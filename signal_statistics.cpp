@@ -25,6 +25,7 @@ void Signal2DCorrelation::Start(){}
 void Signal2DCorrelation::Process(Vec&& signals){
 	if(signals.size()!=2)
 		throw RectScinException("Signal2DCorrelation: error ");
+	if((isfinite(signals[0]))&&(isfinite(signals[1])))
 	m_data.push_back(make_pair(signals[0],signals[1]));
 }
 void Signal2DCorrelation::Finish(){}

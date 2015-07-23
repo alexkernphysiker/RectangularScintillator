@@ -11,8 +11,7 @@ using namespace std;
 int main(int , char **){
 	RectangularScintillator scintillator(
 		{make_pair(-15,15),make_pair(-7,7),make_pair(-7,7)},
-		TimeDistribution2(0.005,0.2,1.5),
-		RandomValueGenerator<double>([](double l){return 1.0;},360,480,2),
+		TimeDistribution2(0.005,0.2,1.5),RandomValueGenerator<double>(300,500),
 		1.58,[](double l){return 0.08;}
 	);
 	auto Phm=[](){return Photosensor({make_pair(-7,7),make_pair(-7,7)},1,[](double l){return 0.3;});};
