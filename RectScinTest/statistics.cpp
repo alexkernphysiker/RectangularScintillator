@@ -18,11 +18,11 @@ TEST(SignalStatictics,Base){
 }
 TEST(SignalDistribution,Base){
 	for(size_t a=0;a<7;a++){
-		double f=rand()%50 -25,t=f+rand()%50;
-		int cnt=rand()%100;
+		double f=(rand()%50)-25,t=f+(rand()%50)+1;
+		int cnt=rand()%100+2;
 		SignalDistribution test(f,t,cnt);
-		EXPECT_EQ(f,test.data().min());
-		EXPECT_EQ(t,test.data().max());
+		EXPECT_EQ(f+test.data().BinWidth()/2.0,test.data().min());
+		EXPECT_EQ(t-test.data().BinWidth()/2.0,test.data().max());
 		EXPECT_EQ(cnt,test.data().size());
 	}
 }
