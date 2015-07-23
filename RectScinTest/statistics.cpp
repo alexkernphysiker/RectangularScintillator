@@ -1,20 +1,18 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include <gtest/gtest.h>
-#include <rectscinexception.h>
-#include <signal_statistics.h>
-using namespace std;
-#define EXPECT_CLOSE_VALUES(A,B) EXPECT_TRUE(pow((A)-(B),2)<0.0000001);
+#include "test_objects.h"
 TEST(SignalStatictics,Base){
-	SignalStatictics test;
-	EXPECT_EQ(0,test.data().count());
+	auto test=make_shared<SignalStatictics>();
+	SignalSender s;
+	s>>test;
+	EXPECT_EQ(0,test->data().count());
 	for(size_t i=0;i<10;i++){
 		for(size_t j=1;j<=i;j++){
-			test.AcceptSignalValue(rand());
-			EXPECT_EQ(j,test.data().count());
+			s.send({rand()});
+			EXPECT_EQ(j,test->data().count());
 		}
-		test.Clear();
-		EXPECT_EQ(0,test.data().count());
+		test->Clear();
+		EXPECT_EQ(0,test->data().count());
 	}
 }
 TEST(SignalDistribution,Base){
@@ -26,4 +24,24 @@ TEST(SignalDistribution,Base){
 		EXPECT_CLOSE_VALUES(t-test.data().BinWidth()/2.0,test.data().max());
 		EXPECT_EQ(cnt,test.data().size());
 	}
+}
+TEST(Signal2DCorrelation,Base){
+	auto test=make_shared<Signal2DCorrelation>();
+	SignalSender sig;
+	sig.Connect2MultiInput(test,2);
+	EXPECT_EQ(0,test->Points().size());
+	for(size_t i=0;i<10;i++){
+		for(size_t j=1;j<=i;j++){
+			double a=rand(),b=rand();
+			sig.send({a,b});
+			EXPECT_EQ(j,test->Points().size());
+			EXPECT_EQ(a,test->Points()[j-1].first);
+			EXPECT_EQ(b,test->Points()[j-1].second);
+		}
+		test->Clear();
+		EXPECT_EQ(0,test->Points().size());
+	}
+}
+TEST(Signal2DCorrelation,Throw){
+	
 }

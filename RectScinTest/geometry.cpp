@@ -1,10 +1,7 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include <gtest/gtest.h>
 #include <random>
-#include <rectscinexception.h>
-#include <geometry.h>
-using namespace std;
+#include "test_objects.h"
 default_random_engine rnd;
 uniform_real_distribution<double> uniform(-10,10);
 uniform_int_distribution<int> iuniform(-10,10);
