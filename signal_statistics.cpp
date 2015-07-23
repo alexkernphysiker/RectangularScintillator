@@ -6,14 +6,22 @@ using namespace std;
 SignalStatictics::SignalStatictics(){}
 SignalStatictics::~SignalStatictics(){}
 void SignalStatictics::AcceptEventStart(){}
-void SignalStatictics::AcceptSignalValue(double time){AddValue(time);}
+void SignalStatictics::AcceptSignalValue(double time){m_data.AddValue(time);}
 void SignalStatictics::AcceptEventEnd(){}
+void SignalStatictics::Clear(){m_data=Sigma<double>();}
+Sigma< double >&& SignalStatictics::data(){return static_right(m_data);}
 
-SignalDistribution::SignalDistribution(double from, double to, int bincount):Distribution<double>(from,to,bincount){}
+SignalDistribution::SignalDistribution(double from, double to, int bincount):
+	m_data(from,to,bincount){
+	f=from;t=to;cnt=bincount;
+}
 SignalDistribution::~SignalDistribution(){}
 void SignalDistribution::AcceptEventStart(){}
-void SignalDistribution::AcceptSignalValue(double time){AddValue(time);}
+void SignalDistribution::AcceptSignalValue(double time){m_data.AddValue(time);}
 void SignalDistribution::AcceptEventEnd(){}
+void SignalDistribution::Clear(){m_data=Distribution<double>(f,t,cnt);}
+Distribution< double >&& SignalDistribution::data(){return static_right(m_data);}
+
 
 Signal2DCorrelation::Signal2DCorrelation(){}
 Signal2DCorrelation::~Signal2DCorrelation(){}

@@ -38,12 +38,12 @@ int main(int , char **){
 	for(unsigned int cnt=0;cnt<500;cnt++)scintillator.RegisterGamma({0,0,0},3000);
 	printf("done.\n");
 	for(unsigned int i=0,n=left_time.size();i<n;i++)
-		printf("Photoelectron Time(%i): %f+/-%f [%i]\n",i,left_time[i]->getAverage(),left_time[i]->getSigma(),left_time[i]->count());
+		printf("Photoelectron Time(%i): %f+/-%f\n",i,left_time[i]->data().getAverage(),left_time[i]->data().getSigma());
 	for(unsigned int i=0,n=diff_time.size();i<n;i++)
-		printf("Time Difference(%i): %f+/-%f [%i]\n",i,diff_time[i]->getAverage(),diff_time[i]->getSigma(),diff_time[i]->count());
-	printf("Photoelectron count: %f+/-%f [%i]\n",left_count->getAverage(),left_count->getSigma(),left_count->count());
+		printf("Time Difference(%i): %f+/-%f\n",i,diff_time[i]->data().getAverage(),diff_time[i]->data().getSigma());
+	printf("Photoelectron count: %f+/-%f\n",left_count->data().getAverage(),left_count->data().getSigma());
 	printf("=================================\n");
-	for(size_t i=0,n=diff_distr->size();i<n;i++)
-		printf("[%f > %f\n",diff_distr->getX(i),diff_distr->getY(i));
+	for(size_t i=0,n=diff_distr->data().size();i<n;i++)
+		printf("[%f > %f\n",diff_distr->data().getX(i),diff_distr->data().getY(i));
 	return 0;
 }

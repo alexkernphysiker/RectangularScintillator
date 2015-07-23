@@ -32,9 +32,9 @@ int main(int , char **){
 	printf("Simulation...\n");
 	for(unsigned int cnt=0;cnt<500;cnt++)scintillator.RegisterGamma({0,0,0},3000);
 	printf("done.\n");
-	printf("Time difference: %f+/-%f [%i]\n",diff_stat->getAverage(),diff_stat->getSigma(),diff_stat->count());
+	printf("Time difference: %f+/-%f\n",diff_stat->data().getAverage(),diff_stat->data().getSigma());
 	printf("=================================\n");
-	for(size_t i=0,n=diff_distr->size();i<n;i++)
-		printf("[%f > %f\n",diff_distr->getX(i),diff_distr->getY(i));
+	for(size_t i=0,n=diff_distr->data().size();i<n;i++)
+		printf("[%f > %f\n",diff_distr->data().getX(i),diff_distr->data().getY(i));
 	return 0;
 }
