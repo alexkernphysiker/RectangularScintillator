@@ -27,11 +27,9 @@ int main(int , char **){
 		for(size_t i=0;i<10;i++){
 			left_time.push_back(make_shared<SignalStatictics>());
 			diff_time.push_back(make_shared<SignalStatictics>());
-			auto s_left=make_shared<WeightedTimeSignal>();
-			s_left->AddSummand(i,1);
+			auto s_left=TimeSignal({make_pair(i,1)});
 			lphm>>(s_left>>left_time[i]);
-			auto s_right=make_shared<WeightedTimeSignal>();
-			s_right->AddSummand(i,1);
+			auto s_right=TimeSignal({make_pair(i,1)});
 			rphm>>s_right;
 			auto diff=(SignalSum({1,-1})<<s_left<<s_right)>>diff_time[i];
 			if(i==0)diff>>diff_distr;
