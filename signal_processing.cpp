@@ -125,6 +125,8 @@ void Multi2MultiSignal::Finish(){SendEventEnd();}
 SignalSortAndSelect::SignalSortAndSelect(size_t number){m_number=number;}
 SignalSortAndSelect::~SignalSortAndSelect(){}
 void SignalSortAndSelect::Process(Vec&& signals){
+	if(signals.size()<=m_number)
+		throw RectScinException("SignalSortAndSelect: selected order statistics is greater than input slots count");
 	Vec out;
 	for(double v:signals)if(isfinite(v))
 		InsertSorted(v,out,std_size(out),std_insert(out,double));
