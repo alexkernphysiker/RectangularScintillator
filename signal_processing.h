@@ -2,6 +2,7 @@
 // GPL v 3.0 license
 #ifndef BYeAoSgG
 #define BYeAoSgG
+#include <random>
 #include "photon2signal.h"
 class SignalPolinomialDistort:public SignalAcceptor,public SignalProducent{
 public:
@@ -17,6 +18,17 @@ inline std::shared_ptr<SignalPolinomialDistort> Distortion(Vec&&coefs){
 	SignalPolinomialDistort *res=new SignalPolinomialDistort(static_right(coefs));
 	return std::shared_ptr<SignalPolinomialDistort>(res);
 }
+class SignalSmear:public SignalAcceptor,public SignalProducent{
+public:
+	SignalSmear(double sigma);
+	virtual ~SignalSmear();
+	virtual void AcceptEventStart()final;
+	virtual void AcceptSignalValue(double signal)final;
+	virtual void AcceptEventEnd()final;
+private:
+	std::default_random_engine rnd;
+	std::normal_distribution<double> smear;
+};
 class AbstractMultiInput:public std::enable_shared_from_this<AbstractMultiInput>{
 	class Slot;
 	friend class Slot;

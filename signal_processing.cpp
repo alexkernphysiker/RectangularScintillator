@@ -17,6 +17,14 @@ void SignalPolinomialDistort::AcceptSignalValue(double signal){
 }
 void SignalPolinomialDistort::AcceptEventEnd(){SendEventEnd();}
 
+SignalSmear::SignalSmear(double sigma):smear(0,sigma){}
+SignalSmear::~SignalSmear(){}
+void SignalSmear::AcceptEventStart(){SendEventStart();}
+void SignalSmear::AcceptSignalValue(double signal){
+	SendSignalValue(signal+smear(rnd));
+}
+void SignalSmear::AcceptEventEnd(){SendEventEnd();}
+
 AbstractMultiInput::AbstractMultiInput(){m_state=0;}
 AbstractMultiInput::~AbstractMultiInput(){}
 AbstractMultiInput& AbstractMultiInput::operator<<(shared_ptr<SignalProducent> input){
