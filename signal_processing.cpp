@@ -47,7 +47,7 @@ void AbstractMultiInput::OneChannelEnd(){
 }
 AbstractMultiInput::Slot::Slot(std::shared_ptr<AbstractMultiInput>father){master=father;}
 AbstractMultiInput::Slot::~Slot(){}
-void AbstractMultiInput::Slot::AcceptEventStart(){master->OneChannelBegin();}
+void AbstractMultiInput::Slot::AcceptEventStart(){master->OneChannelBegin();m_value=INFINITY;}
 void AbstractMultiInput::Slot::AcceptSignalValue(double time){m_value=time;}
 void AbstractMultiInput::Slot::AcceptEventEnd(){master->OneChannelEnd();}
 double AbstractMultiInput::Slot::Value(){return m_value;}
@@ -122,8 +122,20 @@ SignalSorter::SignalSorter(){}
 SignalSorter::~SignalSorter(){}
 void SignalSorter::Process(Vec&& signals){
 	Vec out;
-	for(double v:signals)
+	for(double v:signals)if(isfinite(v))
 		InsertSorted(v,out,std_size(out),std_insert(out,double));
 	for(size_t i=0,n1=out.size(),n2=GetOutSlotsCount();(i<n1)&&(i<n2);i++)
 		SendSignalValue(i,out[i]);
+}
+
+SignalSortedAndSelect::SignalSortedAndSelect(size_t number){
+	m_number=number;
+}
+SignalSortedAndSelect::~SignalSortedAndSelect(){}
+void SignalSortedAndSelect::Process(Vec&& signals){
+	Vec out;
+	for(double v:signals)if(isfinite(v))
+		InsertSorted(v,out,std_size(out),std_insert(out,double));
+	if(out.size()>=m_number)
+		SendSignalValue(out[m_number]);
 }

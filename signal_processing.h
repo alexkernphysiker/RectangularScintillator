@@ -124,4 +124,13 @@ public:
 protected:
     virtual void Process(Vec&& signals)final;
 };
+class SignalSortedAndSelect:public Multi2SingleSignal{
+public:
+	SignalSortedAndSelect(size_t number);
+	virtual ~SignalSortedAndSelect();
+protected:
+	virtual void Process(Vec&& signals)final;
+private:
+	size_t m_number;
+};
 #endif 
