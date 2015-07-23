@@ -90,6 +90,15 @@ private:
 inline std::shared_ptr<ProductWithPowers> SignalProduct(Vec&&config){
 	return std::shared_ptr<ProductWithPowers>(new ProductWithPowers(static_right(config)));
 }
+class SignalSortAndSelect:public Multi2SingleSignal{
+public:
+	SignalSortAndSelect(size_t number);
+	virtual ~SignalSortAndSelect();
+protected:
+	virtual void Process(Vec&&signals)final;
+private:
+	size_t m_number;
+};
 class AbstractMultiOutput{
 public:
 	AbstractMultiOutput();
@@ -127,14 +136,5 @@ protected:
 	virtual void Start()final;
 	virtual void Process(Vec&&signals)=0;
 	virtual void Finish()final;
-};
-class SignalSortAndSelect:public Multi2SingleSignal{
-public:
-	SignalSortAndSelect(size_t number);
-	virtual ~SignalSortAndSelect();
-protected:
-	virtual void Process(Vec&&signals)final;
-private:
-	size_t m_number;
 };
 #endif 

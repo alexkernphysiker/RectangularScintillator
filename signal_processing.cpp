@@ -91,6 +91,17 @@ void ProductWithPowers::Process(Vec&& signals){
 		else return;
 	SendSignalValue(val);
 }
+SignalSortAndSelect::SignalSortAndSelect(size_t number){m_number=number;}
+SignalSortAndSelect::~SignalSortAndSelect(){}
+void SignalSortAndSelect::Process(Vec&& signals){
+	if(signals.size()<=m_number)
+		throw RectScinException("SignalSortAndSelect: selected order statistics is greater than input slots count");
+	Vec out;
+	for(double v:signals)if(isfinite(v))
+		InsertSorted(v,out,std_size(out),std_insert(out,double));
+	if(out.size()>m_number)
+		SendSignalValue(out[m_number]);
+}
 
 AbstractMultiOutput::AbstractMultiOutput(){}
 AbstractMultiOutput::~AbstractMultiOutput(){}
@@ -129,15 +140,3 @@ Multi2MultiSignal::Multi2MultiSignal(){}
 Multi2MultiSignal::~Multi2MultiSignal(){}
 void Multi2MultiSignal::Start(){SendEventStart();}
 void Multi2MultiSignal::Finish(){SendEventEnd();}
-
-SignalSortAndSelect::SignalSortAndSelect(size_t number){m_number=number;}
-SignalSortAndSelect::~SignalSortAndSelect(){}
-void SignalSortAndSelect::Process(Vec&& signals){
-	if(signals.size()<=m_number)
-		throw RectScinException("SignalSortAndSelect: selected order statistics is greater than input slots count");
-	Vec out;
-	for(double v:signals)if(isfinite(v))
-		InsertSorted(v,out,std_size(out),std_insert(out,double));
-	if(out.size()>m_number)
-		SendSignalValue(out[m_number]);
-}
