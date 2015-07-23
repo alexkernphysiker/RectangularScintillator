@@ -18,7 +18,7 @@ TEST(SignalStatictics,Base){
 }
 TEST(SignalDistribution,Base){
 	for(size_t a=0;a<7;a++){
-		double f=rand(),t=f+rand();
+		double f=rand()%50 -25,t=f+rand()%50;
 		int cnt=rand()%100;
 		SignalDistribution test(f,t,cnt);
 		EXPECT_EQ(f,test.data().min());
