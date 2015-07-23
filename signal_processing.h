@@ -118,6 +118,7 @@ protected:
 	virtual void Finish()final;
 };
 class SignalSorter:public Multi2MultiSignal{
+public:
     SignalSorter();
     virtual ~SignalSorter();
 protected:
