@@ -48,7 +48,7 @@ TEST(ProductWithPowers,Base){
 		Vec coefs,signals;
 		double expected=1;
 		for(size_t i=0;i<n;i++){
-			double c=rand()%5+1,s=rand()%5+1;
+			double c=rand()%5+1,s=rand()%50;
 			coefs.push_back(c);
 			signals.push_back(s);
 			expected*=pow(s,c);
