@@ -25,8 +25,8 @@ int main(int , char **){
 		scintillator.Surface(0,RectDimensions::Left)>>(Phm1()>>l1)>>(Phm2()>>l2);
 		scintillator.Surface(0,RectDimensions::Right)>>(Phm1()>>r1)>>(Phm2()>>r2);
 		(SignalSum({1,-1})
-			<<(make_shared<SignalSortAndSelect>(0)<<l1<<l2)
-			<<(make_shared<SignalSortAndSelect>(0)<<r1<<r2)
+			<<(make_shared<SignalSortAndSelect>(1)<<l1<<l2)
+			<<(make_shared<SignalSortAndSelect>(1)<<r1<<r2)
 		)>>diff_stat>>diff_distr;
 	}
 	printf("Simulation...\n");
