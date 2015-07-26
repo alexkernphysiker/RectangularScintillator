@@ -70,7 +70,10 @@ TEST(SignalSortAndSelect,BaseTest){
 			for(size_t k=0;k<50;k++){
 				Vec signals;
 				for(double v=0;v<n;v++)
-					signals.push_back(v);
+					if(signals.size()==0)
+						signals.push_back(v);
+					else
+						signals.insert(signals.begin()+rand()%(signals.size()+1),v);
 				if(orderstatistics<n)
 					EXPECT_NO_THROW(sender.send(static_right(signals)));
 				else
