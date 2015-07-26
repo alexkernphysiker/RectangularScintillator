@@ -45,6 +45,7 @@ double Out::value(){return signal;}
 void Out::AcceptEventStart(){
 	if(event)throw RectScinException("Signal producent unusual behaviour");
 	event=true;
+	signal=INFINITY;
 }
 void Out::AcceptSignalValue(double s){
 	if(!event)throw RectScinException("Signal producent unusual behaviour");

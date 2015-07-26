@@ -61,3 +61,24 @@ TEST(ProductWithPowers,Base){
 		EXPECT_CLOSE_VALUES(out->value(),expected);
 	}
 }
+TEST(SignalSortAndSelect,BaseTest){
+	for(size_t n=1;n<=10;n++)
+		for(size_t orderstatistics=0;orderstatistics<n+5;orderstatistics++){
+			auto test=make_shared<SignalSortAndSelect>(orderstatistics);
+			SignalSender sender;auto out=make_shared<Out>();
+			test>>out; sender.Connect2MultiInput(test,n);
+			for(size_t k=0;k<50;k++){
+				Vec signals;
+				for(double v=0;v<n;v++)
+					signals.push_back(v);
+				if(orderstatistics<n)
+					EXPECT_NO_THROW(sender.send(static_right(signals)));
+				else
+					EXPECT_THROW(sender.send(static_right(signals)),RectScinException);
+				if(orderstatistics<n)
+					EXPECT_EQ(orderstatistics,out->value());
+				else
+					EXPECT_FALSE(isfinite(out->value()));
+			}
+		}
+}
