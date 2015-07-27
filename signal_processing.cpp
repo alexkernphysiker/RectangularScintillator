@@ -142,6 +142,8 @@ void Multi2MultiSignal::Start(){SendEventStart();}
 void Multi2MultiSignal::Finish(){SendEventEnd();}
 
 TimeGate::TimeGate(double width){
+	if(width<=0)
+		throw RectScinException("Wrong time threshold value for TimeGate: it should be positive");
 	m_width=width;
 }
 TimeGate::~TimeGate(){}
