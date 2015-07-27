@@ -14,14 +14,6 @@
 using namespace std;
 #define EXPECT_CLOSE_VALUES(A,B) EXPECT_TRUE(pow((A)-(B),2)<0.0000001);
 #define APROXIMATELY_CLOSE_VALUES(A,B) EXPECT_TRUE(pow((A)-(B),2)<0.001);
-class Signal:public SignalAcceptor,public SignalProducent{
-public:
-	Signal();
-    virtual ~Signal();
-	virtual void AcceptEventStart()final;
-	virtual void AcceptSignalValue(double signal)final;
-	virtual void AcceptEventEnd()final;
-};
 class SignalSender{
 public:
 	SignalSender();

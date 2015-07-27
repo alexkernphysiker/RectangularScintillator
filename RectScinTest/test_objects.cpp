@@ -1,18 +1,6 @@
 // this file is distributed under 
 // GPL v 3.0 license
 #include "test_objects.h"
-Signal::Signal(){}
-Signal::~Signal(){}
-void Signal::AcceptEventStart(){
-	SendEventStart();
-}
-void Signal::AcceptSignalValue(double signal){
-	SendSignalValue(signal);
-}
-void Signal::AcceptEventEnd(){
-	SendEventEnd();
-}
-
 SignalSender::SignalSender(){}
 SignalSender::~SignalSender(){}
 SignalSender& SignalSender::operator>>(shared_ptr<SignalAcceptor> slot){

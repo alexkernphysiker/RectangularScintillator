@@ -26,11 +26,10 @@ int main(int , char **){
 		for(size_t i=0;i<10;i++){
 			left_time.push_back(make_shared<SignalStatictics>());
 			diff_time.push_back(make_shared<SignalStatictics>());
-			auto s_left=TimeSignal({make_pair(i,1)});
-			lphm>>(s_left>>left_time[i]);
-			auto is_right=SignalInvert();
-			rphm>>(TimeSignal({make_pair(i,1)})>>is_right);
-			auto diff=(make_shared<SignalSumm>()<<s_left<<is_right)>>diff_time[i];
+			auto left=make_shared<Signal>(),right=make_shared<Signal>();
+			lphm>>(TimeSignal({make_pair(i,1)})>>(left>>left_time[i]));
+			rphm>>(TimeSignal({make_pair(i,1)})>>(SignalInvert()>>right));
+			auto diff=(make_shared<SignalSumm>()<<left<<right)>>diff_time[i];
 			if(i==0)diff>>diff_distr;
 		}
 	}

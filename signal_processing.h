@@ -5,6 +5,14 @@
 #include <random>
 #include "photon2signal.h"
 class Single2SingleSignal:public SignalAcceptor,public SignalProducent{};
+class Signal:public Single2SingleSignal{
+public:
+	Signal(){}
+    virtual ~Signal(){}
+	virtual void AcceptEventStart()final{SendEventStart();}
+	virtual void AcceptSignalValue(double signal)final{SendSignalValue(signal);}
+	virtual void AcceptEventEnd()final{SendEventEnd();}
+};
 class SignalPolinomialDistort:public Single2SingleSignal{
 public:
 	SignalPolinomialDistort(Vec&&coefs);
