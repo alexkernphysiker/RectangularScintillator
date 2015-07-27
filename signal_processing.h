@@ -15,7 +15,7 @@ private:
 	Vec m_coefs;
 };
 //There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-inline std::shared_ptr<SignalPolinomialDistort> Distortion(Vec&&coefs){
+inline std::shared_ptr<SignalPolinomialDistort> PolynomDistort(Vec&&coefs){
 	SignalPolinomialDistort *res=new SignalPolinomialDistort(static_right(coefs));
 	return std::shared_ptr<SignalPolinomialDistort>(res);
 }

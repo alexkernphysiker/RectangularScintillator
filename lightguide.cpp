@@ -9,7 +9,7 @@ ScintillatorSurface(){
 		RectDimensions::operator<<(static_right(D));
 }
 FlatLightguide::~FlatLightguide(){}
-FlatLightguide& FlatLightguide::operator>>(shared_ptr< IPhotoSensitive > sensor){
+FlatLightguide& FlatLightguide::operator>>(shared_ptr<IPhotonAbsorber> sensor){
 	ScintillatorSurface::operator>>(sensor);
 	return *this;
 }
@@ -20,7 +20,7 @@ RectDimensions&& FlatLightguide::Dimensions(){
 void FlatLightguide::Start(){
 	ScintillatorSurface::Start();
 }
-void FlatLightguide::RegisterPhoton(Photon& photon){
+void FlatLightguide::AbsorbPhoton(Photon& photon){
 	photon.dir=static_right(photon.dir)*(1.0/refr);
 	double horiz=Abs(static_right(photon.dir));
 	double vert=sqrt(1.0-horiz*horiz);

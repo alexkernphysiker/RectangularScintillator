@@ -25,11 +25,11 @@ std::shared_ptr<source> operator>>(std::shared_ptr<source> s,std::shared_ptr<des
 	s->operator>>(d);
 	return s;
 }
-class IPhotoSensitive{
+class IPhotonAbsorber{
 public:
-	virtual ~IPhotoSensitive(){}
+	virtual ~IPhotonAbsorber(){}
 	virtual void Start()=0;
-	virtual void RegisterPhoton(Photon&photon)=0;
+	virtual void AbsorbPhoton(Photon&photon)=0;
 	virtual void End()=0;
 	virtual RectDimensions&&Dimensions()=0;
 	virtual double GlueEfficiency()=0;
@@ -40,14 +40,14 @@ class ScintillatorSurface:protected RectDimensions{
 public:
 	ScintillatorSurface();
 	virtual ~ScintillatorSurface();
-	ScintillatorSurface&operator>>(std::shared_ptr<IPhotoSensitive>sensor);
+	ScintillatorSurface&operator>>(std::shared_ptr<IPhotonAbsorber>sensor);
 protected:
 	void Start();
 	void RegisterPhoton(Photon&photon);//changes photon
 	void End();
 	double ReflectionProbabilityCoeff(Vec&&point);
 private:
-	std::vector<std::shared_ptr<IPhotoSensitive>> m_handlers;
+	std::vector<std::shared_ptr<IPhotonAbsorber>> m_handlers;
 	std::mutex surface_mutex;
 };
 double ReflectionProbability(double refraction,double cos_);

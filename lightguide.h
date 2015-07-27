@@ -1,14 +1,14 @@
 #ifndef XSAYaAus
 #define XSAYaAus
 #include "rectscin.h"
-class FlatLightguide:public virtual IPhotoSensitive,protected virtual ScintillatorSurface{
+class FlatLightguide:public virtual IPhotonAbsorber,protected virtual ScintillatorSurface{
 public:
 	FlatLightguide(std::vector<Pair>&&dimensions,double glue_eff,double n,double H);
 	virtual ~FlatLightguide();
-	FlatLightguide&operator>>(std::shared_ptr<IPhotoSensitive>sensor);
+	FlatLightguide&operator>>(std::shared_ptr<IPhotonAbsorber>sensor);
 	//IPhotoSensitive
     virtual void Start()override;
-    virtual void RegisterPhoton(Photon& photon)override;
+    virtual void AbsorbPhoton(Photon& photon)override;
     virtual void End()override;
     virtual double GlueEfficiency()override;
     virtual RectDimensions&& Dimensions()override;

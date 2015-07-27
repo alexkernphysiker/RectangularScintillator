@@ -18,7 +18,7 @@ void ScintillatorSurface::RegisterPhoton(Photon& photon){
 	if(IsInside(static_right(photon.coord))){
 		Lock lock(surface_mutex);
 		for(auto handler:m_handlers)
-			handler->RegisterPhoton(photon);
+			handler->AbsorbPhoton(photon);
 	}
 }
 void ScintillatorSurface::End(){
@@ -26,7 +26,7 @@ void ScintillatorSurface::End(){
 	for(auto handler:m_handlers)
 		handler->End();
 }
-ScintillatorSurface& ScintillatorSurface::operator>>(shared_ptr<IPhotoSensitive> sensor){
+ScintillatorSurface& ScintillatorSurface::operator>>(shared_ptr<IPhotonAbsorber> sensor){
 	Lock lock(surface_mutex);
 	m_handlers.push_back(sensor);
 	return *this;
