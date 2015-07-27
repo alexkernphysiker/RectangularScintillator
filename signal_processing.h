@@ -4,7 +4,8 @@
 #define BYeAoSgG
 #include <random>
 #include "photon2signal.h"
-class SignalPolinomialDistort:public SignalAcceptor,public SignalProducent{
+class Single2SingleSignal:public SignalAcceptor,public SignalProducent{};
+class SignalPolinomialDistort:public Single2SingleSignal{
 public:
 	SignalPolinomialDistort(Vec&&coefs);
 	virtual ~SignalPolinomialDistort();
@@ -19,7 +20,7 @@ inline std::shared_ptr<SignalPolinomialDistort> PolynomDistort(Vec&&coefs){
 	SignalPolinomialDistort *res=new SignalPolinomialDistort(static_right(coefs));
 	return std::shared_ptr<SignalPolinomialDistort>(res);
 }
-class SignalSmear:public SignalAcceptor,public SignalProducent{
+class SignalSmear:public Single2SingleSignal{
 public:
 	SignalSmear(double sigma);
 	virtual ~SignalSmear();
