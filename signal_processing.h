@@ -140,5 +140,13 @@ protected:
 	virtual void Process(Vec&&signals)=0;
 	virtual void Finish()final;
 };
-
+class TimeGate:public Multi2MultiSignal{
+public:
+    TimeGate(double width);
+    virtual ~TimeGate();
+protected:
+    virtual void Process(Vec&& signals)override;
+private:
+	double m_width;
+};
 #endif 

@@ -140,3 +140,21 @@ Multi2MultiSignal::Multi2MultiSignal(){}
 Multi2MultiSignal::~Multi2MultiSignal(){}
 void Multi2MultiSignal::Start(){SendEventStart();}
 void Multi2MultiSignal::Finish(){SendEventEnd();}
+
+TimeGate::TimeGate(double width){
+	m_width=width;
+}
+TimeGate::~TimeGate(){}
+void TimeGate::Process(Vec&& signals){
+	if(signals.size()>0){
+		double start=signals[0];
+		if(isfinite(start)){
+			for(double v:signals){
+				if(v<start)return;
+				if((v-start)>m_width)return;
+			}
+			for(size_t i=0,n=signals.size();i<n;i++)
+				SendSignalValue(i,signals[i]);
+		}
+	}
+}
