@@ -14,6 +14,7 @@ public:
 private:
 	Vec m_coefs;
 };
+//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<SignalPolinomialDistort> Distortion(Vec&&coefs){
 	SignalPolinomialDistort *res=new SignalPolinomialDistort(static_right(coefs));
 	return std::shared_ptr<SignalPolinomialDistort>(res);
@@ -75,6 +76,7 @@ protected:
 private:
 	Vec m_weights;
 };
+//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<SumWithWeights> SignalSum(Vec&&config){
 	return std::shared_ptr<SumWithWeights>(new SumWithWeights(static_right(config)));
 }
@@ -87,6 +89,7 @@ protected:
 private:
 	Vec m_powers;
 };
+//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<ProductWithPowers> SignalProduct(Vec&&config){
 	return std::shared_ptr<ProductWithPowers>(new ProductWithPowers(static_right(config)));
 }
@@ -137,4 +140,5 @@ protected:
 	virtual void Process(Vec&&signals)=0;
 	virtual void Finish()final;
 };
+
 #endif 

@@ -29,6 +29,7 @@ private:
 	std::uniform_real_distribution<double> P;
 	Vec times;
 };
+//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<PhotoSensitiveSurface> Photosensor(std::vector<Pair>&&dimensions,double glue,Func efficiency){
 	return std::shared_ptr<PhotoSensitiveSurface>(new PhotoSensitiveSurface(static_right(dimensions),glue,efficiency));
 }

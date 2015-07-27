@@ -15,6 +15,8 @@ public:
 private:
 	double g_eff,refr,height;
 };
-std::shared_ptr<FlatLightguide> operator>>(std::shared_ptr<FlatLightguide>,std::shared_ptr<IPhotoSensitive>sensor);
-std::shared_ptr<FlatLightguide> LightGuide(std::vector<Pair>&&dimensions,double glue_eff,double n,double H);
+//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
+inline std::shared_ptr<FlatLightguide> LightGuide(std::vector<Pair>&&dimensions,double glue_eff,double n,double H){
+	return std::shared_ptr<FlatLightguide>(new FlatLightguide(static_right(dimensions),glue_eff,n,H));
+}
 #endif

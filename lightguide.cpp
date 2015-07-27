@@ -31,11 +31,3 @@ void FlatLightguide::RegisterPhoton(Photon& photon){
 void FlatLightguide::End(){
 	ScintillatorSurface::End();
 }
-shared_ptr< FlatLightguide > operator>>(shared_ptr<FlatLightguide> A, shared_ptr<IPhotoSensitive> sensor){
-	A->operator>>(sensor);
-	return A;
-}
-shared_ptr< FlatLightguide > LightGuide(vector< Pair >&& dimensions, double glue_eff, double n, double H){
-	FlatLightguide *res=new FlatLightguide(static_right(dimensions),glue_eff,n,H);
-	return shared_ptr<FlatLightguide>(res);
-}

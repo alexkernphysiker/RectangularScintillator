@@ -48,6 +48,7 @@ private:
 	size_t m_count;
 	double m_sum;
 };
+//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<WeightedTimeSignal> TimeSignal(std::vector<std::pair<size_t,double>>&&params){
 	auto res=std::make_shared<WeightedTimeSignal>();
 	for(auto p:params)

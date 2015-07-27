@@ -81,5 +81,4 @@ const double max_emission_time=20;
 const double emission_time_binwidth=0.01;
 RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,double maxtime=max_emission_time,double dt=emission_time_binwidth);
 RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay,double maxtime=max_emission_time,double dt=emission_time_binwidth);
-
 #endif
