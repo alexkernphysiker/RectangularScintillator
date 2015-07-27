@@ -25,17 +25,16 @@ TEST(SignalSmear,Base){
 			APROXIMATELY_CLOSE_VALUES(sig,out->data().getSigma());
 		}
 }
-TEST(SumWithWeights,Base){
+TEST(SignalSumm,Base){
 	for(size_t n=1;n<=10;n++){
-		Vec coefs,signals;
+		Vec signals;
 		double expected=0;
 		for(size_t i=0;i<n;i++){
-			double c=rand(),s=rand();
-			coefs.push_back(c);
+			double s=rand();
 			signals.push_back(s);
-			expected+=c*s;
+			expected+=s;
 		}
-		auto test=SignalSum(static_right(coefs));
+		auto test=make_shared<SignalSumm>();
 		SignalSender sender;auto out=make_shared<Out>();
 		test>>out;
 		sender.Connect2MultiInput(test,n);
@@ -43,17 +42,16 @@ TEST(SumWithWeights,Base){
 		EXPECT_CLOSE_VALUES(out->value(),expected);
 	}
 }
-TEST(ProductWithPowers,Base){
+TEST(SignalProduct,Base){
 	for(size_t n=1;n<=10;n++){
-		Vec coefs,signals;
+		Vec signals;
 		double expected=1;
 		for(size_t i=0;i<n;i++){
-			double c=rand()%5+1,s=rand()%50;
-			coefs.push_back(c);
+			double s=rand()%50;
 			signals.push_back(s);
-			expected*=pow(s,c);
+			expected*=s;
 		}
-		auto test=SignalProduct(static_right(coefs));
+		auto test=make_shared<SignalProduct>();
 		SignalSender sender;auto out=make_shared<Out>();
 		test>>out;
 		sender.Connect2MultiInput(test,n);

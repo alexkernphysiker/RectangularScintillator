@@ -65,29 +65,23 @@ Multi2SingleSignal::~Multi2SingleSignal(){}
 void Multi2SingleSignal::Start(){SendEventStart();}
 void Multi2SingleSignal::Finish(){SendEventEnd();}
 
-SumWithWeights::SumWithWeights(Vec&& weights){m_weights=weights;}
-SumWithWeights::~SumWithWeights(){}
-void SumWithWeights::Process(Vec&& signals){
-	size_t n=signals.size();
-	if(n>m_weights.size())
-		n=m_weights.size();
+SignalSumm::SignalSumm(){}
+SignalSumm::~SignalSumm(){}
+void SignalSumm::Process(Vec&& signals){
 	double val=0;
-	for(size_t i=0;i<n;i++)
-		if(isfinite(signals[i]))
-			val+=m_weights[i]*signals[i];
+	for(double signal:signals)
+		if(isfinite(signal))
+			val+=signal;
 		else return;
 	SendSignalValue(val);
 }
-ProductWithPowers::ProductWithPowers(Vec&& powers){m_powers=powers;}
-ProductWithPowers::~ProductWithPowers(){}
-void ProductWithPowers::Process(Vec&& signals){
-	size_t n=signals.size();
-	if(n>m_powers.size())
-		n=m_powers.size();
+SignalProduct::SignalProduct(){}
+SignalProduct::~SignalProduct(){}
+void SignalProduct::Process(Vec&& signals){
 	double val=1;
-	for(size_t i=0;i<n;i++)
-		if(isfinite(signals[i]))
-			val*=pow(signals[i],m_powers[i]);
+	for(double signal:signals)
+		if(isfinite(signal))
+			val*=signal;
 		else return;
 	SendSignalValue(val);
 }

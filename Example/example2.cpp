@@ -24,10 +24,9 @@ int main(int , char **){
 			r2=TimeSignal({make_pair(0,1)});
 		scintillator.Surface(0,RectDimensions::Left)>>(Phm1()>>l1)>>(Phm2()>>l2);
 		scintillator.Surface(0,RectDimensions::Right)>>(Phm1()>>r1)>>(Phm2()>>r2);
-		(SignalSum({1,-1})
-			<<(make_shared<SignalSortAndSelect>(1)<<l1<<l2)
-			<<(make_shared<SignalSortAndSelect>(1)<<r1<<r2)
-		)>>diff_stat>>diff_distr;
+		auto temp=SignalInvert();
+		(make_shared<SignalSortAndSelect>(1)<<r1<<r2)>>temp;
+		(make_shared<SignalSumm>()<<(make_shared<SignalSortAndSelect>(1)<<l1<<l2)<<temp)>>diff_stat>>diff_distr;
 	}
 	printf("Simulation...\n");
 	for(unsigned int cnt=0;cnt<500;cnt++)scintillator.RegisterGamma({0,0,0},3000);

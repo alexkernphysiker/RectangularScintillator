@@ -28,9 +28,9 @@ int main(int , char **){
 			diff_time.push_back(make_shared<SignalStatictics>());
 			auto s_left=TimeSignal({make_pair(i,1)});
 			lphm>>(s_left>>left_time[i]);
-			auto s_right=TimeSignal({make_pair(i,1)});
-			rphm>>s_right;
-			auto diff=(SignalSum({1,-1})<<s_left<<s_right)>>diff_time[i];
+			auto is_right=SignalInvert();
+			rphm>>(TimeSignal({make_pair(i,1)})>>is_right);
+			auto diff=(make_shared<SignalSumm>()<<s_left<<is_right)>>diff_time[i];
 			if(i==0)diff>>diff_distr;
 		}
 	}

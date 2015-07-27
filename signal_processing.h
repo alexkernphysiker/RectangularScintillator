@@ -81,32 +81,20 @@ protected:
 	virtual void Start()final;
 	virtual void Finish()final;
 };
-class SumWithWeights:public Multi2SingleSignal{
+class SignalSumm:public Multi2SingleSignal{
 public:
-	SumWithWeights(Vec&&weights);
-	virtual ~SumWithWeights();
+	SignalSumm();
+	virtual ~SignalSumm();
 protected:
 	virtual void Process(Vec&& signals)final;
-private:
-	Vec m_weights;
 };
-//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-inline std::shared_ptr<SumWithWeights> SignalSum(Vec&&config){
-	return std::shared_ptr<SumWithWeights>(new SumWithWeights(static_right(config)));
-}
-class ProductWithPowers:public Multi2SingleSignal{
+class SignalProduct:public Multi2SingleSignal{
 public:
-	ProductWithPowers(Vec&&powers);
-	virtual ~ProductWithPowers();
+	SignalProduct();
+	virtual ~SignalProduct();
 protected:
 	virtual void Process(Vec&& signals)final;
-private:
-	Vec m_powers;
 };
-//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-inline std::shared_ptr<ProductWithPowers> SignalProduct(Vec&&config){
-	return std::shared_ptr<ProductWithPowers>(new ProductWithPowers(static_right(config)));
-}
 class SignalSortAndSelect:public Multi2SingleSignal{
 public:
 	SignalSortAndSelect(size_t number);
