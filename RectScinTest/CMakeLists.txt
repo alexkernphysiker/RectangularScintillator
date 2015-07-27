@@ -4,6 +4,6 @@ set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage -g -Wall -pthread -std=gnu++
 include_directories(..)
 set(gtestlibs gtest gtest_main)
 set(files_to_test ../rectscinexception.cpp ../geometry.cpp ../rectscin.cpp ../sensitive.cpp ../photon2signal.cpp ../signal_processing.cpp ../signal_statistics.cpp)
-set(tests geometry.cpp statistics.cpp processing.cpp)
+set(tests geometry.cpp statistics.cpp processing.cpp sensitive.cpp)
 add_executable(rectscintest ${tests} ${files_to_test} test_objects.cpp)
 target_link_libraries(rectscintest ${gtestlibs})
