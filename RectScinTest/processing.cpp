@@ -85,3 +85,29 @@ TEST(SignalSortAndSelect,BaseTest){
 			}
 		}
 }
+TEST(TimeGate,SimpleTest){
+	EXPECT_THROW(make_shared<TimeGate>(-1),RectScinException);
+	EXPECT_THROW(make_shared<TimeGate>(0),RectScinException);
+	for(double d=1;d<10;d+=1){
+		auto test=make_shared<TimeGate>(d);
+		auto out1=make_shared<Out>(),out2=make_shared<Out>();
+		SignalSender sender;
+		sender.Connect2MultiInput(test,2);
+		test>>out1>>out2;
+		for(double x1=-10;x1<=10;x1+=1)
+			for(double x2=-10;x2<=10;x2+=1){
+				sender.send({x1,x2});
+				if(x2<x1)
+					EXPECT_FALSE(isfinite(out1->value())||isfinite(out2->value()));
+				else{
+					if(x2>(x1+d))
+						EXPECT_FALSE(isfinite(out1->value())||isfinite(out2->value()));
+					else{
+						EXPECT_EQ(x1,out1->value());
+						EXPECT_EQ(x2,out2->value());
+					}
+				}
+			}
+	}
+	
+}
