@@ -59,6 +59,20 @@ TEST(SignalProduct,Base){
 		EXPECT_CLOSE_VALUES(out->value(),expected);
 	}
 }
+TEST(AmplitudeDiscriminator,SimpleTest){
+	for(double thr=-10;thr<=10;thr+=1){
+		auto test=make_shared<AmplitudeDiscriminator>(thr);
+		SignalSender sender;sender>>test;
+		auto out=make_shared<Out>();test>>out;
+		for(double signal=-11;signal>=11;signal+=1){
+			sender.send({signal});
+			if(signal<thr)
+				EXPECT_FALSE(isfinite(out->value()));
+			else
+				EXPECT_EQ(signal,out->value());
+		}
+	}
+}
 TEST(SignalSortAndSelect,BaseTest){
 	for(size_t n=1;n<=10;n++)
 		for(size_t orderstatistics=0;orderstatistics<n+5;orderstatistics++){

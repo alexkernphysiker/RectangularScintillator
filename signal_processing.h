@@ -4,54 +4,49 @@
 #define BYeAoSgG
 #include <random>
 #include "photon2signal.h"
-class Single2SingleSignal:public SignalAcceptor,public SignalProducent{};
+class Single2SingleSignal:public SignalAcceptor,public SignalProducent{
+	virtual void AcceptEventStart()final;
+	virtual void AcceptSignalValue(double signal)=0;
+	virtual void AcceptEventEnd()final;
+};
 class Signal:public Single2SingleSignal{
 public:
-	Signal(){}
-    virtual ~Signal(){}
-	virtual void AcceptEventStart()final{SendEventStart();}
-	virtual void AcceptSignalValue(double signal)final{SendSignalValue(signal);}
-	virtual void AcceptEventEnd()final{SendEventEnd();}
+	Signal();
+	virtual ~Signal();
+	virtual void AcceptSignalValue(double signal)final;
 };
 class SignalPolinomialDistort:public Single2SingleSignal{
 public:
 	SignalPolinomialDistort(Vec&&coefs);
 	virtual ~SignalPolinomialDistort();
-	virtual void AcceptEventStart()final;
 	virtual void AcceptSignalValue(double signal)final;
-	virtual void AcceptEventEnd()final;
 private:
 	Vec m_coefs;
 };
 //There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<SignalPolinomialDistort> PolynomDistort(Vec&&coefs){
-	SignalPolinomialDistort *res=new SignalPolinomialDistort(static_right(coefs));
-	return std::shared_ptr<SignalPolinomialDistort>(res);
+	return std::shared_ptr<SignalPolinomialDistort>(new SignalPolinomialDistort(static_right(coefs)));
 }
-inline std::shared_ptr<SignalPolinomialDistort> SignalAdd(double v){
-	return PolynomDistort({v,1});
-}
-inline std::shared_ptr<SignalPolinomialDistort> SignalMultiply(double c){
-	return PolynomDistort({0,c});
-}
-inline std::shared_ptr<SignalPolinomialDistort> SignalInvert(){
-	return SignalMultiply(-1);
-}
+inline std::shared_ptr<SignalPolinomialDistort> SignalAdd(double v){return PolynomDistort({v,1});}
+inline std::shared_ptr<SignalPolinomialDistort> SignalMultiply(double c){return PolynomDistort({0,c});}
+inline std::shared_ptr<SignalPolinomialDistort> SignalInvert(){return SignalMultiply(-1);}
 class SignalSmear:public Single2SingleSignal{
 public:
 	SignalSmear(double sigma);
 	virtual ~SignalSmear();
-	virtual void AcceptEventStart()final;
 	virtual void AcceptSignalValue(double signal)final;
-	virtual void AcceptEventEnd()final;
 private:
 	std::default_random_engine rnd;
 	std::normal_distribution<double> smear;
 };
-/*class AmplitudeDiscriminator:public Single2SingleSignal{
+class AmplitudeDiscriminator:public Single2SingleSignal{
 public:
-	AmplitudeDiscriminator(double);
-};*/
+	AmplitudeDiscriminator(double thr);
+	virtual ~AmplitudeDiscriminator();
+    virtual void AcceptSignalValue(double signal)final;
+private:
+	double threshold;
+};
 class AbstractMultiInput:public std::enable_shared_from_this<AbstractMultiInput>{
 	class Slot;
 	friend class Slot;

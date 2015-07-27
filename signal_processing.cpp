@@ -5,25 +5,37 @@
 #include "signal_processing.h"
 #include "rectscinexception.h"
 using namespace std;
+void Single2SingleSignal::AcceptEventStart(){SendEventStart();}
+void Single2SingleSignal::AcceptEventEnd(){SendEventEnd();}
+Signal::Signal(){}
+Signal::~Signal(){}
+void Signal::AcceptSignalValue(double signal){SendSignalValue(signal);}
+
 SignalPolinomialDistort::SignalPolinomialDistort(Vec&& coefs){
 	if(coefs.size()==0)
 		throw RectScinException("Distortion: empty coefficients");
 	m_coefs=coefs;
 }
 SignalPolinomialDistort::~SignalPolinomialDistort(){}
-void SignalPolinomialDistort::AcceptEventStart(){SendEventStart();}
 void SignalPolinomialDistort::AcceptSignalValue(double signal){
 	SendSignalValue(Polynom(signal,m_coefs,m_coefs.size()-1));
 }
-void SignalPolinomialDistort::AcceptEventEnd(){SendEventEnd();}
 
 SignalSmear::SignalSmear(double sigma):smear(0,sigma){}
 SignalSmear::~SignalSmear(){}
-void SignalSmear::AcceptEventStart(){SendEventStart();}
 void SignalSmear::AcceptSignalValue(double signal){
 	SendSignalValue(signal+smear(rnd));
 }
-void SignalSmear::AcceptEventEnd(){SendEventEnd();}
+AmplitudeDiscriminator::AmplitudeDiscriminator(double thr){
+	threshold=thr;
+}
+AmplitudeDiscriminator::~AmplitudeDiscriminator(){}
+void AmplitudeDiscriminator::AcceptSignalValue(double signal){
+	if(isfinite(signal))
+		if(signal>=threshold)
+			SendSignalValue(signal);
+}
+
 
 AbstractMultiInput::AbstractMultiInput(){m_state=0;}
 AbstractMultiInput::~AbstractMultiInput(){}
