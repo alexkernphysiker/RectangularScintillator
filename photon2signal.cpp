@@ -53,16 +53,25 @@ WeightedTimeSignal& WeightedTimeSignal::AddSummand(size_t order_statistics, doub
 void WeightedTimeSignal::AcceptEventStart(){
 	m_count=0;
 	m_sum=0;
+	m_state.clear();
+	for(auto element:m_config)m_state.push_back(false);
 	SendEventStart();
 }
 void WeightedTimeSignal::AcceptPhotonTime(double time){
-	for(auto p:m_config)
-		if(p.first==m_count)
-			m_sum+=p.second*time;
+	for(int i=0,n=m_config.size();i<n;i++){
+		auto p=&(m_config[i]);
+		if(p->first==m_count){
+			m_sum+=p->second*time;
+			m_state[i]=true;
+		}
+	}
 	m_count++;
 }
 void WeightedTimeSignal::AcceptEventEnd(){
-	SendSignalValue(m_sum);
+	bool todo=true;
+	for(bool b:m_state)todo&=b;
+	if(todo)
+		SendSignalValue(m_sum);
 	SendEventEnd();
 }
 AmplitudeSignal::AmplitudeSignal(){}

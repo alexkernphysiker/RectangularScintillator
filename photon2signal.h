@@ -45,6 +45,7 @@ public:
 	virtual void AcceptEventEnd()override;
 private:
 	std::vector<std::pair<size_t,double>> m_config;
+	std::vector<bool> m_state;
 	size_t m_count;
 	double m_sum;
 };
