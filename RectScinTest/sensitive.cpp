@@ -33,7 +33,7 @@ TEST(PhotoSensitiveSurface,Efficiency){
 			stat.AddValue(check->data().size());
 		}
 		if((eff==0)||(eff==1))
-			EXPECT_CLOSE_VALUES(eff*1000,stat.getAverage());
+			EXPECT_EQ(eff*1000,stat.getAverage());
 		EXPECT_CLOSE_VALUES_with_error(eff*1000,stat.getAverage(),stat.getSigma()*2);
 	}
 }
