@@ -19,9 +19,9 @@ TEST(PhotoSensitiveSurface,Efficiency){
 		auto check=make_shared<PhotonCheck>();
 		Phm>>check;
 		Sigma<double> stat;
-		for(size_t cnt=0;cnt<100;cnt++){
+		for(size_t cnt=0;cnt<1000;cnt++){
 			Phm->Start();
-			for(size_t i=0;i<100;i++){
+			for(size_t i=0;i<1000;i++){
 				Photon ph;
 				ph.coord={0,0};
 				ph.dir={0,0};
@@ -32,7 +32,9 @@ TEST(PhotoSensitiveSurface,Efficiency){
 			Phm->End();
 			stat.AddValue(check->data().size());
 		}
-		EXPECT_CLOSE_VALUES(eff*100,stat.getAverage());
+		if((eff==0)||(eff==1))
+			EXPECT_CLOSE_VALUES(eff*1000,stat.getAverage());
+		EXPECT_CLOSE_VALUES_with_error(eff*1000,stat.getAverage(),stat.getSigma()*2);
 	}
 }
 TEST(PhotoSensitiveSurface,Geometry){

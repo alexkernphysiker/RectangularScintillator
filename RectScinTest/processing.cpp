@@ -21,8 +21,8 @@ TEST(SignalSmear,Base){
 			SignalSender sender;auto out=make_shared<SignalStatictics>();
 			sender>>(test>>out);
 			for(size_t i=0;i<50000;i++)sender.send({x});
-			APROXIMATELY_CLOSE_VALUES(x,out->data().getAverage());
-			APROXIMATELY_CLOSE_VALUES(sig,out->data().getSigma());
+			EXPECT_CLOSE_VALUES_with_error(x,out->data().getAverage(),0.01);
+			EXPECT_CLOSE_VALUES_with_error(sig,out->data().getSigma(),0.01);
 		}
 }
 TEST(SignalSumm,Base){

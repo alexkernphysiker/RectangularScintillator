@@ -12,9 +12,8 @@
 #include <signal_processing.h>
 #include <signal_statistics.h>
 using namespace std;
-#define EXPECT_CLOSE_VALUES(A,B) EXPECT_TRUE(pow((A)-(B),2)<0.0000001);
 #define EXPECT_CLOSE_VALUES_with_error(A,B,e) EXPECT_TRUE(((A)>=((B)-(e)))&&((A)<=((B)+(e))));
-#define APROXIMATELY_CLOSE_VALUES(A,B) EXPECT_TRUE(pow((A)-(B),2)<0.001);
+#define EXPECT_CLOSE_VALUES(A,B) EXPECT_TRUE(((A)>=((B)-(0.000001)))&&((A)<=((B)+(0.000001))));
 class SignalSender{
 public:
 	SignalSender();
