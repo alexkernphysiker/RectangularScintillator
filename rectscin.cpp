@@ -102,6 +102,8 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N){
 	}
 	if(coord.size()!=NumberOfDimensions())
 		throw RectScinException("RectangularScintillator: wrong gamma interaction point vector size");
+	if(!IsInside(static_right(coord)))
+		throw RectScinException("RectangularScintillator: gamma interaction point is outside");
 	auto process=[this,&coord](size_t n){
 		for(size_t i=0;i<n;i++){
 			Photon ph=GeneratePhoton(static_right(coord));
