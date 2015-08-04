@@ -1,6 +1,7 @@
 // this file is distributed under
 // GPL v 3.0 license
 #include <iostream>
+#include <sstream>
 #include <rectscin.h>
 #include <sensitive.h>
 #include <photon2signal.h>
@@ -13,26 +14,33 @@ int main(int , char **){
 		TimeDistribution2(0.005,0.2,1.5),RandomValueGenerator<double>(300,500),
 		1.58,[](double l){return 0.08;}
 	);
-	auto Phm1=[](){return Photosensor({make_pair(-7,0),make_pair(-7,7)},1,[](double l){return 0.3;});};
-	auto Phm2=[](){return Photosensor({make_pair(0,7),make_pair(-7,7)},1,[](double l){return 0.3;});};
-	auto diff_stat=make_shared<SignalStatictics>();
+	auto Phm=[](){return Photosensor({make_pair(-7,7),make_pair(-7,7)},1,[](double l){return 0.3;});};
+	vector<shared_ptr<SignalStatictics>> left_time;
+	vector<shared_ptr<SignalStatictics>> diff_time;
+	auto left_count=make_shared<SignalStatictics>();
 	auto diff_distr=make_shared<SignalDistribution>(-0.4,0.4,20);
 	{
-		auto l1=TimeSignal({make_pair(0,1)}),
-			l2=TimeSignal({make_pair(0,1)}),
-			r1=TimeSignal({make_pair(0,1)}),
-			r2=TimeSignal({make_pair(0,1)});
-		scintillator.Surface(0,RectDimensions::Left)>>(Phm1()>>l1)>>(Phm2()>>l2);
-		scintillator.Surface(0,RectDimensions::Right)>>(Phm1()>>r1)>>(Phm2()>>r2);
-		auto left=make_shared<Signal>(),right=make_shared<Signal>();
-		(make_shared<SignalSortAndSelect>(1)<<l1<<l2)>>left;
-		(make_shared<SignalSortAndSelect>(1)<<r1<<r2)>>(SignalInvert()>>right);
-		(make_shared<SignalSumm>()<<left<<right)>>diff_stat>>diff_distr;
+		auto lphm=Phm(),rphm=Phm();
+		scintillator.Surface(0,RectDimensions::Left)>>(lphm>>(make_shared<AmplitudeSignal>()>>left_count));
+		scintillator.Surface(0,RectDimensions::Right)>>rphm;
+		for(size_t i=0;i<10;i++){
+			left_time.push_back(make_shared<SignalStatictics>());
+			diff_time.push_back(make_shared<SignalStatictics>());
+			auto left=make_shared<Signal>(),right=make_shared<Signal>();
+			lphm>>(TimeSignal({make_pair(i,1)})>>(left>>left_time[i]));
+			rphm>>(TimeSignal({make_pair(i,1)})>>(SignalInvert()>>right));
+			auto diff=(make_shared<SignalSumm>()<<left<<right)>>diff_time[i];
+			if(i==0)diff>>diff_distr;
+		}
 	}
 	printf("Simulation...\n");
 	for(unsigned int cnt=0;cnt<500;cnt++)scintillator.RegisterGamma({0,0,0},3000);
 	printf("done.\n");
-	printf("Time difference: %f+/-%f\n",diff_stat->data().getAverage(),diff_stat->data().getSigma());
+	for(unsigned int i=0,n=left_time.size();i<n;i++)
+		printf("Photoelectron Time(%i): %f+/-%f\n",i,left_time[i]->data().getAverage(),left_time[i]->data().getSigma());
+	for(unsigned int i=0,n=diff_time.size();i<n;i++)
+		printf("Time Difference(%i): %f+/-%f\n",i,diff_time[i]->data().getAverage(),diff_time[i]->data().getSigma());
+	printf("Photoelectron count: %f+/-%f\n",left_count->data().getAverage(),left_count->data().getSigma());
 	printf("=================================\n");
 	for(size_t i=0,n=diff_distr->data().size();i<n;i++)
 		printf("[%f > %f\n",diff_distr->data().getX(i),diff_distr->data().getY(i));
