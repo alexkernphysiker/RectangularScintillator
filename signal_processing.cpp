@@ -181,14 +181,17 @@ void AllSignalsPresent::Process(Vec&& signals){
 
 SignalSortAndSelect2::SignalSortAndSelect2(size_t number){m_number=number;}
 SignalSortAndSelect2::~SignalSortAndSelect2(){}
+inline bool operator>(Pair a,Pair b){return a.first>b.first;}
+inline bool operator<(Pair a,Pair b){return a.first<b.first;}
 void SignalSortAndSelect2::Process(Vec&& signals){
 	if(signals.size()<=m_number)
 		throw RectScinException("SignalSortAndSelect: selected order statistics is greater than input slots count");
-	Vec out;
-	for(double v:signals)if(isfinite(v))
-		InsertSorted(v,out,std_size(out),std_insert(out,double));
+	vector<Pair> out;
+	for(size_t i=0,n=signals.size();i<n;i++)if(isfinite(signals[i])){
+		InsertSorted(make_pair(signals[i],i),out,std_size(out),std_insert(out,Pair));
+	}
 	if(out.size()>m_number){
-		SendSignalValue(0,m_number);
-		SendSignalValue(1,out[m_number]);
+		SendSignalValue(0,out[m_number].second);
+		SendSignalValue(1,out[m_number].first);
 	}
 }
