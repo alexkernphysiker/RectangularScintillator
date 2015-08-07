@@ -53,4 +53,9 @@ void SignalsToFile::Process(Vec&& signals){
 	file<<"\n";
 }
 void SignalsToFile::Finish(){}
-
+void SignalsToFile::Redirect(string name){
+	file.close();
+	file.open(name.c_str());
+	if(!file.is_open())
+		throw RectScinException("cannot open output file");
+}

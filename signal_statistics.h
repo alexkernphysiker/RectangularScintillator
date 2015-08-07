@@ -50,6 +50,7 @@ class SignalsToFile:public AbstractMultiInput{
 public:
     SignalsToFile(std::string name);
     virtual ~SignalsToFile();
+	void Redirect(std::string name);
 protected:
 	virtual void Start()final;
 	virtual void Process(Vec&&signals)final;
