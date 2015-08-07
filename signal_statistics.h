@@ -2,6 +2,8 @@
 // GPL v 3.0 license
 #ifndef mxhvHUgn
 #define mxhvHUgn
+#include <fstream>
+#include <string>
 #include "math_h/sigma.h"
 #include "math_h/interpolate.h"
 #include "photon2signal.h"
@@ -43,5 +45,16 @@ protected:
 	virtual void Finish()final;
 private:
 	std::vector<Pair> m_data;
-}; 
+};
+class SignalsToFile:public AbstractMultiInput{
+public:
+    SignalsToFile(std::string name);
+    virtual ~SignalsToFile();
+protected:
+	virtual void Start()final;
+	virtual void Process(Vec&&signals)final;
+	virtual void Finish()final;
+private:
+	std::ofstream file;
+};
 #endif 

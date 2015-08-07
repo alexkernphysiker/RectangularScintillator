@@ -37,3 +37,20 @@ void Signal2DCorrelation::Process(Vec&& signals){
 	m_data.push_back(make_pair(signals[0],signals[1]));
 }
 void Signal2DCorrelation::Finish(){}
+
+SignalsToFile::SignalsToFile(string name){
+	file.open(name.c_str());
+	if(!file.is_open())
+		throw RectScinException("cannot open output file");
+}
+SignalsToFile::~SignalsToFile(){
+	file.close();
+}
+void SignalsToFile::Start(){}
+void SignalsToFile::Process(Vec&& signals){
+	for(double signal:signals)
+		file<<signal<<" ";
+	file<<"\n";
+}
+void SignalsToFile::Finish(){}
+
