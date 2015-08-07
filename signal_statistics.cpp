@@ -45,9 +45,14 @@ SignalsToFile::~SignalsToFile(){
 void SignalsToFile::Start(){}
 void SignalsToFile::Process(Vec&& signals){
 	if(file.is_open()){
+		bool atleastone=false;
 		for(double signal:signals)
-			file<<signal<<" ";
-		file<<"\n";
+			atleastone|=isfinite(signal);
+		if(atleastone){
+			for(double signal:signals)
+				file<<signal<<" ";
+			file<<"\n";
+		}
 	}
 }
 void SignalsToFile::Finish(){}
