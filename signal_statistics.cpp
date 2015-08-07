@@ -38,23 +38,21 @@ void Signal2DCorrelation::Process(Vec&& signals){
 }
 void Signal2DCorrelation::Finish(){}
 
-SignalsToFile::SignalsToFile(string name){
-	file.open(name.c_str());
-	if(!file.is_open())
-		throw RectScinException("cannot open output file");
-}
+SignalsToFile::SignalsToFile(){}
 SignalsToFile::~SignalsToFile(){
-	file.close();
+	if(file.is_open())file.close();
 }
 void SignalsToFile::Start(){}
 void SignalsToFile::Process(Vec&& signals){
-	for(double signal:signals)
-		file<<signal<<" ";
-	file<<"\n";
+	if(file.is_open()){
+		for(double signal:signals)
+			file<<signal<<" ";
+		file<<"\n";
+	}
 }
 void SignalsToFile::Finish(){}
 void SignalsToFile::Redirect(string name){
-	file.close();
+	if(file.is_open())file.close();
 	file.open(name.c_str());
 	if(!file.is_open())
 		throw RectScinException("cannot open output file");

@@ -48,7 +48,7 @@ private:
 };
 class SignalsToFile:public AbstractMultiInput{
 public:
-    SignalsToFile(std::string name);
+    SignalsToFile();
     virtual ~SignalsToFile();
 	void Redirect(std::string name);
 protected:
