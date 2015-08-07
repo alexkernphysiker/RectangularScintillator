@@ -166,3 +166,16 @@ void TimeGate::Process(Vec&& signals){
 		}
 	}
 }
+SignalSortAndSelect2::SignalSortAndSelect2(size_t number){m_number=number;}
+SignalSortAndSelect2::~SignalSortAndSelect2(){}
+void SignalSortAndSelect2::Process(Vec&& signals){
+	if(signals.size()<=m_number)
+		throw RectScinException("SignalSortAndSelect: selected order statistics is greater than input slots count");
+	Vec out;
+	for(double v:signals)if(isfinite(v))
+		InsertSorted(v,out,std_size(out),std_insert(out,double));
+	if(out.size()>m_number){
+		SendSignalValue(0,m_number);
+		SendSignalValue(1,out[m_number]);
+	}
+}

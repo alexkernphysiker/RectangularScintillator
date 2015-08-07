@@ -154,4 +154,14 @@ protected:
 private:
 	double m_width;
 };
+class SignalSortAndSelect2:public Multi2MultiSignal{
+public:
+	SignalSortAndSelect2(size_t number);
+	virtual ~SignalSortAndSelect2();
+protected:
+	virtual void Process(Vec&&signals)final;
+private:
+	size_t m_number;
+};
+
 #endif 
