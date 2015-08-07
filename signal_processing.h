@@ -154,6 +154,13 @@ protected:
 private:
 	double m_width;
 };
+class AllSignalsPresent:public Multi2MultiSignal{
+public:
+    AllSignalsPresent();
+    virtual ~AllSignalsPresent();
+protected:
+    virtual void Process(Vec&& signals);
+};
 class SignalSortAndSelect2:public Multi2MultiSignal{
 public:
 	SignalSortAndSelect2(size_t number);

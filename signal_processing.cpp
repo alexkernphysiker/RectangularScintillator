@@ -155,17 +155,26 @@ TimeGate::TimeGate(double width){
 TimeGate::~TimeGate(){}
 void TimeGate::Process(Vec&& signals){
 	if(signals.size()>0){
+		for(double signal:signals)
+			if(isfinite(signal));else return;
 		double start=signals[0];
-		if(isfinite(start)){
-			for(double v:signals){
-				if(v<start)return;
-				if((v-start)>m_width)return;
-			}
-			for(size_t i=0,n=signals.size();i<n;i++)
-				SendSignalValue(i,signals[i]);
+		for(double v:signals){
+			if(v<start)return;
+			if((v-start)>m_width)return;
 		}
+		for(size_t i=0;i<signals.size();i++)
+			SendSignalValue(i,signals[i]);
 	}
 }
+AllSignalsPresent::AllSignalsPresent(){}
+AllSignalsPresent::~AllSignalsPresent(){}
+void AllSignalsPresent::Process(Vec&& signals){
+	for(double signal:signals)
+		if(isfinite(signal));else return;
+	for(size_t i=0;i<signals.size();i++)
+		SendSignalValue(i,signals[i]);
+}
+
 SignalSortAndSelect2::SignalSortAndSelect2(size_t number){m_number=number;}
 SignalSortAndSelect2::~SignalSortAndSelect2(){}
 void SignalSortAndSelect2::Process(Vec&& signals){
