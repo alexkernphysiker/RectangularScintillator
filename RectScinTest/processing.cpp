@@ -151,3 +151,28 @@ TEST(TimeGate,SimpleTest){
 	}
 	
 }
+TEST(AllSignalsPresent,SimpleTest){
+	auto test=make_shared<AllSignalsPresent>();
+	auto out1=make_shared<Out>(),out2=make_shared<Out>();
+	SignalSender sender;
+	sender.Connect2MultiInput(test,2);
+	test>>out1>>out2;
+	for(double x1=-10;x1<=10;x1+=1)
+		for(double x2=-10;x2<=10;x2+=1){
+			sender.send({x1,x2});
+			EXPECT_TRUE(isfinite(out1->value()));
+			EXPECT_TRUE(isfinite(out2->value()));
+			EXPECT_EQ(x1,out1->value());
+			EXPECT_EQ(x2,out2->value());
+		}
+	for(double x1=-10;x1<=10;x1+=1){
+		sender.send({x1,INFINITY});
+		EXPECT_FALSE(isfinite(out1->value()));
+		EXPECT_FALSE(isfinite(out2->value()));
+	}
+	for(double x2=-10;x2<=10;x2+=1){
+		sender.send({INFINITY,x2});
+		EXPECT_FALSE(isfinite(out1->value()));
+		EXPECT_FALSE(isfinite(out2->value()));
+	}
+}
