@@ -9,7 +9,7 @@
 #include "geometry.h"
 const double speed_of_light=300;//mm/ns
 typedef std::function<double(double)> Func;
-typedef std::default_random_engine RANDOM;
+typedef std::mt19937 RANDOM;
 struct Photon{
 	Vec coord;
 	double time;
