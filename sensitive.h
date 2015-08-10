@@ -21,7 +21,7 @@ public:
 	PhotoSensitiveSurface&operator>>(std::shared_ptr<PhotonTimeAcceptor>);
 protected:
 	//Photons come in not sorted by time, but are sorted here
-	void PhotonTimeAccepted(double time);
+	virtual void PhotonTimeAccepted(double time,RANDOM&R);
 private:
 	double m_glue;
 	Func m_efficiency;//depends on lambda
@@ -32,5 +32,18 @@ private:
 //There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<PhotoSensitiveSurface> Photosensor(std::vector<Pair>&&dimensions,double glue,Func efficiency){
 	return std::shared_ptr<PhotoSensitiveSurface>(new PhotoSensitiveSurface(static_right(dimensions),glue,efficiency));
+}
+class PhotoSensitiveSurfaceWithTTS:public PhotoSensitiveSurface{
+public:
+    PhotoSensitiveSurfaceWithTTS(std::vector< Pair >&& dimensions, double glue, Func efficiency,double tts);
+    virtual ~PhotoSensitiveSurfaceWithTTS();
+protected:
+    virtual void PhotonTimeAccepted(double time, RANDOM& R)override;
+private:
+	std::normal_distribution<double> m_tts;;
+};
+//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
+inline std::shared_ptr<PhotoSensitiveSurface> Photosensor(std::vector<Pair>&&dimensions,double glue,Func efficiency,double tts){
+	return std::shared_ptr<PhotoSensitiveSurfaceWithTTS>(new PhotoSensitiveSurfaceWithTTS(static_right(dimensions),glue,efficiency,tts));
 }
 #endif

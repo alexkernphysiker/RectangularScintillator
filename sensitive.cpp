@@ -26,9 +26,9 @@ void PhotoSensitiveSurface::Start(){
 void PhotoSensitiveSurface::AbsorbPhoton(Photon& photon,RANDOM&R){
 	if(IsInside(static_right(photon.coord)))
 		if(P(R)<m_efficiency(photon.lambda))
-			PhotonTimeAccepted(photon.time);
+			PhotonTimeAccepted(photon.time,R);
 }
-void PhotoSensitiveSurface::PhotonTimeAccepted(double time){
+void PhotoSensitiveSurface::PhotonTimeAccepted(double time,RANDOM&R){
 	InsertSorted(time,times,field_size(times),field_insert(times,double));
 }
 void PhotoSensitiveSurface::End(){
@@ -38,3 +38,13 @@ void PhotoSensitiveSurface::End(){
 	for(auto sig:m_signal)
 		sig->AcceptEventEnd();
 }
+
+PhotoSensitiveSurfaceWithTTS::PhotoSensitiveSurfaceWithTTS(vector<Pair>&& dimensions, double glue, Func efficiency, double tts):
+	PhotoSensitiveSurface(static_right(dimensions),glue,efficiency),m_tts(5*tts,tts){}
+PhotoSensitiveSurfaceWithTTS::~PhotoSensitiveSurfaceWithTTS(){}
+void PhotoSensitiveSurfaceWithTTS::PhotonTimeAccepted(double time, RANDOM& R){
+	double offs=m_tts(R);if(offs<0)offs=0;
+    PhotoSensitiveSurface::PhotonTimeAccepted(time+offs, R);
+}
+
+
