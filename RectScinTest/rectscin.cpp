@@ -17,8 +17,8 @@ TEST(RectangularScintillator,geometry){
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1,[](double){return 0.0;}
 	);
-	EXPECT_NO_THROW(rsc.RegisterGamma({0.5,0.5,0.5},10));
-	EXPECT_THROW(rsc.RegisterGamma({2,2,2},1),RectScinException);
+	EXPECT_NO_THROW(rsc.RegisterGamma({0.5,0.5,0.5},10,engine));
+	EXPECT_THROW(rsc.RegisterGamma({2,2,2},1,engine),RectScinException);
 }
 TEST(RectangularScintillator, Isotropic){
 	RectangularScintillator rsc(
@@ -39,7 +39,7 @@ TEST(RectangularScintillator, Isotropic){
 			times.push_back(time);
 		}
 	for(size_t cnt=0;cnt<200;cnt++)
-		rsc.RegisterGamma({0.5,0.5,0.5},3000);
+		rsc.RegisterGamma({0.5,0.5,0.5},3000,engine);
 	auto check_close=[](vector<shared_ptr<SignalStatictics>>&vec){
 		double val=INFINITY,err;
 		for(shared_ptr<SignalStatictics>one:vec)

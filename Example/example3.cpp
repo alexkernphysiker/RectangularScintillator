@@ -30,7 +30,9 @@ int main(int , char **){
 		(make_shared<SignalSumm>()<<left<<right)>>diff_stat>>diff_distr;
 	}
 	printf("Simulation...\n");
-	for(unsigned int cnt=0;cnt<500;cnt++)scintillator.RegisterGamma({0,0,0},3000);
+	RANDOM engine;
+	for(unsigned int cnt=0;cnt<500;cnt++)
+		scintillator.RegisterGamma({0,0,0},3000,engine);
 	printf("done.\n");
 	printf("Time difference: %f+/-%f\n",diff_stat->data().getAverage(),diff_stat->data().getSigma());
 	printf("=================================\n");

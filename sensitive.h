@@ -14,7 +14,7 @@ public:
 	PhotoSensitiveSurface(std::vector<Pair>&&dimensions,double glue,Func efficiency);
 	virtual ~PhotoSensitiveSurface();
 	virtual void Start()final;
-	virtual void AbsorbPhoton(Photon&photon)final;
+	virtual void AbsorbPhoton(Photon&photon,RANDOM&R)final;
 	virtual void End()final;
     virtual RectDimensions&& Dimensions()final;
     virtual double GlueEfficiency()override;
@@ -22,7 +22,6 @@ public:
 protected:
 	//Photons come in not sorted by time, but are sorted here
 	void PhotonTimeAccepted(double time);
-	std::default_random_engine rand;
 private:
 	double m_glue;
 	Func m_efficiency;//depends on lambda

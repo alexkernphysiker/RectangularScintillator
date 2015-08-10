@@ -9,6 +9,7 @@
 #include "geometry.h"
 const double speed_of_light=300;//mm/ns
 typedef std::function<double(double)> Func;
+typedef std::default_random_engine RANDOM;
 struct Photon{
 	Vec coord;
 	double time;
@@ -29,7 +30,7 @@ class IPhotonAbsorber{
 public:
 	virtual ~IPhotonAbsorber(){}
 	virtual void Start()=0;
-	virtual void AbsorbPhoton(Photon&photon)=0;
+	virtual void AbsorbPhoton(Photon&photon,RANDOM&R)=0;
 	virtual void End()=0;
 	virtual RectDimensions&&Dimensions()=0;
 	virtual double GlueEfficiency()=0;
@@ -43,7 +44,7 @@ public:
 	ScintillatorSurface&operator>>(std::shared_ptr<IPhotonAbsorber>sensor);
 protected:
 	void Start();
-	void RegisterPhoton(Photon&photon);//changes photon
+	void RegisterPhoton(Photon&photon,RANDOM&R);//changes photon
 	void End();
 	double ReflectionProbabilityCoeff(Vec&&point);
 private:
@@ -61,11 +62,11 @@ public:
 	);
 	virtual ~RectangularScintillator();
 	ScintillatorSurface&Surface(size_t dimension,Side side);
-	void RegisterGamma(Vec&&coord,size_t N);
+	void RegisterGamma(Vec&&coord,size_t N,RANDOM&R);
 	LinearInterpolation<double>&&ReflectionProbabilityFunction();
 protected:
-	Photon GeneratePhoton(Vec&&coord);
-	IntersectionSearchResults TraceGeometry(Photon &ph);//Changes Photon
+	Photon GeneratePhoton(Vec&&coord,RANDOM&R);
+	IntersectionSearchResults TraceGeometry(Photon &ph,RANDOM&R);//Changes Photon
 private:
 	RandomValueGenerator<double> m_time_distribution;
 	RandomValueGenerator<double> m_lambda_distribution;
@@ -74,7 +75,6 @@ private:
 	LinearInterpolation<double> reflection_probability;
 	typedef std::pair<std::shared_ptr<ScintillatorSurface>,std::shared_ptr<ScintillatorSurface>> SurfPair;
 	std::vector<SurfPair> m_edges;
-	std::default_random_engine rand;
 	std::mutex trace_mutex;
 };
 const double max_emission_time=20;

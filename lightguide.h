@@ -8,7 +8,7 @@ public:
 	FlatLightguide&operator>>(std::shared_ptr<IPhotonAbsorber>sensor);
 	//IPhotoSensitive
     virtual void Start()override;
-    virtual void AbsorbPhoton(Photon& photon)override;
+	virtual void AbsorbPhoton(Photon& photon,RANDOM&R)override;
     virtual void End()override;
     virtual double GlueEfficiency()override;
     virtual RectDimensions&& Dimensions()override;

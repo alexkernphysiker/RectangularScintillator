@@ -21,11 +21,6 @@ void SignalPolinomialDistort::AcceptSignalValue(double signal){
 	SendSignalValue(Polynom(signal,m_coefs,m_coefs.size()-1));
 }
 
-SignalSmear::SignalSmear(double sigma):smear(0,sigma){}
-SignalSmear::~SignalSmear(){}
-void SignalSmear::AcceptSignalValue(double signal){
-	SendSignalValue(signal+smear(rnd));
-}
 AmplitudeDiscriminator::AmplitudeDiscriminator(double thr){
 	threshold=thr;
 }

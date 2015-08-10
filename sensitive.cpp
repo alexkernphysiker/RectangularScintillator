@@ -23,11 +23,10 @@ void PhotoSensitiveSurface::Start(){
 		sig->AcceptEventStart();
 	times.clear();
 }
-void PhotoSensitiveSurface::AbsorbPhoton(Photon& photon){
-	if(IsInside(static_right(photon.coord))){
-		if(P(rand)<m_efficiency(photon.lambda))
+void PhotoSensitiveSurface::AbsorbPhoton(Photon& photon,RANDOM&R){
+	if(IsInside(static_right(photon.coord)))
+		if(P(R)<m_efficiency(photon.lambda))
 			PhotonTimeAccepted(photon.time);
-	}
 }
 void PhotoSensitiveSurface::PhotonTimeAccepted(double time){
 	InsertSorted(time,times,field_size(times),field_insert(times,double));

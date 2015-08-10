@@ -1,6 +1,7 @@
 // this file is distributed under 
 // GPL v 3.0 license
 #include "test_objects.h"
+RANDOM engine;
 SignalSender::SignalSender(){}
 SignalSender::~SignalSender(){}
 SignalSender& SignalSender::operator>>(shared_ptr<SignalAcceptor> slot){

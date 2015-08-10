@@ -27,7 +27,7 @@ TEST(PhotoSensitiveSurface,Efficiency){
 				ph.dir={0,0};
 				ph.lambda=1;
 				ph.time=double(rand()%1000)/100;
-				Phm->AbsorbPhoton(ph);
+				Phm->AbsorbPhoton(ph,engine);
 			}
 			Phm->End();
 			stat.AddValue(check->data().size());
@@ -50,7 +50,7 @@ TEST(PhotoSensitiveSurface,Geometry){
 				ph.dir={0,0};
 				ph.lambda=1;
 				ph.time=double(rand()%1000)/100;
-				Phm->AbsorbPhoton(ph);
+				Phm->AbsorbPhoton(ph,engine);
 			}
 			Phm->End();
 			EXPECT_EQ(0,check->data().size());
@@ -61,7 +61,7 @@ TEST(PhotoSensitiveSurface,Geometry){
 				ph.dir={0,0};
 				ph.lambda=1;
 				ph.time=double(rand()%1000)/100;
-				Phm->AbsorbPhoton(ph);
+				Phm->AbsorbPhoton(ph,engine);
 			}
 			Phm->End();
 			EXPECT_EQ(n,check->data().size());
@@ -80,7 +80,7 @@ TEST(PhotoSensitiveSurface,PhotonSortingTest){
 				ph.dir={0,0};
 				ph.lambda=1;
 				ph.time=double(rand()%1000)/100;
-				Phm->AbsorbPhoton(ph);
+				Phm->AbsorbPhoton(ph,engine);
 			}
 			Phm->End();
 			for(size_t i=1;i<n;i++)

@@ -14,11 +14,11 @@ void ScintillatorSurface::Start(){
 	for(auto handler:m_handlers)
 		handler->Start();
 }
-void ScintillatorSurface::RegisterPhoton(Photon& photon){
+void ScintillatorSurface::RegisterPhoton(Photon& photon,RANDOM&R){
 	if(IsInside(static_right(photon.coord))){
 		Lock lock(surface_mutex);
 		for(auto handler:m_handlers)
-			handler->AbsorbPhoton(photon);
+			handler->AbsorbPhoton(photon,R);
 	}
 }
 void ScintillatorSurface::End(){
@@ -95,7 +95,7 @@ ScintillatorSurface& RectangularScintillator::Surface(size_t dimension, Side sid
 	if(side==Right)return *(m_edges[dimension].second);
 	throw RectScinException("RectangularScintillator: surface index out of range");
 }
-void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N){
+void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N,RANDOM&R){
 	for(SurfPair&sp:m_edges){
 		sp.first->Start();
 		sp.second->Start();
@@ -104,12 +104,12 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N){
 		throw RectScinException("RectangularScintillator: wrong gamma interaction point vector size");
 	if(!IsInside(static_right(coord)))
 		throw RectScinException("RectangularScintillator: gamma interaction point is outside");
-	auto process=[this,&coord](size_t n){
+	auto process=[this,&coord,&R](size_t n){
 		for(size_t i=0;i<n;i++){
-			Photon ph=GeneratePhoton(static_right(coord));
-			IntersectionSearchResults trace=TraceGeometry(ph);
+			Photon ph=GeneratePhoton(static_right(coord),R);
+			IntersectionSearchResults trace=TraceGeometry(ph,R);
 			if(trace.surface!=None){
-				Surface(trace.surfaceDimentionIndex,trace.surface).RegisterPhoton(ph);
+				Surface(trace.surfaceDimentionIndex,trace.surface).RegisterPhoton(ph,R);
 			}
 		}
 	};
@@ -127,27 +127,27 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N){
 		sp.second->End();
 	}
 }
-Photon RectangularScintillator::GeneratePhoton(Vec&&coord){
+Photon RectangularScintillator::GeneratePhoton(Vec&&coord,RANDOM&R){
 	Photon res;
 	res.coord=coord;
 	if(NumberOfDimensions()==1){
 		uniform_int_distribution<int> get_bin(0,1);
-		if(get_bin(rand)==0)
+		if(get_bin(R)==0)
 			res.dir.push_back(-1);
 		else
 			res.dir.push_back(1);
 	}
 	if(NumberOfDimensions()==2){
 		uniform_real_distribution<double> get_angle(0,2.0*3.1415926);
-		double phi=get_angle(rand);
+		double phi=get_angle(R);
 		res.dir.push_back(sin(phi));
 		res.dir.push_back(cos(phi));
 	}
 	if(NumberOfDimensions()==3){
 		uniform_real_distribution<double> get_angle(0,2.0*3.1415926);
 		uniform_real_distribution<double> get_secondangle(-1,1);
-		double phi=get_angle(rand);
-		double cos_theta=get_secondangle(rand);
+		double phi=get_angle(R);
+		double cos_theta=get_secondangle(R);
 		double sin_theta=sqrt(1-cos_theta*cos_theta);
 		res.dir.push_back(cos_theta);
 		res.dir.push_back(sin_theta*sin(phi));
@@ -157,12 +157,12 @@ Photon RectangularScintillator::GeneratePhoton(Vec&&coord){
 		throw RectScinException("RectangularScintillator: isotropic 4D random directions not implemented");
 	{
 		Lock lock(trace_mutex);
-		res.time=m_time_distribution();
-		res.lambda=m_lambda_distribution();
+		res.time=m_time_distribution(R);
+		res.lambda=m_lambda_distribution(R);
 	}
 	return res;
 }
-RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry(Photon&ph){
+RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry(Photon&ph,RANDOM&R){
 	uniform_real_distribution<double> prob_(0,1);
 	double absorption;{
 		Lock lock(trace_mutex);
@@ -195,7 +195,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 			ph.coord[dimension]=Dimension(dimension).second;
 		//check for other effects
 		double absorption_prob=1.0-exp(-path_length*absorption);
-		if(prob_(rand)<absorption_prob){
+		if(prob_(R)<absorption_prob){
 			//Photon is absopbed
 			res.surface=None;
 			return res;
@@ -206,7 +206,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 			point.erase(point.begin()+dimension);
 			refl_prob*=Surface(dimension,res.surface).ReflectionProbabilityCoeff(static_right(point));
 		}
-		if(prob_(rand)<refl_prob){
+		if(prob_(R)<refl_prob){
 			//Photon is reflected back
 			ph.dir[dimension]=-ph.dir[dimension];
 		}else{

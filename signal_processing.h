@@ -30,15 +30,6 @@ inline std::shared_ptr<SignalPolinomialDistort> PolynomDistort(Vec&&coefs){
 inline std::shared_ptr<SignalPolinomialDistort> SignalAdd(double v){return PolynomDistort({v,1});}
 inline std::shared_ptr<SignalPolinomialDistort> SignalMultiply(double c){return PolynomDistort({0,c});}
 inline std::shared_ptr<SignalPolinomialDistort> SignalInvert(){return SignalMultiply(-1);}
-class SignalSmear:public Single2SingleSignal{
-public:
-	SignalSmear(double sigma);
-	virtual ~SignalSmear();
-	virtual void AcceptSignalValue(double signal)final;
-private:
-	std::default_random_engine rnd;
-	std::normal_distribution<double> smear;
-};
 class AmplitudeDiscriminator:public Single2SingleSignal{
 public:
 	AmplitudeDiscriminator(double thr);

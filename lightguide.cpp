@@ -20,13 +20,13 @@ RectDimensions&& FlatLightguide::Dimensions(){
 void FlatLightguide::Start(){
 	ScintillatorSurface::Start();
 }
-void FlatLightguide::AbsorbPhoton(Photon& photon){
+void FlatLightguide::AbsorbPhoton(Photon& photon,RANDOM&R){
 	photon.dir=static_right(photon.dir)*(1.0/refr);
 	double horiz=Abs(static_right(photon.dir));
 	double vert=sqrt(1.0-horiz*horiz);
 	Vec offset=static_right(photon.dir)*(horiz*height/vert);
 	photon.coord=static_right(photon.coord)+static_right(offset);
-	ScintillatorSurface::RegisterPhoton(photon);
+	ScintillatorSurface::RegisterPhoton(photon,R);
 }
 void FlatLightguide::End(){
 	ScintillatorSurface::End();

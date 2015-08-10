@@ -34,7 +34,9 @@ int main(int , char **){
 		}
 	}
 	printf("Simulation...\n");
-	for(unsigned int cnt=0;cnt<500;cnt++)scintillator.RegisterGamma({0,0,0},3000);
+	RANDOM engine;
+	for(unsigned int cnt=0;cnt<500;cnt++)
+		scintillator.RegisterGamma({0,0,0},3000,engine);
 	printf("done.\n");
 	for(unsigned int i=0,n=left_time.size();i<n;i++)
 		printf("Photoelectron Time(%i): %f+/-%f\n",i,left_time[i]->data().getAverage(),left_time[i]->data().getSigma());

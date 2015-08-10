@@ -14,17 +14,6 @@ TEST(SignalPolinomialDistort,Base){
 		EXPECT_CLOSE_VALUES(out->value(),expected);
 	}
 }
-TEST(SignalSmear,Base){
-	for(double x=-10;x<=10;x+=0.5)
-		for(double sig=0;sig<5;sig+=0.5){
-			auto test=make_shared<SignalSmear>(sig);
-			SignalSender sender;auto out=make_shared<SignalStatictics>();
-			sender>>(test>>out);
-			for(size_t i=0;i<50000;i++)sender.send({x});
-			EXPECT_CLOSE_VALUES_with_error(x,out->data().getAverage(),0.01);
-			EXPECT_CLOSE_VALUES_with_error(sig,out->data().getSigma(),0.01);
-		}
-}
 TEST(SignalSumm,Base){
 	for(size_t n=1;n<=10;n++){
 		Vec signals;
