@@ -98,12 +98,12 @@ TEST(SignalSortAndSelect,BaseTest){
 		}
 }
 TEST(SignalSortAndSelect2,BaseTest){
-	for(size_t n=1;n<=10;n++)
+	for(size_t n=1;n<=50;n++)
 		for(size_t orderstatistics=0;orderstatistics<n+5;orderstatistics++){
 			auto test=make_shared<SignalSortAndSelect2>(orderstatistics);
 			SignalSender sender;auto out1=make_shared<Out>(),out2=make_shared<Out>();
 			test>>out1>>out2; sender.Connect2MultiInput(test,n);
-			for(size_t k=0;k<50;k++){
+			for(size_t k=0;k<100;k++){
 				Vec signals;
 				for(double v=0;v<n;v++)
 					if(signals.size()==0)
@@ -118,6 +118,11 @@ TEST(SignalSortAndSelect2,BaseTest){
 						EXPECT_TRUE(out1->value()>=0);
 						EXPECT_TRUE(out1->value()<signals.size());
 						EXPECT_EQ(orderstatistics,out2->value());
+						for(size_t i=0,n=signals.size();i<n;i++)
+							if(orderstatistics==signals[i])
+								EXPECT_EQ(i,out1->value());
+							else
+								EXPECT_NE(i,out1->value());
 					}else{
 						EXPECT_FALSE(isfinite(out1->value()));
 						EXPECT_FALSE(isfinite(out2->value()));
