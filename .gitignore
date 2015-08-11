@@ -9,7 +9,7 @@ CMakeFiles
 *.txt
 script.gnuplot
 *.png
-Example*
+example
 *.cbp
 # Compiled Object files
 *.slo
