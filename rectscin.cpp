@@ -146,8 +146,11 @@ Photon RectangularScintillator::GeneratePhoton(Vec&&coord,RANDOM&R){
 	if(NumberOfDimensions()==3){
 		uniform_real_distribution<double> get_angle(0,2.0*3.1415926);
 		uniform_real_distribution<double> get_secondangle(-1,1);
-		double phi=get_angle(R);
-		double cos_theta=get_secondangle(R);
+		double cos_theta,phi;
+		{Lock lock(trace_mutex);
+			phi=get_angle(R);
+			cos_theta=get_secondangle(R);
+		}
 		double sin_theta=sqrt(1-cos_theta*cos_theta);
 		res.dir.push_back(cos_theta);
 		res.dir.push_back(sin_theta*sin(phi));
@@ -195,10 +198,12 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 			ph.coord[dimension]=Dimension(dimension).second;
 		//check for other effects
 		double absorption_prob=1.0-exp(-path_length*absorption);
-		if(prob_(R)<absorption_prob){
-			//Photon is absopbed
-			res.surface=None;
-			return res;
+		{Lock lock(trace_mutex);
+			if(prob_(R)<absorption_prob){
+				//Photon is absopbed
+				res.surface=None;
+				return res;
+			}
 		}
 		double refl_prob=refl_p[dimension];
 		{//check if photon reached a glued area of surface
@@ -206,15 +211,17 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 			point.erase(point.begin()+dimension);
 			refl_prob*=Surface(dimension,res.surface).ReflectionProbabilityCoeff(static_right(point));
 		}
-		if(prob_(R)<refl_prob){
-			//Photon is reflected back
-			ph.dir[dimension]=-ph.dir[dimension];
-		}else{
-			//Photon leaves the scintillator
-			ph.dir=static_right(ph.dir)*m_refraction;
-			ph.coord.erase(ph.coord.begin()+dimension);
-			ph.dir.erase(ph.dir.begin()+dimension);
-			return res;
+		{Lock lock(trace_mutex);
+			if(prob_(R)<refl_prob){
+				//Photon is reflected back
+				ph.dir[dimension]=-ph.dir[dimension];
+			}else{
+				//Photon leaves the scintillator
+				ph.dir=static_right(ph.dir)*m_refraction;
+				ph.coord.erase(ph.coord.begin()+dimension);
+				ph.dir.erase(ph.dir.begin()+dimension);
+				return res;
+			}
 		}
 	}
 }
