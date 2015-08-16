@@ -13,6 +13,13 @@ public:
 	virtual void AcceptPhotonTime(double time)override{times.push_back(time);}
 	virtual void AcceptEventEnd()override{}
 };
+TEST(PhotoSensitiveSurface,Glue_eff){
+	for(double glue=0;glue<=1;glue+=0.1){
+		auto Phm=Photosensor({make_pair(-1,1),make_pair(-1,1)},glue,[](double){return 1;});
+		EXPECT_EQ(glue,Phm->GlueEfficiency());
+		EXPECT_EQ(2,Phm->Dimensions().NumberOfDimensions());
+	}
+}
 TEST(PhotoSensitiveSurface,Efficiency){
 	for(double eff=0;eff<=1;eff+=1){
 		auto Phm=Photosensor({make_pair(-1,1),make_pair(-1,1)},1,[eff](double){return eff;});
