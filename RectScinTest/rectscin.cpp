@@ -44,7 +44,7 @@ TEST(RectangularScintillator, Isotropic){
 		double val=INFINITY,err;
 		for(shared_ptr<SignalStatictics>one:vec)
 			if(isfinite(val)){
-				EXPECT_TRUE(pow(val-one->data().getAverage(),2)<=pow(err+one->data().getSigma(),2));
+				EXPECT_CLOSE_VALUES_with_error(one->data().getAverage(),val,err+one->data().getSigma());
 			}else{
 				val=one->data().getAverage();
 				err=one->data().getSigma();
