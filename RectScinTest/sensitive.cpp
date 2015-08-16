@@ -94,3 +94,23 @@ TEST(PhotoSensitiveSurface,PhotonSortingTest){
 				EXPECT_TRUE(check->data()[i-1]<=check->data()[i]);
 		}
 }
+TEST(PhotoSensitiveSurfaceWithTTS,tts){
+	for(double tts=0;tts<0.6;tts+=0.1){
+		auto Phm=Photosensor({make_pair(-1,1),make_pair(-1,1)},1,[](double){return 1;},tts);
+		auto check=make_shared<PhotonCheck>();
+		Phm>>check;
+		Sigma<double> sig;
+		for(size_t cnt=0;cnt<1000;cnt++){
+			Phm->Start();
+			Photon ph;
+			ph.coord={0,0};
+			ph.dir={0,0};
+			ph.lambda=1;
+			ph.time=1;
+			Phm->AbsorbPhoton(ph,engine);
+			Phm->End();
+			sig.AddValue(check->data()[0]);
+		}
+		EXPECT_CLOSE_VALUES_with_error(tts,sig.getSigma(),tts*0.2);
+	}
+}
