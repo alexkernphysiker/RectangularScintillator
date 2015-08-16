@@ -53,3 +53,30 @@ TEST(RectangularScintillator, Isotropic){
 	check_close(counts);
 	check_close(times);
 }
+TEST(RectangularScintillator,Glue){
+	RectangularScintillator rsc(
+		{make_pair(0,1),make_pair(0,1),make_pair(0,1)},
+		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
+		1.6,[](double){return 0.0;}
+	);
+	auto ideal=make_shared<SignalStatictics>(),
+		middle=make_shared<SignalStatictics>(),
+		worst=make_shared<SignalStatictics>();
+	rsc.Surface(0,RectDimensions::Left)>>(
+		Photosensor({make_pair(0,1),make_pair(0,1)},1.0,[](double){return 1.0;})
+		>>(make_shared<AmplitudeSignal>()>>ideal)
+	);
+	rsc.Surface(1,RectDimensions::Left)>>(
+		Photosensor({make_pair(0,1),make_pair(0,1)},0.5,[](double){return 1.0;})
+		>>(make_shared<AmplitudeSignal>()>>middle)
+	);
+	rsc.Surface(2,RectDimensions::Left)>>(
+		Photosensor({make_pair(0,1),make_pair(0,1)},0.0,[](double){return 1.0;})
+		>>(make_shared<AmplitudeSignal>()>>worst)
+	);
+	for(size_t cnt=0;cnt<200;cnt++)
+		rsc.RegisterGamma({0.5,0.5,0.5},3000,engine);
+	EXPECT_TRUE(worst->data().getAverage()<ideal->data().getAverage());
+	EXPECT_TRUE(worst->data().getAverage()<middle->data().getAverage());
+	EXPECT_TRUE(middle->data().getAverage()<ideal->data().getAverage());
+}
