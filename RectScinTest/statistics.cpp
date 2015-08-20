@@ -8,7 +8,7 @@ TEST(SignalStatictics,Base){
 	EXPECT_EQ(0,test->data().count());
 	for(size_t i=0;i<10;i++){
 		for(size_t j=1;j<=i;j++){
-			s.send({rand()});
+			s.send({Rand(engine)});
 			EXPECT_EQ(j,test->data().count());
 		}
 		test->Clear();
@@ -17,7 +17,7 @@ TEST(SignalStatictics,Base){
 }
 TEST(SignalDistribution,Base){
 	for(size_t a=0;a<7;a++){
-		double f=(rand()%50)-25,t=f+(rand()%50)+1;
+		double f=Rand(engine),t=f+Rand(engine)+10;
 		int cnt=rand()%100+2;
 		SignalDistribution test(f,t,cnt);
 		EXPECT_CLOSE_VALUES(f+test.data().BinWidth()/2.0,test.data().min());
@@ -32,7 +32,7 @@ TEST(Signal2DCorrelation,Base){
 	EXPECT_EQ(0,test->Points().size());
 	for(size_t i=0;i<10;i++){
 		for(size_t j=1;j<=i;j++){
-			double a=rand(),b=rand();
+			double a=Rand(engine),b=Rand(engine);
 			sig.send({a,b});
 			EXPECT_EQ(j,test->Points().size());
 			EXPECT_EQ(a,test->Points()[j-1].first);
@@ -46,9 +46,9 @@ TEST(Signal2DCorrelation,Throw){
 	auto test=make_shared<Signal2DCorrelation>();
 	SignalSender sig;
 	sig.Connect2MultiInput(test,1);
-	EXPECT_THROW(sig.send({rand()}),RectScinException);
+	EXPECT_THROW(sig.send({Rand(engine)}),RectScinException);
 	sig.Connect2MultiInput(test,1);
-	EXPECT_NO_THROW(sig.send({rand(),rand()}));
+	EXPECT_NO_THROW(sig.send({Rand(engine),Rand(engine)}));
 	sig.Connect2MultiInput(test,1);
-	EXPECT_THROW(sig.send({rand(),rand(),rand()}),RectScinException);
+	EXPECT_THROW(sig.send({Rand(engine),Rand(engine),Rand(engine)}),RectScinException);
 }

@@ -2,6 +2,8 @@
 // GPL v 3.0 license
 #include "test_objects.h"
 RANDOM engine;
+uniform_real_distribution<double> Rand(-10,10);
+uniform_int_distribution<int> iRand(-10,10);
 SignalSender::SignalSender(){}
 SignalSender::~SignalSender(){}
 SignalSender& SignalSender::operator>>(shared_ptr<SignalAcceptor> slot){

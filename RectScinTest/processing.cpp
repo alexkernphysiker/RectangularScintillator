@@ -4,11 +4,11 @@
 #include "test_objects.h"
 TEST(SignalPolinomialDistort,Base){
 	for(size_t p=0;p<10;p++){
-		Vec C;for(size_t i=0;i<=p;i++)C.push_back(rand());
+		Vec C;for(size_t i=0;i<=p;i++)C.push_back(Rand(engine));
 		auto test=PolynomDistort(static_right(C));
 		SignalSender sender;auto out=make_shared<Out>();
 		sender>>(test>>out);
-		double signal=rand();
+		double signal=Rand(engine);
 		sender.send({signal});
 		double expected=Polynom(signal,C,p);
 		EXPECT_CLOSE_VALUES(out->value(),expected);
@@ -19,7 +19,7 @@ TEST(SignalSumm,Base){
 		Vec signals;
 		double expected=0;
 		for(size_t i=0;i<n;i++){
-			double s=rand();
+			double s=Rand(engine);
 			signals.push_back(s);
 			expected+=s;
 		}
@@ -36,7 +36,7 @@ TEST(SignalProduct,Base){
 		Vec signals;
 		double expected=1;
 		for(size_t i=0;i<n;i++){
-			double s=rand()%50;
+			double s=Rand(engine);
 			signals.push_back(s);
 			expected*=s;
 		}
@@ -68,13 +68,14 @@ TEST(SignalSortAndSelect,BaseTest){
 			auto test=make_shared<SignalSortAndSelect>(orderstatistics);
 			SignalSender sender;auto out=make_shared<Out>();
 			test>>out; sender.Connect2MultiInput(test,n);
+			uniform_int_distribution<int> indexr(0,100000);
 			for(size_t k=0;k<50;k++){
 				Vec signals;
 				for(double v=0;v<n;v++)
 					if(signals.size()==0)
 						signals.push_back(v);
 					else
-						signals.insert(signals.begin()+rand()%(signals.size()+1),v);
+						signals.insert(signals.begin()+indexr(engine)%(signals.size()+1),v);
 					if(orderstatistics<n)
 						EXPECT_NO_THROW(sender.send(static_right(signals)));
 					else
@@ -94,11 +95,12 @@ TEST(SignalSortAndSelect2,BaseTest){
 			test>>out1>>out2; sender.Connect2MultiInput(test,n);
 			for(size_t k=0;k<100;k++){
 				Vec signals;
+				uniform_int_distribution<int> indexr(0,100000);
 				for(double v=0;v<n;v++)
 					if(signals.size()==0)
 						signals.push_back(v);
 					else
-						signals.insert(signals.begin()+rand()%(signals.size()+1),v);
+						signals.insert(signals.begin()+indexr(engine)%(signals.size()+1),v);
 					if(orderstatistics<n)
 						EXPECT_NO_THROW(sender.send(static_right(signals)));
 					else

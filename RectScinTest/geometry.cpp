@@ -2,19 +2,16 @@
 // GPL v 3.0 license
 #include <random>
 #include "test_objects.h"
-default_random_engine rnd;
-uniform_real_distribution<double> uniform(-10,10);
-uniform_int_distribution<int> iuniform(-10,10);
 TEST(VecOpr,throwtest){
 	Vec A;
 	Vec B;
 	for(int i=0;i<10;i++){
-		A.push_back(uniform(rnd));
+		A.push_back(Rand(engine));
 		EXPECT_THROW(static_right(A)+static_right(B),RectScinException);
 		EXPECT_THROW(static_right(A)-static_right(B),RectScinException);
 		EXPECT_THROW(SqDistance(static_right(A),static_right(B)),RectScinException);
 		EXPECT_THROW(Distance(static_right(A),static_right(B)),RectScinException);
-		B.push_back(uniform(rnd));
+		B.push_back(Rand(engine));
 		EXPECT_NO_THROW(static_right(A)+static_right(B));
 		EXPECT_NO_THROW(static_right(A)-static_right(B));
 		EXPECT_NO_THROW(SqDistance(static_right(A),static_right(B)));
@@ -22,10 +19,10 @@ TEST(VecOpr,throwtest){
 	}
 	A.clear();B.clear();
 	for(int i=0;i<10;i++){
-		B.push_back(uniform(rnd));
+		B.push_back(Rand(engine));
 		EXPECT_THROW(static_right(A)+static_right(B),RectScinException);
 		EXPECT_THROW(static_right(A)-static_right(B),RectScinException);
-		A.push_back(uniform(rnd));
+		A.push_back(Rand(engine));
 		EXPECT_NO_THROW(static_right(A)+static_right(B));
 		EXPECT_NO_THROW(static_right(A)-static_right(B));
 	}
@@ -35,7 +32,7 @@ TEST(VecOpr,Mul){
 	for(int i=0;i<10;i++){
 		for(double c=-10;c<=10;c+=1)
 			EXPECT_TRUE((static_right(A)*c).size()==A.size());
-		A.push_back(uniform(rnd));
+		A.push_back(Rand(engine));
 	}
 	A.clear();
 	for(int i=0;i<10;i++){
@@ -47,7 +44,7 @@ TEST(VecOpr,Mul){
 				EXPECT_TRUE(B[i]==(A[i]*c));
 			}
 		}
-		A.push_back(iuniform(rnd));
+		A.push_back(iRand(engine));
 	}
 }
 TEST(VecOpr,Add_Sub){
@@ -58,8 +55,8 @@ TEST(VecOpr,Add_Sub){
 			EXPECT_TRUE((static_right(A)+static_right(B)).size()==A.size());
 			EXPECT_TRUE((static_right(A)-static_right(B)).size()==A.size());
 		}
-		A.push_back(uniform(rnd));
-		B.push_back(uniform(rnd));
+		A.push_back(Rand(engine));
+		B.push_back(Rand(engine));
 	}
 	A.clear();
 	B.clear();
@@ -72,8 +69,8 @@ TEST(VecOpr,Add_Sub){
 				EXPECT_TRUE(C[i]==(A[i]+B[i]));
 			}
 		}
-		A.push_back(uniform(rnd));
-		B.push_back(uniform(rnd));
+		A.push_back(Rand(engine));
+		B.push_back(Rand(engine));
 	}
 }
 TEST(VecOpr,Distances){
@@ -85,13 +82,13 @@ TEST(VecOpr,Distances){
 			EXPECT_TRUE(d>=0);
 			EXPECT_TRUE(sqrt(SqDistance(static_right(A),static_right(B)))==d);
 		}
-		A.push_back(uniform(rnd));
-		B.push_back(uniform(rnd));
+		A.push_back(Rand(engine));
+		B.push_back(Rand(engine));
 	}
 	A.clear();
 	B.clear();
-	A.push_back(uniform(rnd));
-	B.push_back(uniform(rnd));
+	A.push_back(Rand(engine));
+	B.push_back(Rand(engine));
 	EXPECT_TRUE(SqDistance(static_right(A),static_right(B))==pow(A[0]-B[0],2));
 }
 
@@ -121,7 +118,7 @@ TEST(RectDimensions,IsInside){
 			bool test=true;
 			Vec v;
 			for(size_t j=0,n=A.NumberOfDimensions();j<n;j++){
-				double x=uniform(rnd);
+				double x=Rand(engine);
 				test&=(x>=A.Dimension(j).first)&&(x<=A.Dimension(j).second);
 				EXPECT_THROW(A.IsInside(static_right(v)),RectScinException);
 				v.push_back(x);
@@ -161,9 +158,9 @@ TEST(RectDimensions,WhereIntersects){
 		for(size_t i=1;i<10;i++){
 			A<<make_pair(-10.0+i,double(i));
 			uniform_real_distribution<double> coord(-10.0+i,i);
-			O.push_back(coord(rnd));
+			O.push_back(coord(engine));
 			Outside.push_back(100);
-			D.push_back(uniform(rnd));
+			D.push_back(Rand(engine));
 			EXPECT_TRUE(A.WhereIntersects(static_right(Outside),static_right(D)).surface==RectDimensions::None);
 			if(Abs(static_right(D))>0){
 				RectDimensions::IntersectionSearchResults res=A.WhereIntersects(static_right(O),static_right(D));
