@@ -147,11 +147,12 @@ private:
 };
 class AllSignalsPresent:public Multi2MultiSignal{
 public:
-    AllSignalsPresent();
-    virtual ~AllSignalsPresent();
+    AllSignalsPresent(){}
+    virtual ~AllSignalsPresent(){}
 protected:
     virtual void Process(Vec&& signals);
 };
+
 class SignalSortAndSelect2:public Multi2MultiSignal{
 public:
 	SignalSortAndSelect2(size_t number);
@@ -161,5 +162,18 @@ protected:
 private:
 	size_t m_number;
 };
-
+class SignalSort:public Multi2MultiSignal{
+public:
+	SignalSort(){}
+	virtual ~SignalSort(){}
+protected:
+	virtual void Process(Vec&& signals)final;
+};
+class SignalSort2:public Multi2MultiSignal{
+public:
+	SignalSort2(){}
+	virtual ~SignalSort2(){}
+protected:
+	virtual void Process(Vec&& signals)final;
+};
 #endif 

@@ -164,8 +164,6 @@ void TimeGate::Process(Vec&& signals){
 		}
 	}
 }
-AllSignalsPresent::AllSignalsPresent(){}
-AllSignalsPresent::~AllSignalsPresent(){}
 void AllSignalsPresent::Process(Vec&& signals){
 	bool condition=true;
 	for(double signal:signals)
@@ -188,5 +186,35 @@ void SignalSortAndSelect2::Process(Vec&& signals){
 	if(out.size()>m_number){
 		SendSignalValue(0,out[m_number].second);
 		SendSignalValue(1,out[m_number].first);
+	}
+}
+
+void SignalSort::Process(Vec&& signals){
+	Vec out;
+	for(double signal:signals)
+		if(isfinite(signal))
+			InsertSorted(signal,out,std_size(out),std_insert(out,double));
+		size_t i=0;
+	for(double signal:out){
+		if(i<GetOutSlotsCount())
+			SendSignalValue(i,signal);
+		i++;
+	}
+}
+void SignalSort2::Process(Vec&& signals){
+	vector<Pair> out;
+	size_t i=0;
+	for(double signal:signals){
+		if(isfinite(signal))
+			InsertSorted(make_pair(signal,i),out,std_size(out),std_insert(out,Pair));
+		i++;
+	}
+	i=0;
+	for(Pair&signal:out){
+		if(i<(GetOutSlotsCount()/2)){
+			SendSignalValue(i*2,signal.second);
+			SendSignalValue(i*2+1,signal.first);
+		}
+		i++;
 	}
 }

@@ -172,3 +172,66 @@ TEST(AllSignalsPresent,SimpleTest){
 		EXPECT_FALSE(isfinite(out2->value()));
 	}
 }
+TEST(SignalSort,Base){
+	for(size_t n=1;n<=20;n++)for(size_t outcnt=1;outcnt<=20;outcnt++){
+			auto test=make_shared<SignalSort>();
+			SignalSender sender;sender.Connect2MultiInput(test,n);
+			vector<shared_ptr<Out>> out;
+			for(size_t i=0;i<outcnt;i++){
+				auto o=make_shared<Out>();
+				test>>o;
+				out.push_back(o);
+			}
+			uniform_int_distribution<int> indexr(0,100);
+			for(size_t k=0;k<50;k++){
+				Vec signals;double c=3;
+				for(double v=0;v<n;v++){
+					double V=v*c;
+					if(signals.size()==0)signals.push_back(V);
+					else signals.insert(signals.begin()+indexr(engine)%(signals.size()+1),V);
+				}
+				sender.send(static_right(signals));
+				size_t f=outcnt;if(f>n){f=n;}
+				for(size_t i=0;i<f;i++)
+					EXPECT_EQ(i*c,out[i]->value());
+				for(size_t i=f;i<outcnt;i++)
+					EXPECT_FALSE(isfinite(out[i]->value()));
+			}
+	}
+}
+TEST(SignalSort2,Base){
+	const size_t N=5;
+	for(size_t n=1;n<=N;n++)for(size_t outcnt=1;outcnt<=N;outcnt++){
+		auto test=make_shared<SignalSort2>();
+		SignalSender sender;sender.Connect2MultiInput(test,n);
+		vector<shared_ptr<Out>> out;
+		for(size_t i=0;i<outcnt*2;i++){
+			auto o=make_shared<Out>();
+			test>>o;
+			out.push_back(o);
+		}
+		size_t f=outcnt;if(f>n){f=n;}
+		uniform_int_distribution<int> indexr(0,1000);
+		for(size_t k=0;k<50;k++){
+			Vec signals;double c=3;
+			for(double v=0;v<n;v++){
+				double V=v*c;
+				if(signals.size()==0)signals.push_back(V);
+				else signals.insert(signals.begin()+indexr(engine)%(signals.size()+1),V);
+			}
+			sender.send(static_right(signals));
+			for(size_t i=0;i<f;i++){
+				double val=out[i*2+1]->value(),ind=out[i*2]->value();
+				EXPECT_EQ(c*i,val);
+				size_t trueindex=n;
+				for(size_t i=0;i<n;i++)if(signals[i]==val)trueindex=i;
+				EXPECT_TRUE(trueindex<n);
+				EXPECT_EQ(trueindex,ind);
+			}
+			for(size_t i=f;i<outcnt;i++){
+				EXPECT_FALSE(isfinite(out[i*2]->value()));
+				EXPECT_FALSE(isfinite(out[i*2+1]->value()));
+			}
+		}
+	}
+}
