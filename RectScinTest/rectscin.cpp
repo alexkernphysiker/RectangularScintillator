@@ -53,6 +53,41 @@ TEST(RectangularScintillator, Isotropic){
 	check_close(counts);
 	check_close(times);
 }
+TEST(RectangularScintillator, Isotropic2){
+	RectangularScintillator rsc(
+		{make_pair(-1,1),make_pair(-1,1),make_pair(-1,1)},
+		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
+		1.6,[](double){return 0.0;}
+	);
+	vector<shared_ptr<SignalStatictics>> counts,times;
+	for(size_t dimension=0;dimension<3;dimension++)
+		for(auto side=RectDimensions::Left;side<=RectDimensions::Right;inc(side))
+			for(double x1=-1;x1<1;x1+=1)
+				for(double x2=-1;x2<1;x2+=1){
+					auto ampl=make_shared<SignalStatictics>(),time=make_shared<SignalStatictics>();
+					rsc.Surface(dimension,side)>>(
+						Photosensor({make_pair(x1,x1+1),make_pair(x2,x2+1)},1.0,[](double){return 1.0;})
+							>>(make_shared<AmplitudeSignal>()>>ampl)
+							>>(TimeSignal({make_pair(0,1)})>>time)
+					);
+					counts.push_back(ampl);
+					times.push_back(time);
+				}
+	for(size_t cnt=0;cnt<400;cnt++)
+		rsc.RegisterGamma({0,0,0},3000,engine);
+	auto check_close=[](vector<shared_ptr<SignalStatictics>>&vec){
+		double val=INFINITY,err;
+	for(shared_ptr<SignalStatictics>one:vec)
+		if(isfinite(val)){
+			EXPECT_CLOSE_VALUES_with_error(one->data().getAverage(),val,err+one->data().getSigma());
+		}else{
+			val=one->data().getAverage();
+			err=one->data().getSigma();
+		}
+	};
+	check_close(counts);
+	check_close(times);
+}
 TEST(RectangularScintillator,Glue){
 	RectangularScintillator rsc(
 		{make_pair(0,1),make_pair(0,1),make_pair(0,1)},
