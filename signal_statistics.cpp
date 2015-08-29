@@ -27,7 +27,7 @@ SignalsToFile::~SignalsToFile(){
 	if(file.is_open())file.close();
 }
 void SignalsToFile::Start(){}
-void SignalsToFile::Process(Vec&& signals){
+void SignalsToFile::Process(const Vec&signals){
 	if(file.is_open()){
 		bool atleastone=false;
 		for(double signal:signals)

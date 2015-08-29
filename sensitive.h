@@ -13,11 +13,11 @@ class PhotoSensitiveSurface:public IPhotonAbsorber,protected RectDimensions{
 public:
 	PhotoSensitiveSurface(std::vector<Pair>&&dimensions,double glue,Func efficiency);
 	virtual ~PhotoSensitiveSurface();
-	virtual void Start()final;
-	virtual void AbsorbPhoton(Photon&photon,RANDOM&R)final;
-	virtual void End()final;
-	virtual RectDimensions&&Dimensions()final;
-	virtual double GlueEfficiency()const final;
+	virtual void Start()override;
+	virtual void AbsorbPhoton(Photon&photon,RANDOM&R)override;
+	virtual void End()override;
+	virtual RectDimensions&&Dimensions()override;
+	virtual double GlueEfficiency()const override;
 	PhotoSensitiveSurface&operator>>(std::shared_ptr<PhotonTimeAcceptor>);
 protected:
 	//Photons come in not sorted by time, but are sorted here

@@ -10,8 +10,8 @@ public:
     virtual void Start()override;
 	virtual void AbsorbPhoton(Photon& photon,RANDOM&R)override;
     virtual void End()override;
-    virtual double GlueEfficiency()const final;
-    virtual RectDimensions&&Dimensions()final;
+    virtual double GlueEfficiency()const override;
+    virtual RectDimensions&&Dimensions()override;
 private:
 	
 	double g_eff,refr,height;

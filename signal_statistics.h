@@ -39,9 +39,9 @@ public:
     virtual ~SignalsToFile();
 	void Redirect(std::string name);
 protected:
-	virtual void Start()final;
-	virtual void Process(Vec&&signals)final;
-	virtual void Finish()final;
+	virtual void Start()override;
+	virtual void Process(const Vec&signals)override;
+	virtual void Finish()override;
 private:
 	std::ofstream file;
 };

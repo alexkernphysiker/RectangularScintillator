@@ -5,21 +5,21 @@
 #include <random>
 #include "photon2signal.h"
 class Single2SingleSignal:public SignalAcceptor,public SignalProducent{
-	virtual void AcceptEventStart()final;
+	virtual void AcceptEventStart()override;
 	virtual void AcceptSignalValue(double signal)=0;
-	virtual void AcceptEventEnd()final;
+	virtual void AcceptEventEnd()override;
 };
 class Signal:public Single2SingleSignal{
 public:
 	Signal();
 	virtual ~Signal();
-	virtual void AcceptSignalValue(double signal)final;
+	virtual void AcceptSignalValue(double signal)override;
 };
 class SignalPolinomialDistort:public Single2SingleSignal{
 public:
 	SignalPolinomialDistort(Vec&&coefs);
 	virtual ~SignalPolinomialDistort();
-	virtual void AcceptSignalValue(double signal)final;
+	virtual void AcceptSignalValue(double signal)override;
 private:
 	Vec m_coefs;
 };
@@ -34,7 +34,7 @@ class AmplitudeDiscriminator:public Single2SingleSignal{
 public:
 	AmplitudeDiscriminator(double thr);
 	virtual ~AmplitudeDiscriminator();
-    virtual void AcceptSignalValue(double signal)final;
+    virtual void AcceptSignalValue(double signal)override;
 private:
 	double threshold;
 };
@@ -56,9 +56,9 @@ private:
 	public:
 		Slot(std::shared_ptr<AbstractMultiInput>father);
         virtual ~Slot();
-		virtual void AcceptEventStart()final;
-		virtual void AcceptSignalValue(double signal)final;
-		virtual void AcceptEventEnd()final;
+		virtual void AcceptEventStart()override;
+		virtual void AcceptSignalValue(double signal)override;
+		virtual void AcceptEventEnd()override;
 		double Value();
 	private:
 		std::shared_ptr<AbstractMultiInput>master;
@@ -72,29 +72,29 @@ public:
     Multi2SingleSignal();
 	virtual ~Multi2SingleSignal();
 protected:
-	virtual void Start()final;
-	virtual void Finish()final;
+	virtual void Start()override;
+	virtual void Finish()override;
 };
 class SignalSumm:public Multi2SingleSignal{
 public:
 	SignalSumm();
 	virtual ~SignalSumm();
 protected:
-	virtual void Process(const Vec&signals)final;
+	virtual void Process(const Vec&signals)override;
 };
 class SignalProduct:public Multi2SingleSignal{
 public:
 	SignalProduct();
 	virtual ~SignalProduct();
 protected:
-	virtual void Process(const Vec&signals)final;
+	virtual void Process(const Vec&signals)override;
 };
 class SignalSortAndSelect:public Multi2SingleSignal{
 public:
 	SignalSortAndSelect(size_t number);
 	virtual ~SignalSortAndSelect();
 protected:
-	virtual void Process(const Vec&signals)final;
+	virtual void Process(const Vec&signals)override;
 private:
 	size_t m_number;
 };
@@ -123,18 +123,18 @@ class Single2MultiSignal:public SignalAcceptor,public AbstractMultiOutput{
 public:
     Single2MultiSignal();
     virtual ~Single2MultiSignal();
-	virtual void AcceptEventStart()final;
+	virtual void AcceptEventStart()override;
 	virtual void AcceptSignalValue(double time)=0;
-	virtual void AcceptEventEnd()final;
+	virtual void AcceptEventEnd()override;
 };
 class Multi2MultiSignal:public AbstractMultiInput,public AbstractMultiOutput{
 public:
     Multi2MultiSignal();
     virtual ~Multi2MultiSignal();
 protected:
-	virtual void Start()final;
+	virtual void Start()override;
 	virtual void Process(const Vec&signals)=0;
-	virtual void Finish()final;
+	virtual void Finish()override;
 };
 class TimeGate:public Multi2MultiSignal{
 public:
@@ -158,7 +158,7 @@ public:
 	SignalSortAndSelect2(size_t number);
 	virtual ~SignalSortAndSelect2();
 protected:
-	virtual void Process(const Vec&signals)final;
+	virtual void Process(const Vec&signals)override;
 private:
 	size_t m_number;
 };
@@ -167,13 +167,13 @@ public:
 	SignalSort(){}
 	virtual ~SignalSort(){}
 protected:
-	virtual void Process(const Vec&signals)final;
+	virtual void Process(const Vec&signals)override;
 };
 class SignalSort2:public Multi2MultiSignal{
 public:
 	SignalSort2(){}
 	virtual ~SignalSort2(){}
 protected:
-	virtual void Process(const Vec&signals)final;
+	virtual void Process(const Vec&signals)override;
 };
 #endif 
