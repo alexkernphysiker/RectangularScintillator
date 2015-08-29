@@ -54,7 +54,7 @@ void AbstractMultiInput::OneChannelEnd(){
 		Vec values;
 		for(auto slot:m_input_slots)
 			values.push_back(slot->Value());
-		Process(static_right(values));
+		Process(values);
 		Finish();
 	}
 	if(m_state<0)
@@ -74,7 +74,7 @@ void Multi2SingleSignal::Finish(){SendEventEnd();}
 
 SignalSumm::SignalSumm(){}
 SignalSumm::~SignalSumm(){}
-void SignalSumm::Process(Vec&& signals){
+void SignalSumm::Process(const Vec&signals){
 	double val=0;
 	for(double signal:signals)
 		if(isfinite(signal))
@@ -84,7 +84,7 @@ void SignalSumm::Process(Vec&& signals){
 }
 SignalProduct::SignalProduct(){}
 SignalProduct::~SignalProduct(){}
-void SignalProduct::Process(Vec&& signals){
+void SignalProduct::Process(const Vec&signals){
 	double val=1;
 	for(double signal:signals)
 		if(isfinite(signal))
@@ -94,7 +94,7 @@ void SignalProduct::Process(Vec&& signals){
 }
 SignalSortAndSelect::SignalSortAndSelect(size_t number){m_number=number;}
 SignalSortAndSelect::~SignalSortAndSelect(){}
-void SignalSortAndSelect::Process(Vec&& signals){
+void SignalSortAndSelect::Process(const Vec&signals){
 	if(signals.size()<=m_number)
 		throw RectScinException("SignalSortAndSelect: selected order statistics is greater than input slots count");
 	Vec out;
@@ -148,7 +148,7 @@ TimeGate::TimeGate(double width){
 	m_width=width;
 }
 TimeGate::~TimeGate(){}
-void TimeGate::Process(Vec&& signals){
+void TimeGate::Process(const Vec&signals){
 	if(signals.size()>0){
 		bool condition=true;
 		for(double signal:signals)
@@ -164,7 +164,7 @@ void TimeGate::Process(Vec&& signals){
 		}
 	}
 }
-void AllSignalsPresent::Process(Vec&& signals){
+void AllSignalsPresent::Process(const Vec&signals){
 	bool condition=true;
 	for(double signal:signals)
 		condition&=isfinite(signal);
@@ -176,7 +176,7 @@ SignalSortAndSelect2::SignalSortAndSelect2(size_t number){m_number=number;}
 SignalSortAndSelect2::~SignalSortAndSelect2(){}
 inline bool operator>(Pair a,Pair b){return a.first>b.first;}
 inline bool operator<(Pair a,Pair b){return a.first<b.first;}
-void SignalSortAndSelect2::Process(Vec&& signals){
+void SignalSortAndSelect2::Process(const Vec&signals){
 	if(signals.size()<=m_number)
 		throw RectScinException("SignalSortAndSelect: selected order statistics is greater than input slots count");
 	vector<Pair> out;
@@ -189,7 +189,7 @@ void SignalSortAndSelect2::Process(Vec&& signals){
 	}
 }
 
-void SignalSort::Process(Vec&& signals){
+void SignalSort::Process(const Vec&signals){
 	Vec out;
 	for(double signal:signals)
 		if(isfinite(signal))
@@ -201,7 +201,7 @@ void SignalSort::Process(Vec&& signals){
 		i++;
 	}
 }
-void SignalSort2::Process(Vec&& signals){
+void SignalSort2::Process(const Vec&signals){
 	vector<Pair> out;
 	size_t i=0;
 	for(double signal:signals){

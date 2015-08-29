@@ -5,7 +5,7 @@
 TEST(SignalPolinomialDistort,Base){
 	for(size_t p=0;p<10;p++){
 		Vec C;for(size_t i=0;i<=p;i++)C.push_back(Rand(engine));
-		auto test=PolynomDistort(static_right(C));
+		auto test=PolynomDistort(static_cast<decltype(C)>(C));
 		SignalSender sender;auto out=make_shared<Out>();
 		sender>>(test>>out);
 		double signal=Rand(engine);
@@ -27,7 +27,7 @@ TEST(SignalSumm,Base){
 		SignalSender sender;auto out=make_shared<Out>();
 		test>>out;
 		sender.Connect2MultiInput(test,n);
-		sender.send(static_right(signals));
+		sender.send(static_cast<Vec&&>(signals));
 		EXPECT_CLOSE_VALUES(out->value(),expected);
 	}
 }
@@ -44,7 +44,7 @@ TEST(SignalProduct,Base){
 		SignalSender sender;auto out=make_shared<Out>();
 		test>>out;
 		sender.Connect2MultiInput(test,n);
-		sender.send(static_right(signals));
+		sender.send(static_cast<Vec&&>(signals));
 		EXPECT_CLOSE_VALUES(out->value(),expected);
 	}
 }
@@ -77,9 +77,9 @@ TEST(SignalSortAndSelect,BaseTest){
 					else
 						signals.insert(signals.begin()+indexr(engine)%(signals.size()+1),v);
 					if(orderstatistics<n)
-						EXPECT_NO_THROW(sender.send(static_right(signals)));
+						EXPECT_NO_THROW(sender.send(static_cast<Vec&&>(signals)));
 					else
-						EXPECT_THROW(sender.send(static_right(signals)),RectScinException);
+						EXPECT_THROW(sender.send(static_cast<Vec&&>(signals)),RectScinException);
 					if(orderstatistics<n)
 						EXPECT_EQ(orderstatistics,out->value());
 					else
@@ -102,9 +102,9 @@ TEST(SignalSortAndSelect2,BaseTest){
 					else
 						signals.insert(signals.begin()+indexr(engine)%(signals.size()+1),v);
 					if(orderstatistics<n)
-						EXPECT_NO_THROW(sender.send(static_right(signals)));
+						EXPECT_NO_THROW(sender.send(static_cast<Vec&&>(signals)));
 					else
-						EXPECT_THROW(sender.send(static_right(signals)),RectScinException);
+						EXPECT_THROW(sender.send(static_cast<Vec&&>(signals)),RectScinException);
 					if(orderstatistics<n){
 						EXPECT_TRUE(out1->value()>=0);
 						EXPECT_TRUE(out1->value()<signals.size());
@@ -190,7 +190,7 @@ TEST(SignalSort,Base){
 					if(signals.size()==0)signals.push_back(V);
 					else signals.insert(signals.begin()+indexr(engine)%(signals.size()+1),V);
 				}
-				sender.send(static_right(signals));
+				sender.send(static_cast<Vec&&>(signals));
 				size_t f=outcnt;if(f>n){f=n;}
 				for(size_t i=0;i<f;i++)
 					EXPECT_EQ(i*c,out[i]->value());
@@ -219,7 +219,7 @@ TEST(SignalSort2,Base){
 				if(signals.size()==0)signals.push_back(V);
 				else signals.insert(signals.begin()+indexr(engine)%(signals.size()+1),V);
 			}
-			sender.send(static_right(signals));
+			sender.send(static_cast<Vec&&>(signals));
 			for(size_t i=0;i<f;i++){
 				double val=out[i*2+1]->value(),ind=out[i*2]->value();
 				EXPECT_EQ(c*i,val);

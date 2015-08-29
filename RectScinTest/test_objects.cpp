@@ -46,5 +46,3 @@ void Out::AcceptEventEnd(){
 	if(!event)throw RectScinException("Signal producent unusual behaviour");
 	event=false;
 }
-
-

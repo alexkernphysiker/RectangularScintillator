@@ -15,7 +15,7 @@ public:
 	virtual void AcceptEventStart()override;
 	virtual void AcceptSignalValue(double time)override;
 	virtual void AcceptEventEnd()override;
-	Sigma<double>&&data();
+	Sigma<double>&data()const;
 	void Clear();
 private:
 	Sigma<double> m_data;
@@ -27,24 +27,11 @@ public:
 	virtual void AcceptEventStart()override;
 	virtual void AcceptSignalValue(double time)override;
 	virtual void AcceptEventEnd()override;
-	Distribution<double>&&data();
+	Distribution<double>&data()const;
 	void Clear();
 private:
 	double f,t;int cnt;
 	Distribution<double> m_data;
-};
-class Signal2DCorrelation:public AbstractMultiInput{
-public:
-	Signal2DCorrelation();
-	virtual ~Signal2DCorrelation();
-	void Clear();
-	std::vector<Pair>&&Points();
-protected:
-	virtual void Start()final;
-	virtual void Process(Vec&&signals)final;
-	virtual void Finish()final;
-private:
-	std::vector<Pair> m_data;
 };
 class SignalsToFile:public AbstractMultiInput{
 public:

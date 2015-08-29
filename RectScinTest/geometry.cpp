@@ -7,38 +7,38 @@ TEST(VecOpr,throwtest){
 	Vec B;
 	for(int i=0;i<10;i++){
 		A.push_back(Rand(engine));
-		EXPECT_THROW(static_right(A)+static_right(B),RectScinException);
-		EXPECT_THROW(static_right(A)-static_right(B),RectScinException);
-		EXPECT_THROW(SqDistance(static_right(A),static_right(B)),RectScinException);
-		EXPECT_THROW(Distance(static_right(A),static_right(B)),RectScinException);
+		EXPECT_THROW((A)+(B),RectScinException);
+		EXPECT_THROW((A)-(B),RectScinException);
+		EXPECT_THROW(SqDistance((A),(B)),RectScinException);
+		EXPECT_THROW(Distance((A),(B)),RectScinException);
 		B.push_back(Rand(engine));
-		EXPECT_NO_THROW(static_right(A)+static_right(B));
-		EXPECT_NO_THROW(static_right(A)-static_right(B));
-		EXPECT_NO_THROW(SqDistance(static_right(A),static_right(B)));
-		EXPECT_NO_THROW(Distance(static_right(A),static_right(B)));
+		EXPECT_NO_THROW((A)+(B));
+		EXPECT_NO_THROW((A)-(B));
+		EXPECT_NO_THROW(SqDistance((A),(B)));
+		EXPECT_NO_THROW(Distance((A),(B)));
 	}
 	A.clear();B.clear();
 	for(int i=0;i<10;i++){
 		B.push_back(Rand(engine));
-		EXPECT_THROW(static_right(A)+static_right(B),RectScinException);
-		EXPECT_THROW(static_right(A)-static_right(B),RectScinException);
+		EXPECT_THROW((A)+(B),RectScinException);
+		EXPECT_THROW((A)-(B),RectScinException);
 		A.push_back(Rand(engine));
-		EXPECT_NO_THROW(static_right(A)+static_right(B));
-		EXPECT_NO_THROW(static_right(A)-static_right(B));
+		EXPECT_NO_THROW((A)+(B));
+		EXPECT_NO_THROW((A)-(B));
 	}
 }
 TEST(VecOpr,Mul){
 	Vec A;
 	for(int i=0;i<10;i++){
 		for(double c=-10;c<=10;c+=1)
-			EXPECT_TRUE((static_right(A)*c).size()==A.size());
+			EXPECT_TRUE(((A)*c).size()==A.size());
 		A.push_back(Rand(engine));
 	}
 	A.clear();
 	for(int i=0;i<10;i++){
 		for(double c=-9.5;c<10;c+=1){//escape zero
-			Vec B=static_right(A)*c;
-			Vec C=static_right(B)*(1.0/c);
+			Vec B=(A)*c;
+			Vec C=(B)*(1.0/c);
 			for(size_t i=0,n=A.size();i<n;i++){
 				EXPECT_TRUE(C[i]==A[i]);
 				EXPECT_TRUE(B[i]==(A[i]*c));
@@ -52,8 +52,8 @@ TEST(VecOpr,Add_Sub){
 	Vec B;
 	for(int i=0;i<10;i++){
 		for(double c=-10;c<=10;c+=1){
-			EXPECT_TRUE((static_right(A)+static_right(B)).size()==A.size());
-			EXPECT_TRUE((static_right(A)-static_right(B)).size()==A.size());
+			EXPECT_TRUE(((A)+(B)).size()==A.size());
+			EXPECT_TRUE(((A)-(B)).size()==A.size());
 		}
 		A.push_back(Rand(engine));
 		B.push_back(Rand(engine));
@@ -62,8 +62,8 @@ TEST(VecOpr,Add_Sub){
 	B.clear();
 	for(int i=0;i<10;i++){
 		for(double c=-10;c<=10;c+=1){
-			Vec C=static_right(A)+static_right(B);
-			Vec D=static_right(C)-static_right(B);
+			Vec C=(A)+(B);
+			Vec D=(C)-(B);
 			for(size_t i=0,n=A.size();i<n;i++){
 				EXPECT_TRUE(D[i]==A[i]);
 				EXPECT_TRUE(C[i]==(A[i]+B[i]));
@@ -78,9 +78,9 @@ TEST(VecOpr,Distances){
 	Vec B;
 	for(int i=0;i<10;i++){
 		for(double c=-10;c<=10;c+=1){
-			double d=Distance(static_right(A),static_right(B));
+			double d=Distance((A),(B));
 			EXPECT_TRUE(d>=0);
-			EXPECT_TRUE(sqrt(SqDistance(static_right(A),static_right(B)))==d);
+			EXPECT_TRUE(sqrt(SqDistance((A),(B)))==d);
 		}
 		A.push_back(Rand(engine));
 		B.push_back(Rand(engine));
@@ -89,7 +89,7 @@ TEST(VecOpr,Distances){
 	B.clear();
 	A.push_back(Rand(engine));
 	B.push_back(Rand(engine));
-	EXPECT_TRUE(SqDistance(static_right(A),static_right(B))==pow(A[0]-B[0],2));
+	EXPECT_TRUE(SqDistance((A),(B))==pow(A[0]-B[0],2));
 }
 
 TEST(RectDimensions,Dimensions){
@@ -120,10 +120,10 @@ TEST(RectDimensions,IsInside){
 			for(size_t j=0,n=A.NumberOfDimensions();j<n;j++){
 				double x=Rand(engine);
 				test&=(x>=A.Dimension(j).first)&&(x<=A.Dimension(j).second);
-				EXPECT_THROW(A.IsInside(static_right(v)),RectScinException);
+				EXPECT_THROW(A.IsInside((v)),RectScinException);
 				v.push_back(x);
 			}
-			EXPECT_TRUE(A.IsInside(static_right(v))==test);
+			EXPECT_TRUE(A.IsInside((v))==test);
 		}
 	}
 }
@@ -132,11 +132,11 @@ TEST(RectDimensions,WhereIntersects_throwing1){
 	Vec O;Vec D;
 	for(size_t i=1;i<10;i++){
 		A<<make_pair(-10.0+i,double(i));
-		EXPECT_THROW(A.WhereIntersects(static_right(O),static_right(D)),exception);
+		EXPECT_THROW(A.WhereIntersects((O),(D)),exception);
 		O.push_back(0);
-		EXPECT_THROW(A.WhereIntersects(static_right(O),static_right(D)),exception);
+		EXPECT_THROW(A.WhereIntersects((O),(D)),exception);
 		D.push_back(0);
-		EXPECT_TRUE(A.WhereIntersects(static_right(O),static_right(D)).surface==RectDimensions::None);
+		EXPECT_TRUE(A.WhereIntersects((O),(D)).surface==RectDimensions::None);
 	}
 }
 TEST(RectDimensions,WhereIntersects_throwing2){
@@ -144,11 +144,11 @@ TEST(RectDimensions,WhereIntersects_throwing2){
 	Vec O;Vec D;
 	for(size_t i=1;i<10;i++){
 		A<<make_pair(-10.0+i,double(i));
-		EXPECT_THROW(A.WhereIntersects(static_right(O),static_right(D)),exception);
+		EXPECT_THROW(A.WhereIntersects((O),(D)),exception);
 		D.push_back(0);
-		EXPECT_THROW(A.WhereIntersects(static_right(O),static_right(D)),exception);
+		EXPECT_THROW(A.WhereIntersects((O),(D)),exception);
 		O.push_back(0);
-		EXPECT_TRUE(A.WhereIntersects(static_right(O),static_right(D)).surface==RectDimensions::None);
+		EXPECT_TRUE(A.WhereIntersects((O),(D)).surface==RectDimensions::None);
 	}
 }
 TEST(RectDimensions,WhereIntersects){
@@ -161,9 +161,9 @@ TEST(RectDimensions,WhereIntersects){
 			O.push_back(coord(engine));
 			Outside.push_back(100);
 			D.push_back(Rand(engine));
-			EXPECT_TRUE(A.WhereIntersects(static_right(Outside),static_right(D)).surface==RectDimensions::None);
-			if(Abs(static_right(D))>0){
-				RectDimensions::IntersectionSearchResults res=A.WhereIntersects(static_right(O),static_right(D));
+			EXPECT_TRUE(A.WhereIntersects((Outside),(D)).surface==RectDimensions::None);
+			if(Abs((D))>0){
+				RectDimensions::IntersectionSearchResults res=A.WhereIntersects((O),(D));
 				if(res.surface!=RectDimensions::None){
 					//Condition for found exit point
 					EXPECT_TRUE(res.surfaceDimentionIndex<A.NumberOfDimensions());
@@ -175,8 +175,8 @@ TEST(RectDimensions,WhereIntersects){
 						diff=pow(res.coordinates[res.surfaceDimentionIndex]-A.Dimension(res.surfaceDimentionIndex).second,2);
 					EXPECT_TRUE(diff<0.00000001);
 					EXPECT_FALSE(diff<0);
-					double actual_dist=Distance(static_right(res.coordinates),static_right(O));
-					double expected_dist=Abs(static_right(D))*res.k;
+					double actual_dist=Distance((res.coordinates),(O));
+					double expected_dist=Abs((D))*res.k;
 					diff=pow(actual_dist-expected_dist,2);
 					EXPECT_TRUE(diff<0.00000001);
 				}else{
@@ -184,7 +184,7 @@ TEST(RectDimensions,WhereIntersects){
 					EXPECT_TRUE(false);
 				}
 			}else{
-				EXPECT_TRUE(A.WhereIntersects(static_right(O),static_right(D)).surface==RectDimensions::None);
+				EXPECT_TRUE(A.WhereIntersects((O),(D)).surface==RectDimensions::None);
 			}
 		}
 	}

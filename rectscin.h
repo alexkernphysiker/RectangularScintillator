@@ -33,7 +33,7 @@ public:
 	virtual void AbsorbPhoton(Photon&photon,RANDOM&R)=0;
 	virtual void End()=0;
 	virtual RectDimensions&&Dimensions()=0;
-	virtual double GlueEfficiency()=0;
+	virtual double GlueEfficiency()const=0;
 };
 class RectangularScintillator;
 class ScintillatorSurface:protected RectDimensions{
@@ -42,11 +42,12 @@ public:
 	ScintillatorSurface();
 	virtual ~ScintillatorSurface();
 	ScintillatorSurface&operator>>(std::shared_ptr<IPhotonAbsorber>sensor);
+	RectDimensions&&Dimensions();
 protected:
 	void Start();
 	void RegisterPhoton(Photon&photon,RANDOM&R);//changes photon
 	void End();
-	double ReflectionProbabilityCoeff(Vec&&point);
+	double ReflectionProbabilityCoeff(const Vec&point)const;
 private:
 	std::vector<std::shared_ptr<IPhotonAbsorber>> m_handlers;
 	std::mutex surface_mutex;
@@ -63,9 +64,10 @@ public:
 	virtual ~RectangularScintillator();
 	ScintillatorSurface&Surface(size_t dimension,Side side);
 	void RegisterGamma(Vec&&coord,size_t N,RANDOM&R);
-	LinearInterpolation<double>&&ReflectionProbabilityFunction();
+	
+	LinearInterpolation<double>&ReflectionProbabilityFunction()const;
 protected:
-	Photon GeneratePhoton(Vec&&coord,RANDOM&R);
+	Photon GeneratePhoton(const Vec&coord,RANDOM&R);
 	IntersectionSearchResults TraceGeometry(Photon &ph,RANDOM&R);//Changes Photon
 private:
 	RandomValueGenerator<double> m_time_distribution;

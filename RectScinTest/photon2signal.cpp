@@ -19,7 +19,7 @@ TEST(WeightedTimeSignal,IfNotComplete){
 		vector<pair<size_t,double>> vec;
 		for(size_t i=0;i<n;i++)
 			vec.push_back(make_pair(i,1));
-		auto test=TimeSignal(static_right(vec));
+		auto test=TimeSignal(static_cast<decltype(vec)>(vec));
 		auto out=make_shared<Out>();
 		test>>out;
 		for(size_t cnt=0;cnt<n;cnt++){
@@ -36,7 +36,7 @@ TEST(WeightedTimeSignal,IfComplete){
 		vector<pair<size_t,double>> vec;
 		for(size_t i=0;i<n;i++)
 			vec.push_back(make_pair(i,1));
-		auto test=TimeSignal(static_right(vec));
+		auto test=TimeSignal(static_cast<decltype(vec)>(vec));
 		auto out=make_shared<Out>();
 		test>>out;
 		test->AcceptEventStart();

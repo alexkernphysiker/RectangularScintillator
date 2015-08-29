@@ -4,11 +4,11 @@
 #include "test_objects.h"
 class PhotonCheck:public PhotonTimeAcceptor{
 private:
-	vector<double> times;
+	Vec times;
 public:
 	PhotonCheck(){}
 	virtual ~PhotonCheck(){}
-	vector<double>&&data(){return static_right(times);}
+	Vec& data()const{return const_cast<Vec&>(times);}
 	virtual void AcceptEventStart()override{times.clear();}
 	virtual void AcceptPhotonTime(double time)override{times.push_back(time);}
 	virtual void AcceptEventEnd()override{}

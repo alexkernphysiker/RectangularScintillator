@@ -8,12 +8,10 @@ PhotoSensitiveSurface::PhotoSensitiveSurface(vector< Pair >&&dimensions,double g
 	m_glue=glue;
 }
 PhotoSensitiveSurface::~PhotoSensitiveSurface(){}
-RectDimensions&& PhotoSensitiveSurface::Dimensions(){
+RectDimensions&&PhotoSensitiveSurface::Dimensions(){
 	return static_cast<RectDimensions&&>(*this);
 }
-double PhotoSensitiveSurface::GlueEfficiency(){
-	return m_glue;
-}
+double PhotoSensitiveSurface::GlueEfficiency()const{return m_glue;}
 PhotoSensitiveSurface& PhotoSensitiveSurface::operator>>(shared_ptr<PhotonTimeAcceptor> sig){
 	m_signal.push_back(sig);
 	return *this;
@@ -24,7 +22,7 @@ void PhotoSensitiveSurface::Start(){
 	times.clear();
 }
 void PhotoSensitiveSurface::AbsorbPhoton(Photon& photon,RANDOM&R){
-	if(IsInside(static_right(photon.coord)))
+	if(IsInside(photon.coord))
 		if(P(R)<m_efficiency(photon.lambda))
 			PhotonTimeAccepted(photon.time,R);
 }
@@ -40,11 +38,9 @@ void PhotoSensitiveSurface::End(){
 }
 
 PhotoSensitiveSurfaceWithTTS::PhotoSensitiveSurfaceWithTTS(vector<Pair>&& dimensions, double glue, Func efficiency, double tts):
-	PhotoSensitiveSurface(static_right(dimensions),glue,efficiency),m_tts(5*tts,tts){}
+	PhotoSensitiveSurface(static_cast<std::vector<Pair>&&>(dimensions),glue,efficiency),m_tts(5*tts,tts){}
 PhotoSensitiveSurfaceWithTTS::~PhotoSensitiveSurfaceWithTTS(){}
 void PhotoSensitiveSurfaceWithTTS::PhotonTimeAccepted(double time, RANDOM& R){
 	double offs=m_tts(R);if(offs<0)offs=0;
     PhotoSensitiveSurface::PhotonTimeAccepted(time+offs, R);
 }
-
-

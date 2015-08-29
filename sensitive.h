@@ -16,8 +16,8 @@ public:
 	virtual void Start()final;
 	virtual void AbsorbPhoton(Photon&photon,RANDOM&R)final;
 	virtual void End()final;
-    virtual RectDimensions&& Dimensions()final;
-    virtual double GlueEfficiency()override;
+	virtual RectDimensions&&Dimensions()final;
+	virtual double GlueEfficiency()const final;
 	PhotoSensitiveSurface&operator>>(std::shared_ptr<PhotonTimeAcceptor>);
 protected:
 	//Photons come in not sorted by time, but are sorted here
@@ -31,11 +31,11 @@ private:
 };
 //There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<PhotoSensitiveSurface> Photosensor(std::vector<Pair>&&dimensions,double glue,Func efficiency){
-	return std::shared_ptr<PhotoSensitiveSurface>(new PhotoSensitiveSurface(static_right(dimensions),glue,efficiency));
+	return std::shared_ptr<PhotoSensitiveSurface>(new PhotoSensitiveSurface(static_cast<std::vector<Pair>&&>(dimensions),glue,efficiency));
 }
 class PhotoSensitiveSurfaceWithTTS:public PhotoSensitiveSurface{
 public:
-    PhotoSensitiveSurfaceWithTTS(std::vector< Pair >&& dimensions, double glue, Func efficiency,double tts);
+    PhotoSensitiveSurfaceWithTTS(std::vector<Pair>&& dimensions, double glue, Func efficiency,double tts);
     virtual ~PhotoSensitiveSurfaceWithTTS();
 protected:
     virtual void PhotonTimeAccepted(double time, RANDOM& R)override;
@@ -44,6 +44,6 @@ private:
 };
 //There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<PhotoSensitiveSurface> Photosensor(std::vector<Pair>&&dimensions,double glue,Func efficiency,double tts){
-	return std::shared_ptr<PhotoSensitiveSurfaceWithTTS>(new PhotoSensitiveSurfaceWithTTS(static_right(dimensions),glue,efficiency,tts));
+	return std::shared_ptr<PhotoSensitiveSurfaceWithTTS>(new PhotoSensitiveSurfaceWithTTS(static_cast<std::vector<Pair>&&>(dimensions),glue,efficiency,tts));
 }
 #endif

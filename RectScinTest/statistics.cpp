@@ -25,30 +25,3 @@ TEST(SignalDistribution,Base){
 		EXPECT_EQ(cnt,test.data().size());
 	}
 }
-TEST(Signal2DCorrelation,Base){
-	auto test=make_shared<Signal2DCorrelation>();
-	SignalSender sig;
-	sig.Connect2MultiInput(test,2);
-	EXPECT_EQ(0,test->Points().size());
-	for(size_t i=0;i<10;i++){
-		for(size_t j=1;j<=i;j++){
-			double a=Rand(engine),b=Rand(engine);
-			sig.send({a,b});
-			EXPECT_EQ(j,test->Points().size());
-			EXPECT_EQ(a,test->Points()[j-1].first);
-			EXPECT_EQ(b,test->Points()[j-1].second);
-		}
-		test->Clear();
-		EXPECT_EQ(0,test->Points().size());
-	}
-}
-TEST(Signal2DCorrelation,Throw){
-	auto test=make_shared<Signal2DCorrelation>();
-	SignalSender sig;
-	sig.Connect2MultiInput(test,1);
-	EXPECT_THROW(sig.send({Rand(engine)}),RectScinException);
-	sig.Connect2MultiInput(test,1);
-	EXPECT_NO_THROW(sig.send({Rand(engine),Rand(engine)}));
-	sig.Connect2MultiInput(test,1);
-	EXPECT_THROW(sig.send({Rand(engine),Rand(engine),Rand(engine)}),RectScinException);
-}

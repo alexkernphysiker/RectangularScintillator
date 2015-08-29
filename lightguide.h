@@ -10,13 +10,14 @@ public:
     virtual void Start()override;
 	virtual void AbsorbPhoton(Photon& photon,RANDOM&R)override;
     virtual void End()override;
-    virtual double GlueEfficiency()override;
-    virtual RectDimensions&& Dimensions()override;
+    virtual double GlueEfficiency()const final;
+    virtual RectDimensions&&Dimensions()final;
 private:
+	
 	double g_eff,refr,height;
 };
 //There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
 inline std::shared_ptr<FlatLightguide> LightGuide(std::vector<Pair>&&dimensions,double glue_eff,double n,double H){
-	return std::shared_ptr<FlatLightguide>(new FlatLightguide(static_right(dimensions),glue_eff,n,H));
+	return std::shared_ptr<FlatLightguide>(new FlatLightguide(static_cast<std::vector<Pair>&&>(dimensions),glue_eff,n,H));
 }
 #endif

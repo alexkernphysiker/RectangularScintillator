@@ -14,8 +14,8 @@ void ScintillatorSurface::Start(){
 	for(auto handler:m_handlers)
 		handler->Start();
 }
-void ScintillatorSurface::RegisterPhoton(Photon& photon,RANDOM&R){
-	if(IsInside(static_right(photon.coord))){
+void ScintillatorSurface::RegisterPhoton(Photon&photon,RANDOM&R){
+	if(IsInside(photon.coord)){
 		Lock lock(surface_mutex);
 		for(auto handler:m_handlers)
 			handler->AbsorbPhoton(photon,R);
@@ -31,10 +31,9 @@ ScintillatorSurface& ScintillatorSurface::operator>>(shared_ptr<IPhotonAbsorber>
 	m_handlers.push_back(sensor);
 	return *this;
 }
-double ScintillatorSurface::ReflectionProbabilityCoeff(Vec&& point){
-	Lock lock(surface_mutex);
+double ScintillatorSurface::ReflectionProbabilityCoeff(const Vec&point)const{
 	for(auto sensor:m_handlers)
-		if(sensor->Dimensions().IsInside(static_right(point))){
+		if(sensor->Dimensions().IsInside(point)){
 			double eff=sensor->GlueEfficiency();
 			if((eff<0)||(eff>1))
 				throw RectScinException("Optical glue efficiency must be in the range [0;1]");
@@ -42,6 +41,10 @@ double ScintillatorSurface::ReflectionProbabilityCoeff(Vec&& point){
 		}
 	return 1.0;
 }
+RectDimensions&&ScintillatorSurface::Dimensions(){
+	return static_cast<RectDimensions&&>(*this);
+}
+
 double ReflectionProbability(double refraction,double cos_){
 	double cos_phi=cos_;
 	if(cos_phi<0.0)cos_phi=-cos_phi;
@@ -67,7 +70,7 @@ m_time_distribution(time_distribution),
 m_lambda_distribution(lambda_distribution){
 	if(dimensions.size()==0)
 		throw RectScinException("Cannot create scintillator with no dimensions");
-	for(Pair D:dimensions)RectDimensions::operator<<(static_right(D));
+	for(Pair D:dimensions)RectDimensions::operator<<(static_cast<Pair&&>(D));
 	m_refraction=refraction;
 	m_absorption=absorption;
 	for(size_t i=0,n=NumberOfDimensions();i<n;i++){
@@ -83,9 +86,8 @@ m_lambda_distribution(lambda_distribution){
 		reflection_probability<<make_pair(x,ReflectionProbability(m_refraction,x));
 }
 RectangularScintillator::~RectangularScintillator(){}
-LinearInterpolation< double >&& RectangularScintillator::ReflectionProbabilityFunction(){
-	Lock lock(trace_mutex);
-	return static_right(reflection_probability);
+LinearInterpolation<double>&RectangularScintillator::ReflectionProbabilityFunction()const{
+	return const_cast<LinearInterpolation<double>&>(reflection_probability);
 }
 ScintillatorSurface& RectangularScintillator::Surface(size_t dimension, Side side){
 	if(dimension>=NumberOfDimensions())
@@ -102,11 +104,10 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N,RANDOM&R){
 	}
 	if(coord.size()!=NumberOfDimensions())
 		throw RectScinException("RectangularScintillator: wrong gamma interaction point vector size");
-	if(!IsInside(static_right(coord)))
-		throw RectScinException("RectangularScintillator: gamma interaction point is outside");
+	if(!IsInside(coord))throw RectScinException("RectangularScintillator: gamma interaction point is outside");
 	auto process=[this,&coord,&R](size_t n){
 		for(size_t i=0;i<n;i++){
-			Photon ph=GeneratePhoton(static_right(coord),R);
+			Photon ph=GeneratePhoton(coord,R);
 			IntersectionSearchResults trace=TraceGeometry(ph,R);
 			if(trace.surface!=None){
 				Surface(trace.surfaceDimentionIndex,trace.surface).RegisterPhoton(ph,R);
@@ -127,7 +128,7 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N,RANDOM&R){
 		sp.second->End();
 	}
 }
-Photon RectangularScintillator::GeneratePhoton(Vec&&coord,RANDOM&R){
+Photon RectangularScintillator::GeneratePhoton(const Vec&coord,RANDOM&R){
 	Photon res;
 	res.coord=coord;
 	if(NumberOfDimensions()==1){
@@ -182,8 +183,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		refl_p[dimension]=reflection_probability(cos_angle);
 	}
 	while(true){
-		IntersectionSearchResults res=
-			WhereIntersects(static_right(ph.coord),static_right(ph.dir));
+		IntersectionSearchResults res=WhereIntersects(ph.coord,ph.dir);
 		if(res.surface==None)
 			return res;
 		size_t dimension=res.surfaceDimentionIndex;
@@ -209,7 +209,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		{//check if photon reached a glued area of surface
 			Vec point=ph.coord;
 			point.erase(point.begin()+dimension);
-			refl_prob*=Surface(dimension,res.surface).ReflectionProbabilityCoeff(static_right(point));
+			refl_prob*=Surface(dimension,res.surface).ReflectionProbabilityCoeff(point);
 		}
 		{Lock lock(trace_mutex);
 			if(prob_(R)<refl_prob){
@@ -217,7 +217,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 				ph.dir[dimension]=-ph.dir[dimension];
 			}else{
 				//Photon leaves the scintillator
-				ph.dir=static_right(ph.dir)*m_refraction;
+				ph.dir=ph.dir*m_refraction;
 				ph.coord.erase(ph.coord.begin()+dimension);
 				ph.dir.erase(ph.dir.begin()+dimension);
 				return res;

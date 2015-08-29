@@ -7,13 +7,13 @@
 #include "rectscinexception.h"
 #include "geometry.h"
 using namespace std;
-Vec operator*(Vec&&p,double c){
+Vec operator*(const Vec&p,double c){
 	Vec res;
 	for(double x:p)
 		res.push_back(x*c);
 	return res;
 }
-Vec operator+(Vec&&p1,Vec&&p2){
+Vec operator+(const Vec&p1,const Vec&p2){
 	if(p1.size()!=p2.size())
 		throw RectScinException("A+B: vector sizes differ");
 	Vec res;
@@ -21,7 +21,7 @@ Vec operator+(Vec&&p1,Vec&&p2){
 		res.push_back(p1[i]+p2[i]);
 	return res;
 }
-Vec operator-(Vec&&p1,Vec&&p2){
+Vec operator-(const Vec&p1,const Vec&p2){
 	if(p1.size()!=p2.size())
 		throw RectScinException("A-B: vector sizes differ");
 	Vec res;
@@ -29,20 +29,14 @@ Vec operator-(Vec&&p1,Vec&&p2){
 		res.push_back(p1[i]-p2[i]);
 	return res;
 }
-double SqAbs(Vec&&p){
+double SqAbs(const Vec&p){
 	double res=0;
 	for(double x:p)res+=x*x;
 	return res;
 }
-double Abs(Vec&& p){
-	return sqrt(SqAbs(static_right(p)));
-}
-double SqDistance(Vec&&p1, Vec&&p2){
-	return SqAbs(static_right(p1)-static_right(p2));
-}
-double Distance(Vec&&p1,Vec&&p2){
-	return Abs(static_right(p1)-static_right(p2));
-}
+double Abs(const Vec&p){return sqrt(SqAbs(p));}
+double SqDistance(const Vec&p1,const Vec&p2){return SqAbs(p1-p2);}
+double Distance(const Vec&p1,const Vec&p2){return Abs(p1-p2);}
 RectDimensions::Side& inc(RectDimensions::Side& val){
 	val=static_cast<RectDimensions::Side>(val+1);
 	return val;
@@ -56,17 +50,13 @@ RectDimensions& RectDimensions::operator<<(Pair&&dimension){
 	m_dimensions.push_back(dimension);
 	return *this;
 }
-size_t RectDimensions::NumberOfDimensions(){
-	Lock lock(geom_mutex);
-	return m_dimensions.size();
-}
-Pair&&RectDimensions::Dimension(size_t i){
+size_t RectDimensions::NumberOfDimensions()const{return m_dimensions.size();}
+Pair&&RectDimensions::Dimension(size_t i)const{
 	if(i>=NumberOfDimensions())
 		throw RectScinException("RectDimensions: dimension index out of range");
-	Lock lock(geom_mutex);
-	return static_cast<Pair&&>(m_dimensions[i]);
+	return const_cast<Pair&&>(m_dimensions[i]);
 }
-bool RectDimensions::IsInside(Vec&&point){
+bool RectDimensions::IsInside(const Vec&point)const{
 	if(point.size()!=NumberOfDimensions())
 		throw RectScinException("RectDimensions::IsInside: wrong point size");
 	for(size_t i=0,n=NumberOfDimensions();i<n;i++)
@@ -74,10 +64,10 @@ bool RectDimensions::IsInside(Vec&&point){
 			return false;
 	return true;
 }
-RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&point,Vec&&dir){
+RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(const Vec&point,const Vec&dir){
 	if(NumberOfDimensions()!=dir.size())
 		throw RectScinException("RectDimensions trace: wrong direction vector size");
-	if(!IsInside(static_right(point))){
+	if(!IsInside(point)){
 		IntersectionSearchResults res;
 		res.surface=None;
 		return res;
@@ -105,7 +95,7 @@ RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(Vec&&p
 		size_t dimension=dim_order[i].second;
 		double k=dim_order[i].first/dir[dimension];
 		if(k<0) k=-k;
-		Vec endpoint=static_right(point)+(static_right(dir)*k);
+		Vec endpoint=point+(dir*k);
 		bool Belong_to_surface=true;
 		for(size_t i=0,n=NumberOfDimensions();i<n;i++)
 			if(i!=dimension){
