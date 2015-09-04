@@ -18,7 +18,7 @@ TEST(RectangularScintillator,geometry){
 		1,[](double){return 0.0;}
 	);
 	EXPECT_NO_THROW(rsc.RegisterGamma({0.5,0.5,0.5},10,engine));
-	EXPECT_THROW(rsc.RegisterGamma({2,2,2},1,engine),RectScinException);
+	EXPECT_THROW(rsc.RegisterGamma({2,2,2},1,engine),math_h_error<RectangularScintillator>);
 }
 TEST(RectangularScintillator, Isotropic){
 	RectangularScintillator rsc(

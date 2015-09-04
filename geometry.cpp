@@ -4,7 +4,7 @@
 #include <math.h>
 #include "math_h/interpolate.h"
 #include "math_h/randomfunc.h"
-#include "rectscinexception.h"
+#include "math_h/exception_math_h.h"
 #include "geometry.h"
 using namespace std;
 Vec operator*(const Vec&p,double c){
@@ -15,7 +15,7 @@ Vec operator*(const Vec&p,double c){
 }
 Vec operator+(const Vec&p1,const Vec&p2){
 	if(p1.size()!=p2.size())
-		throw RectScinException("A+B: vector sizes differ");
+		throw math_h_error<Vec>("A+B: vector sizes differ");
 	Vec res;
 	for(size_t i=0,n=p1.size();i<n;i++)
 		res.push_back(p1[i]+p2[i]);
@@ -23,7 +23,7 @@ Vec operator+(const Vec&p1,const Vec&p2){
 }
 Vec operator-(const Vec&p1,const Vec&p2){
 	if(p1.size()!=p2.size())
-		throw RectScinException("A-B: vector sizes differ");
+		throw math_h_error<Vec>("A-B: vector sizes differ");
 	Vec res;
 	for(size_t i=0,n=p1.size();i<n;i++)
 		res.push_back(p1[i]-p2[i]);
@@ -45,7 +45,7 @@ RectDimensions::RectDimensions(){}
 RectDimensions::~RectDimensions(){}
 RectDimensions& RectDimensions::operator<<(Pair&&dimension){
 	if(dimension.first>dimension.second)
-		throw RectScinException("RectDimensions: wrong dimension left>right");
+		throw math_h_error<RectDimensions>("RectDimensions: wrong dimension left>right");
 	Lock lock(geom_mutex);
 	m_dimensions.push_back(dimension);
 	return *this;
@@ -53,12 +53,12 @@ RectDimensions& RectDimensions::operator<<(Pair&&dimension){
 size_t RectDimensions::NumberOfDimensions()const{return m_dimensions.size();}
 Pair&&RectDimensions::Dimension(size_t i)const{
 	if(i>=NumberOfDimensions())
-		throw RectScinException("RectDimensions: dimension index out of range");
+		throw math_h_error<RectDimensions>("RectDimensions: dimension index out of range");
 	return const_cast<Pair&&>(m_dimensions[i]);
 }
 bool RectDimensions::IsInside(const Vec&point)const{
 	if(point.size()!=NumberOfDimensions())
-		throw RectScinException("RectDimensions::IsInside: wrong point size");
+		throw math_h_error<RectDimensions>("RectDimensions::IsInside: wrong point size");
 	for(size_t i=0,n=NumberOfDimensions();i<n;i++)
 		if((point[i]<Dimension(i).first)||(point[i]>Dimension(i).second))
 			return false;
@@ -66,7 +66,7 @@ bool RectDimensions::IsInside(const Vec&point)const{
 }
 RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(const Vec&point,const Vec&dir){
 	if(NumberOfDimensions()!=dir.size())
-		throw RectScinException("RectDimensions trace: wrong direction vector size");
+		throw math_h_error<RectDimensions>("RectDimensions trace: wrong direction vector size");
 	if(!IsInside(point)){
 		IntersectionSearchResults res;
 		res.surface=None;

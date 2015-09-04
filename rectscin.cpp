@@ -4,7 +4,7 @@
 #include <mutex>
 #include "math_h/sympson.h"
 #include "math_h/functions.h"
-#include "rectscinexception.h"
+#include "math_h/exception_math_h.h"
 #include "rectscin.h"
 using namespace std;
 ScintillatorSurface::ScintillatorSurface(){}
@@ -36,7 +36,7 @@ double ScintillatorSurface::ReflectionProbabilityCoeff(const Vec&point)const{
 		if(sensor->Dimensions().IsInside(point)){
 			double eff=sensor->GlueEfficiency();
 			if((eff<0)||(eff>1))
-				throw RectScinException("Optical glue efficiency must be in the range [0;1]");
+				throw math_h_error<ScintillatorSurface>("Optical glue efficiency must be in the range [0;1]");
 			return 1.0-eff;
 		}
 	return 1.0;
@@ -69,7 +69,7 @@ RectangularScintillator::RectangularScintillator(
 m_time_distribution(time_distribution),
 m_lambda_distribution(lambda_distribution){
 	if(dimensions.size()==0)
-		throw RectScinException("Cannot create scintillator with no dimensions");
+		throw math_h_error<RectangularScintillator>("Cannot create scintillator with no dimensions");
 	for(Pair D:dimensions)RectDimensions::operator<<(static_cast<Pair&&>(D));
 	m_refraction=refraction;
 	m_absorption=absorption;
@@ -91,11 +91,11 @@ LinearInterpolation<double>&RectangularScintillator::ReflectionProbabilityFuncti
 }
 ScintillatorSurface& RectangularScintillator::Surface(size_t dimension, Side side){
 	if(dimension>=NumberOfDimensions())
-		throw RectScinException("RectangularScintillator: dimension index out of range");
+		throw math_h_error<RectangularScintillator>("RectangularScintillator: dimension index out of range");
 	Lock lock(trace_mutex);
 	if(side==Left)return *(m_edges[dimension].first);
 	if(side==Right)return *(m_edges[dimension].second);
-	throw RectScinException("RectangularScintillator: surface index out of range");
+	throw math_h_error<RectangularScintillator>("RectangularScintillator: surface index out of range");
 }
 void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N,RANDOM&R){
 	for(SurfPair&sp:m_edges){
@@ -103,8 +103,9 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N,RANDOM&R){
 		sp.second->Start();
 	}
 	if(coord.size()!=NumberOfDimensions())
-		throw RectScinException("RectangularScintillator: wrong gamma interaction point vector size");
-	if(!IsInside(coord))throw RectScinException("RectangularScintillator: gamma interaction point is outside");
+		throw math_h_error<RectangularScintillator>("RectangularScintillator: wrong gamma interaction point vector size");
+	if(!IsInside(coord))
+		throw math_h_error<RectangularScintillator>("RectangularScintillator: gamma interaction point is outside");
 	auto process=[this,&coord,&R](size_t n){
 		for(size_t i=0;i<n;i++){
 			Photon ph=GeneratePhoton(coord,R);
@@ -158,7 +159,7 @@ Photon RectangularScintillator::GeneratePhoton(const Vec&coord,RANDOM&R){
 		res.dir.push_back(sin_theta*cos(phi));
 	}
 	if(NumberOfDimensions()>=4)
-		throw RectScinException("RectangularScintillator: isotropic 4D random directions not implemented");
+		throw math_h_error<RectangularScintillator>("RectangularScintillator: isotropic 4D and higher random directions not implemented");
 	{
 		Lock lock(trace_mutex);
 		res.time=m_time_distribution(R);
@@ -178,7 +179,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		if(cos_angle<0.0)
 			cos_angle=-cos_angle;
 		if(cos_angle>1.0)
-			throw RectScinException("Trace: cosine error");
+			throw math_h_error<RectangularScintillator>("Trace: cosine error");
 		Lock lock(trace_mutex);
 		refl_p[dimension]=reflection_probability(cos_angle);
 	}

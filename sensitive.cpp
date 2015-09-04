@@ -1,5 +1,5 @@
 #include "math_h/interpolate.h"
-#include "rectscinexception.h"
+#include "math_h/exception_math_h.h"
 #include "sensitive.h"
 using namespace std;
 PhotoSensitiveSurface::PhotoSensitiveSurface(vector< Pair >&&dimensions,double glue,Func efficiency):RectDimensions(),P(0,1){

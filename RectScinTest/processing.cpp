@@ -79,7 +79,7 @@ TEST(SignalSortAndSelect,BaseTest){
 					if(orderstatistics<n)
 						EXPECT_NO_THROW(sender.send(static_cast<Vec&&>(signals)));
 					else
-						EXPECT_THROW(sender.send(static_cast<Vec&&>(signals)),RectScinException);
+						EXPECT_THROW(sender.send(static_cast<Vec&&>(signals)),exception);
 					if(orderstatistics<n)
 						EXPECT_EQ(orderstatistics,out->value());
 					else
@@ -104,7 +104,7 @@ TEST(SignalSortAndSelect2,BaseTest){
 					if(orderstatistics<n)
 						EXPECT_NO_THROW(sender.send(static_cast<Vec&&>(signals)));
 					else
-						EXPECT_THROW(sender.send(static_cast<Vec&&>(signals)),RectScinException);
+						EXPECT_THROW(sender.send(static_cast<Vec&&>(signals)),exception);
 					if(orderstatistics<n){
 						EXPECT_TRUE(out1->value()>=0);
 						EXPECT_TRUE(out1->value()<signals.size());
@@ -122,8 +122,8 @@ TEST(SignalSortAndSelect2,BaseTest){
 		}
 }
 TEST(TimeGate,SimpleTest){
-	EXPECT_THROW(make_shared<TimeGate>(-1),RectScinException);
-	EXPECT_THROW(make_shared<TimeGate>(0),RectScinException);
+	EXPECT_THROW(make_shared<TimeGate>(-1),math_h_error<TimeGate>);
+	EXPECT_THROW(make_shared<TimeGate>(0),math_h_error<TimeGate>);
 	for(double d=1;d<10;d+=1){
 		auto test=make_shared<TimeGate>(d);
 		auto out1=make_shared<Out>(),out2=make_shared<Out>();

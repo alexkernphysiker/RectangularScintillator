@@ -1,7 +1,7 @@
 // this file is distributed under 
 // GPL v 3.0 license
 #include "signal_statistics.h"
-#include "rectscinexception.h"
+#include "math_h/exception_math_h.h"
 using namespace std;
 SignalStatictics::SignalStatictics(){}
 SignalStatictics::~SignalStatictics(){}
@@ -44,5 +44,5 @@ void SignalsToFile::Redirect(string name){
 	if(file.is_open())file.close();
 	file.open(name.c_str());
 	if(!file.is_open())
-		throw RectScinException("cannot open output file");
+		throw math_h_error<SignalsToFile>("cannot open output file");
 }

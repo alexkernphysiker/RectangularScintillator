@@ -34,15 +34,15 @@ SignalSender& SignalSender::send(Vec&& signals){
 Out::Out(){event=false;}Out::~Out(){}
 double Out::value(){return signal;}
 void Out::AcceptEventStart(){
-	if(event)throw RectScinException("Signal producent unusual behaviour");
+	if(event)throw math_h_error<Out>("Signal producent unusual behaviour");
 	event=true;
 	signal=INFINITY;
 }
 void Out::AcceptSignalValue(double s){
-	if(!event)throw RectScinException("Signal producent unusual behaviour");
+	if(!event)throw math_h_error<Out>("Signal producent unusual behaviour");
 	signal=s;
 }
 void Out::AcceptEventEnd(){
-	if(!event)throw RectScinException("Signal producent unusual behaviour");
+	if(!event)throw math_h_error<Out>("Signal producent unusual behaviour");
 	event=false;
 }
