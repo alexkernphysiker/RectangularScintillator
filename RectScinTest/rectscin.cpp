@@ -115,3 +115,39 @@ TEST(RectangularScintillator,Glue){
 	EXPECT_TRUE(worst->data().getAverage()<middle->data().getAverage());
 	EXPECT_TRUE(middle->data().getAverage()<ideal->data().getAverage());
 }
+TEST(RectangularScintillator, oneD_symmetry){
+	RectangularScintillator rsc(
+		{make_pair(-10,10),make_pair(-1,1),make_pair(-1,1)},
+		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
+		1.6,[](double){return 0.0;}
+	);
+	auto timediff=make_shared<SignalSumm>(),ampldiff=make_shared<SignalSumm>();
+	{
+		auto time=make_shared<Signal>(),ampl=make_shared<Signal>();
+		rsc.Surface(0,RectDimensions::Left)>>(
+			Photosensor({make_pair(0,1),make_pair(0,1)},1.0,[](double){return 1.0;})
+				>>(make_shared<AmplitudeSignal>()>>ampl)
+				>>(TimeSignal({make_pair(0,1)})>>time)
+		);
+		timediff<<time;ampldiff<<ampl;
+	}
+	{
+		auto time=make_shared<Signal>(),ampl=make_shared<Signal>();
+		rsc.Surface(0,RectDimensions::Right)>>(
+			Photosensor({make_pair(0,1),make_pair(0,1)},1.0,[](double){return 1.0;})
+				>>(make_shared<AmplitudeSignal>()>>(SignalInvert()>>ampl))
+				>>(TimeSignal({make_pair(0,1)})>>(SignalInvert()>>time))
+		);
+		timediff<<time;ampldiff<<ampl;
+	}
+	auto timestat=make_shared<SignalStatictics>(),amplstat=make_shared<SignalStatictics>();
+	timediff>>timestat;ampldiff>>amplstat;
+	for(size_t cnt=0;cnt<100;cnt++)
+		rsc.RegisterGamma({-5,0,0},3000,engine);
+	double oldtime=timestat->data().getAverage(),oldampl=amplstat->data().getAverage();
+	timestat->Clear();amplstat->Clear();
+	for(size_t cnt=0;cnt<100;cnt++)
+		rsc.RegisterGamma({+5,0,0},3000,engine);
+	EXPECT_CLOSE_VALUES_with_error(-oldtime,timestat->data().getAverage(),timestat->data().getSigma());
+	EXPECT_CLOSE_VALUES_with_error(-oldampl,amplstat->data().getAverage(),amplstat->data().getSigma());
+}
