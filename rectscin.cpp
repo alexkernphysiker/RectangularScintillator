@@ -98,7 +98,11 @@ void RectangularScintillator::Options::operator=(const RectangularScintillator::
 	concurrency=source.concurrency;
 	max_reflections=source.max_reflections;
 }
-RectangularScintillator::Options RectangularScintillator::Defaults(){return Options(1,10);}
+RectangularScintillator::Options RectangularScintillator::Defaults(){return Options(1,0);}
+RectangularScintillator::Options RectangularScintillator::Concurrency(size_t c){return Options(c,0);}
+RectangularScintillator::Options RectangularScintillator::Reflections(long unsigned int r){return Options(1,r);}
+
+
 void RectangularScintillator::Configure(RectangularScintillator::Options&& conf){
 	m_config=conf;
 }

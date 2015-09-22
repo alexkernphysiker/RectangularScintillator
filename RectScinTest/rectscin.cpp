@@ -121,6 +121,7 @@ TEST(RectangularScintillator, oneD_symmetry){
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1.6,[](double){return 0.0;}
 	);
+	rsc.Configure(RectangularScintillator::Reflections(5));
 	auto timediff=make_shared<SignalSumm>(),ampldiff=make_shared<SignalSumm>();
 	{
 		auto time=make_shared<Signal>(),ampl=make_shared<Signal>();

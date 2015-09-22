@@ -73,6 +73,8 @@ public:
 		void operator=(const Options&source);
 	};
 	static Options Defaults();
+	static Options Concurrency(size_t c);
+	static Options Reflections(unsigned long r);
 	void Configure(Options&&conf);
 	Options&CurrentConfig()const;
 	
