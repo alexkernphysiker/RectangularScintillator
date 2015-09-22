@@ -65,11 +65,23 @@ public:
 	ScintillatorSurface&Surface(size_t dimension,Side side);
 	void RegisterGamma(Vec&&coord,size_t N,RANDOM&R);
 	
+	struct Options{
+		size_t concurrency;
+		unsigned long max_reflections;
+		Options(size_t c,unsigned long refl);
+		Options(Options&&source);
+		void operator=(const Options&source);
+	};
+	static Options Defaults();
+	void Configure(Options&&conf);
+	Options&CurrentConfig()const;
+	
 	LinearInterpolation<double>&ReflectionProbabilityFunction()const;
 protected:
 	Photon GeneratePhoton(const Vec&coord,RANDOM&R);
 	IntersectionSearchResults TraceGeometry(Photon &ph,RANDOM&R);//Changes Photon
 private:
+	Options m_config;
 	RandomValueGenerator<double> m_time_distribution;
 	RandomValueGenerator<double> m_lambda_distribution;
 	double m_refraction;

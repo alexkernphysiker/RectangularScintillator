@@ -66,6 +66,7 @@ RectangularScintillator::RectangularScintillator(
 	RandomValueGenerator<double>&&lambda_distribution,
 	double refraction,Func absorption
 ):RectDimensions(),
+m_config(Defaults()),
 m_time_distribution(time_distribution),
 m_lambda_distribution(lambda_distribution){
 	if(dimensions.size()==0)
@@ -88,6 +89,21 @@ m_lambda_distribution(lambda_distribution){
 RectangularScintillator::~RectangularScintillator(){}
 LinearInterpolation<double>&RectangularScintillator::ReflectionProbabilityFunction()const{
 	return const_cast<LinearInterpolation<double>&>(reflection_probability);
+}
+RectangularScintillator::Options::Options(size_t c, unsigned long refl):
+	concurrency(c),max_reflections(refl){}
+RectangularScintillator::Options::Options(RectangularScintillator::Options&& source):
+	concurrency(source.concurrency),max_reflections(source.max_reflections){}
+void RectangularScintillator::Options::operator=(const RectangularScintillator::Options& source){
+	concurrency=source.concurrency;
+	max_reflections=source.max_reflections;
+}
+RectangularScintillator::Options RectangularScintillator::Defaults(){return Options(1,0);}
+void RectangularScintillator::Configure(RectangularScintillator::Options&& conf){
+	m_config=conf;
+}
+RectangularScintillator::Options& RectangularScintillator::CurrentConfig()const{
+	return const_cast<Options&>(m_config);
 }
 ScintillatorSurface& RectangularScintillator::Surface(size_t dimension, Side side){
 	if(dimension>=NumberOfDimensions())
@@ -116,7 +132,9 @@ void RectangularScintillator::RegisterGamma(Vec&&coord,size_t N,RANDOM&R){
 		}
 	};
 	{
-		size_t threads=thread::hardware_concurrency();if(threads==0)threads=1;
+		size_t threads=m_config.concurrency;
+		if(threads==0)
+			throw math_h_error<RectangularScintillator>("Threads count cannot be zero");
 		size_t part=N/threads,rest=N%threads;
 		vector<shared_ptr<thread>> thread_vector;
 		for(size_t i=1;i<threads;i++)
@@ -183,6 +201,7 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 		Lock lock(trace_mutex);
 		refl_p[dimension]=reflection_probability(cos_angle);
 	}
+	unsigned long refl_counter=0;
 	while(true){
 		IntersectionSearchResults res=WhereIntersects(ph.coord,ph.dir);
 		if(res.surface==None)
@@ -221,6 +240,13 @@ RectDimensions::IntersectionSearchResults RectangularScintillator::TraceGeometry
 				ph.dir=ph.dir*m_refraction;
 				ph.coord.erase(ph.coord.begin()+dimension);
 				ph.dir.erase(ph.dir.begin()+dimension);
+				return res;
+			}
+		}
+		if(m_config.max_reflections>0){
+			refl_counter++;
+			if(refl_counter>m_config.max_reflections){
+				res.surface=None;
 				return res;
 			}
 		}
