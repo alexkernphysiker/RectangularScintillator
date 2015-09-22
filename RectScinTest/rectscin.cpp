@@ -90,7 +90,7 @@ TEST(RectangularScintillator, Isotropic2){
 }
 TEST(RectangularScintillator,Glue){
 	RectangularScintillator rsc(
-		{make_pair(0,1),make_pair(0,1),make_pair(0,1)},
+		{make_pair(-5,5),make_pair(-5,5),make_pair(-5,5)},
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1.6,[](double){return 0.0;}
 	);
@@ -98,26 +98,26 @@ TEST(RectangularScintillator,Glue){
 		middle=make_shared<SignalStatictics>(),
 		worst=make_shared<SignalStatictics>();
 	rsc.Surface(0,RectDimensions::Left)>>(
-		Photosensor({make_pair(0,1),make_pair(0,1)},1.0,[](double){return 1.0;})
+		Photosensor({make_pair(-5,5),make_pair(-5,5)},1.0,[](double){return 1.0;})
 		>>(make_shared<AmplitudeSignal>()>>ideal)
 	);
 	rsc.Surface(1,RectDimensions::Left)>>(
-		Photosensor({make_pair(0,1),make_pair(0,1)},0.5,[](double){return 1.0;})
+		Photosensor({make_pair(-5,5),make_pair(-5,5)},0.5,[](double){return 1.0;})
 		>>(make_shared<AmplitudeSignal>()>>middle)
 	);
 	rsc.Surface(2,RectDimensions::Left)>>(
-		Photosensor({make_pair(0,1),make_pair(0,1)},0.0,[](double){return 1.0;})
+		Photosensor({make_pair(-5,5),make_pair(-5,5)},0.0,[](double){return 1.0;})
 		>>(make_shared<AmplitudeSignal>()>>worst)
 	);
 	for(size_t cnt=0;cnt<200;cnt++)
-		rsc.RegisterGamma({0.5,0.5,0.5},3000,engine);
+		rsc.RegisterGamma({0,0,0},3000,engine);
 	EXPECT_TRUE(worst->data().getAverage()<ideal->data().getAverage());
 	EXPECT_TRUE(worst->data().getAverage()<middle->data().getAverage());
 	EXPECT_TRUE(middle->data().getAverage()<ideal->data().getAverage());
 }
 TEST(RectangularScintillator, oneD_symmetry){
 	RectangularScintillator rsc(
-		{make_pair(-10,10),make_pair(-1,1),make_pair(-1,1)},
+		{make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1.6,[](double){return 0.0;}
 	);
@@ -143,11 +143,11 @@ TEST(RectangularScintillator, oneD_symmetry){
 	auto timestat=make_shared<SignalStatictics>(),amplstat=make_shared<SignalStatictics>();
 	timediff>>timestat;ampldiff>>amplstat;
 	for(size_t cnt=0;cnt<100;cnt++)
-		rsc.RegisterGamma({-5,0,0},3000,engine);
+		rsc.RegisterGamma({-30,0,0},3000,engine);
 	double oldtime=timestat->data().getAverage(),oldampl=amplstat->data().getAverage();
 	timestat->Clear();amplstat->Clear();
 	for(size_t cnt=0;cnt<100;cnt++)
-		rsc.RegisterGamma({+5,0,0},3000,engine);
+		rsc.RegisterGamma({+30,0,0},3000,engine);
 	EXPECT_CLOSE_VALUES_with_error(-oldtime,timestat->data().getAverage(),timestat->data().getSigma());
 	EXPECT_CLOSE_VALUES_with_error(-oldampl,amplstat->data().getAverage(),amplstat->data().getSigma());
 }
