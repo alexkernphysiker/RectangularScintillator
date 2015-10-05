@@ -142,15 +142,15 @@ TEST(RectangularScintillator, oneD_symmetry_plus_concurrency){
 	}
 	auto timestat=make_shared<SignalStatictics>(),amplstat=make_shared<SignalStatictics>();
 	timediff>>timestat;ampldiff>>amplstat;
-	for(size_t threads=1;threads<5;threads++){
+	for(size_t threads=1;threads<15;threads++){
 		rsc.Configure(RectangularScintillator::Options(threads,5));
 		printf("%i threads\n",threads);
 		timestat->Clear();amplstat->Clear();
-		for(size_t cnt=0;cnt<100;cnt++)
+		for(size_t cnt=0;cnt<200;cnt++)
 			rsc.RegisterGamma({-30,0,0},3000,engine);
 		double oldtime=timestat->data().getAverage(),oldampl=amplstat->data().getAverage();
 		timestat->Clear();amplstat->Clear();
-		for(size_t cnt=0;cnt<100;cnt++)
+		for(size_t cnt=0;cnt<200;cnt++)
 			rsc.RegisterGamma({+30,0,0},3000,engine);
 		EXPECT_CLOSE_VALUES_with_error(-oldtime,timestat->data().getAverage(),timestat->data().getSigma());
 		EXPECT_CLOSE_VALUES_with_error(-oldampl,amplstat->data().getAverage(),amplstat->data().getSigma());
