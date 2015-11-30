@@ -4,8 +4,8 @@
 #define mxhvHUgn
 #include <fstream>
 #include <string>
-#include "math_h/sigma.h"
-#include "math_h/interpolate.h"
+#include "../math_h/include/sigma.h"
+#include "../math_h/include/interpolate.h"
 #include "photon2signal.h"
 #include "signal_processing.h"
 class SignalStatictics:public SignalAcceptor{

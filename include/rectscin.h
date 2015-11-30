@@ -4,8 +4,8 @@
 #define WEXXxads
 #include <functional>
 #include <memory>
-#include "math_h/randomfunc.h"
-#include "math_h/interpolate.h"
+#include "../math_h/include/randomfunc.h"
+#include "../math_h/include/interpolate.h"
 #include "geometry.h"
 const double speed_of_light=300;//mm/ns
 typedef std::function<double(double)> Func;

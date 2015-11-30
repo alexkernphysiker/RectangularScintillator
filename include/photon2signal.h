@@ -2,7 +2,7 @@
 // GPL v 3.0 license
 #ifndef oRsHdaNh
 #define oRsHdaNh
-#include "math_h/sigma.h"
+#include "../math_h/include/sigma.h"
 #include "sensitive.h"
 class OrderStatistics:public PhotonTimeAcceptor{
 public:

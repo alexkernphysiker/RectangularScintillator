@@ -1,6 +1,6 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include <math_h/functions.h>
+#include <functions.h>
 #include "test_objects.h"
 TEST(AmplitudeSignal,BaseTest){
 	auto test=make_shared<AmplitudeSignal>();

@@ -1,6 +1,6 @@
-#include "math_h/interpolate.h"
-#include "math_h/exception_math_h.h"
-#include "sensitive.h"
+#include <interpolate.h>
+#include <exception_math_h.h>
+#include <sensitive.h>
 using namespace std;
 PhotoSensitiveSurface::PhotoSensitiveSurface(vector< Pair >&&dimensions,double glue,Func efficiency):RectDimensions(),P(0,1){
 	for(Pair&D:dimensions)RectDimensions::operator<<(static_cast<Pair&&>(D));

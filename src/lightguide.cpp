@@ -1,4 +1,4 @@
-#include "lightguide.h"
+#include <lightguide.h>
 using namespace std;
 FlatLightguide::FlatLightguide(vector<Pair>&& dimensions, double glue_eff, double n, double H):
 ScintillatorSurface(){

@@ -1,0 +1,7 @@
+find_package(GTest REQUIRED)
+set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage -g -Wall -pthread -std=gnu++11")
+set(gtestlibs gtest gtest_main)
+enable_testing()
+add_executable(rs_test test_objects.cpp geometry.cpp sensitive.cpp photon2signal.cpp processing.cpp statistics.cpp rectscin.cpp)
+target_link_libraries(rs_test rectscin ${gtestlibs})
+add_test(rs_test rs_test)

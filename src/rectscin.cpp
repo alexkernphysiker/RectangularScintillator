@@ -2,10 +2,10 @@
 // GPL v 3.0 license
 #include <thread>
 #include <mutex>
-#include "math_h/sympson.h"
-#include "math_h/functions.h"
-#include "math_h/exception_math_h.h"
-#include "rectscin.h"
+#include <sympson.h>
+#include <functions.h>
+#include <exception_math_h.h>
+#include <rectscin.h>
 using namespace std;
 ScintillatorSurface::ScintillatorSurface(){}
 ScintillatorSurface::~ScintillatorSurface(){}

@@ -1,7 +1,7 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include "signal_statistics.h"
-#include "math_h/exception_math_h.h"
+#include <exception_math_h.h>
+#include <signal_statistics.h>
 using namespace std;
 SignalStatictics::SignalStatictics(){}
 SignalStatictics::~SignalStatictics(){}

@@ -2,10 +2,10 @@
 // GPL v 3.0 license
 #include <mutex>
 #include <math.h>
-#include "math_h/interpolate.h"
-#include "math_h/randomfunc.h"
-#include "math_h/exception_math_h.h"
-#include "geometry.h"
+#include <interpolate.h>
+#include <randomfunc.h>
+#include <exception_math_h.h>
+#include <geometry.h>
 using namespace std;
 Vec operator*(const Vec&p,double c){
 	Vec res;

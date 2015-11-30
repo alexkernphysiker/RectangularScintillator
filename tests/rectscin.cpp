@@ -1,6 +1,6 @@
 // this file is distributed under 
 // GPL v 3.0 license
-#include <math_h/functions.h>
+#include <functions.h>
 #include "test_objects.h"
 TEST(RectangularScintillator,reflection){
 	RectangularScintillator rsc(
@@ -142,7 +142,7 @@ TEST(RectangularScintillator, oneD_symmetry_plus_concurrency){
 	}
 	auto timestat=make_shared<SignalStatictics>(),amplstat=make_shared<SignalStatictics>();
 	timediff>>timestat;ampldiff>>amplstat;
-	for(size_t threads=1;threads<15;threads++){
+	for(size_t threads=1;threads<3;threads++){
 		rsc.Configure(RectangularScintillator::Options(threads,5));
 		printf("%i threads\n",threads);
 		timestat->Clear();amplstat->Clear();
