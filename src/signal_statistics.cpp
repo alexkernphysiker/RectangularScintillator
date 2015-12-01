@@ -1,5 +1,5 @@
 // this file is distributed under 
-// GPL v 3.0 license
+// MIT license
 #include <exception_math_h.h>
 #include <signal_statistics.h>
 using namespace std;

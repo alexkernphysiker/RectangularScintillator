@@ -1,3 +1,5 @@
+// this file is distributed under 
+// MIT license
 #ifndef XSAYaAus
 #define XSAYaAus
 #include "rectscin.h"

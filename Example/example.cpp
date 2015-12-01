@@ -1,5 +1,5 @@
-// this file is distributed under
-// GPL v 3.0 license
+// this file is distributed under 
+// MIT license
 #include <iostream>
 #include <rectscin.h>
 #include <sensitive.h>

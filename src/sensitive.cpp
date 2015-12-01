@@ -1,3 +1,5 @@
+// this file is distributed under 
+// MIT license
 #include <interpolate.h>
 #include <exception_math_h.h>
 #include <sensitive.h>

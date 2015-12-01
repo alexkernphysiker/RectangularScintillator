@@ -1,5 +1,5 @@
 // this file is distributed under 
-// GPL v 3.0 license
+// MIT license
 #include "test_objects.h"
 TEST(SignalStatictics,Base){
 	auto test=make_shared<SignalStatictics>();
