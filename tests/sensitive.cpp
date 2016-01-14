@@ -1,6 +1,6 @@
 // this file is distributed under 
 // MIT license
-#include <functions.h>
+#include <math_h/functions.h>
 #include "test_objects.h"
 class PhotonCheck:public PhotonTimeAcceptor{
 private:

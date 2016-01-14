@@ -1,7 +1,7 @@
 // this file is distributed under 
 // MIT license
-#include <exception_math_h.h>
-#include <photon2signal.h>
+#include <math_h/exception_math_h.h>
+#include <RectScin/photon2signal.h>
 using namespace std;
 OrderStatistics::OrderStatistics(size_t count){
 	m_count=0;

@@ -1,9 +1,9 @@
 // this file is distributed under 
 // MIT license
-#include <exception_math_h.h>
-#include <functions.h>
-#include <interpolate.h>
-#include <signal_processing.h>
+#include <math_h/exception_math_h.h>
+#include <math_h/functions.h>
+#include <math_h/interpolate.h>
+#include <RectScin/signal_processing.h>
 using namespace std;
 void Single2SingleSignal::AcceptEventStart(){SendEventStart();}
 void Single2SingleSignal::AcceptEventEnd(){SendEventEnd();}

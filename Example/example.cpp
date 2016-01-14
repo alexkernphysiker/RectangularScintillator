@@ -1,11 +1,11 @@
 // this file is distributed under 
 // MIT license
 #include <iostream>
-#include <rectscin.h>
-#include <sensitive.h>
-#include <photon2signal.h>
-#include <signal_processing.h>
-#include <signal_statistics.h>
+#include <RectScin/rectscin.h>
+#include <RectScin/sensitive.h>
+#include <RectScin/photon2signal.h>
+#include <RectScin/signal_processing.h>
+#include <RectScin/signal_statistics.h>
 using namespace std;
 int main(int , char **){
 	RectangularScintillator scintillator(

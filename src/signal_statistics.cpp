@@ -1,7 +1,7 @@
 // this file is distributed under 
 // MIT license
-#include <exception_math_h.h>
-#include <signal_statistics.h>
+#include <math_h/exception_math_h.h>
+#include <RectScin/signal_statistics.h>
 using namespace std;
 SignalStatictics::SignalStatictics(){}
 SignalStatictics::~SignalStatictics(){}

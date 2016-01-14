@@ -3,14 +3,14 @@
 #ifndef bIRWVXRF
 #define bIRWVXRF
 #include <gtest/gtest.h>
-#include <exception_math_h.h>
-#include <geometry.h>
-#include <rectscin.h>
-#include <sensitive.h>
-#include <lightguide.h>
-#include <photon2signal.h>
-#include <signal_processing.h>
-#include <signal_statistics.h>
+#include <math_h/exception_math_h.h>
+#include <RectScin/geometry.h>
+#include <RectScin/rectscin.h>
+#include <RectScin/sensitive.h>
+#include <RectScin/lightguide.h>
+#include <RectScin/photon2signal.h>
+#include <RectScin/signal_processing.h>
+#include <RectScin/signal_statistics.h>
 using namespace std;
 extern RANDOM engine;
 extern uniform_real_distribution<double> Rand;
