@@ -21,11 +21,13 @@ int main(int , char **){
 		scintillator.Surface(0,RectDimensions::Right)>>(photosensor()>>(TimeSignal({make_pair(0,1)})>>(SignalInvert()>>right)));
 		(make_shared<SignalSumm>()<<left<<right)>>time_difference;
 	}
-	printf("Simulation...\n");
+	cout<<"Simulation..."<<endl;
 	RANDOM engine;
 	for(unsigned int cnt=0;cnt<500;cnt++)
 		scintillator.RegisterGamma({0,0,0},3000,engine);
-	printf("done.\n");
-	printf("Time difference = %f+/-%f[ns]\n",time_difference->data().getAverage(),time_difference->data().getSigma());
+	cout<<"done."<<endl;
+	cout<<"Time difference = "
+	      <<time_difference->data().getAverage()<<" +/- "
+	      <<time_difference->data().getSigma()<<" [ns]"<<endl;
 	return 0;
 }

@@ -144,7 +144,7 @@ TEST(RectangularScintillator, oneD_symmetry_plus_concurrency){
 	timediff>>timestat;ampldiff>>amplstat;
 	for(size_t threads=1;threads<3;threads++){
 		rsc.Configure(RectangularScintillator::Options(threads,5));
-		printf("%i threads\n",threads);
+		cout<< threads<<" threads"<<endl;
 		timestat->Clear();amplstat->Clear();
 		for(size_t cnt=0;cnt<200;cnt++)
 			rsc.RegisterGamma({-30,0,0},3000,engine);
