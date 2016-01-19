@@ -2,6 +2,44 @@ Library for Monte Carlo simulation of photons movement in scintillator of rectan
 ===========================================================================================
 
 
+Compiling
+=========
+For using this library, please run:
+
+git clone https://github.com/alexkernphysiker/RectangularScintillator.git
+
+cd RectangularScintillator
+
+git submodule update --init --recursive
+
+cmake .
+
+make
+
+
+For using this library in your git repository please run:
+
+git submodule add https://github.com/alexkernphysiker/RectangularScintillator.git
+
+git submodule update --init --recursive
+
+If you have your own cmake project, you can use this library by adding add_subdirectory instruction.
+But you will have to add path RectangularScintillator/include to your include directories.
+
+
+
+CMake Options
+=============
+
+debug - if ON the project is compiled in debug mode
+
+example - if ON the example is compiled
+
+test - if ON the tests are compiled
+
+
+
+
 General information
 ===================
 
@@ -20,6 +58,7 @@ The implemented algorithms can process signal time (depending on the time of pho
 The signals can be further processed with combinations of algorithms implemented in this library or by user.
 
 
+
 Scintillator
 ============
 Class {RectangularScintillator} defined in rectscin.h implements generating emitted photons and tracing them inside the scintillator.
@@ -32,6 +71,7 @@ Absorption coefficient is given as {function<double(double)>} because it depends
 Method {Surface(dimension,side)} returns the object that represents corresponding rectangular surface and allows to connect scintillator with photosensor or anything else that is designed for this.
 The {dimension} parameters means that the surface is defined by fixing corresponding coordinate to it's minimum value for left side and maximum value for right side.
 surface geometry is given the same way but excluding the dimension that has fixed coordinate.
+
 
 
 Photosensor
@@ -63,6 +103,7 @@ auto timesignal=TimeSignal({make_pair(0,0.5),make_pair(1,0.5)});//average of 1st
 scintillator.Surface(...)>>(sensor>>timesignal);
 
 
+
 Signal analyse
 ==============
 
@@ -85,6 +126,9 @@ or another way:
 scintillator.Surface(...one...)>>(sensor1>>(make_shared<SignalStatictics>()>>statistics1));
 
 scintillator.Surface(...another...)>>(sensor2>>(make_shared<SignalStatictics>()>>statistics2));
+
+Here template "make_shared" must have type of used signal analysing class as a parameter.
+
 
 
 More complicated systems
