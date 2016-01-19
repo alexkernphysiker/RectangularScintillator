@@ -1,6 +1,6 @@
 // this file is distributed under 
 // MIT license
-#include <math_h/exception_math_h.h>
+#include <math_h/error.h>
 #include <RectScin/photon2signal.h>
 using namespace std;
 OrderStatistics::OrderStatistics(size_t count){
@@ -14,7 +14,7 @@ size_t OrderStatistics::count(){
 }
 Sigma< double >&& OrderStatistics::At(size_t i){
 	if(i>=count())
-		throw math_h_error<OrderStatistics>("Order statistics range check error");
+		throw Error<OrderStatistics>("Order statistics range check error");
 	return static_cast<Sigma<double>&&>(m_stat[i]);
 }
 void OrderStatistics::AcceptEventStart(){

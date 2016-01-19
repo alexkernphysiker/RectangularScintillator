@@ -1,6 +1,6 @@
 // this file is distributed under 
 // MIT license
-#include <math_h/exception_math_h.h>
+#include <math_h/error.h>
 #include <math_h/functions.h>
 #include <math_h/interpolate.h>
 #include <RectScin/signal_processing.h>
@@ -13,7 +13,7 @@ void Signal::AcceptSignalValue(double signal){SendSignalValue(signal);}
 
 SignalPolinomialDistort::SignalPolinomialDistort(Vec&& coefs){
 	if(coefs.size()==0)
-		throw math_h_error<SignalPolinomialDistort>("Distortion: empty coefficients");
+		throw Error<SignalPolinomialDistort>("Distortion: empty coefficients");
 	m_coefs=coefs;
 }
 SignalPolinomialDistort::~SignalPolinomialDistort(){}
@@ -43,7 +43,7 @@ AbstractMultiInput& AbstractMultiInput::operator<<(shared_ptr<SignalProducent> i
 }
 void AbstractMultiInput::OneChannelBegin(){
 	if(m_state<0)
-		throw math_h_error<AbstractMultiInput>("MultiInput error: state changed to an invalid value.");
+		throw Error<AbstractMultiInput>("MultiInput error: state changed to an invalid value.");
 	if(m_state==0)
 		Start();
 	m_state++;
@@ -58,7 +58,7 @@ void AbstractMultiInput::OneChannelEnd(){
 		Finish();
 	}
 	if(m_state<0)
-		throw math_h_error<AbstractMultiInput>("MultiInput error: state changed to an invalid value.");
+		throw Error<AbstractMultiInput>("MultiInput error: state changed to an invalid value.");
 }
 AbstractMultiInput::Slot::Slot(std::shared_ptr<AbstractMultiInput>father){master=father;}
 AbstractMultiInput::Slot::~Slot(){}
@@ -96,7 +96,7 @@ SignalSortAndSelect::SignalSortAndSelect(size_t number){m_number=number;}
 SignalSortAndSelect::~SignalSortAndSelect(){}
 void SignalSortAndSelect::Process(const Vec&signals){
 	if(signals.size()<=m_number)
-		throw math_h_error<SignalSortAndSelect>("SignalSortAndSelect: selected order statistics is greater than input slots count");
+		throw Error<SignalSortAndSelect>("SignalSortAndSelect: selected order statistics is greater than input slots count");
 	Vec out;
 	for(double v:signals)if(isfinite(v))
 		InsertSorted(v,out,std_size(out),std_insert(out,double));
@@ -119,7 +119,7 @@ size_t AbstractMultiOutput::GetOutSlotsCount(){
 }
 void AbstractMultiOutput::SendSignalValue(size_t i, double signal){
 	if(i>=m_output_slots.size())
-		throw math_h_error<AbstractMultiOutput>("Mutli output range check error.");
+		throw Error<AbstractMultiOutput>("Mutli output range check error.");
 	m_output_slots[i]->Value(signal);
 }
 void AbstractMultiOutput::SendEventEnd(){
@@ -144,7 +144,7 @@ void Multi2MultiSignal::Finish(){SendEventEnd();}
 
 TimeGate::TimeGate(double width){
 	if(width<=0)
-		throw math_h_error<TimeGate>("Wrong time threshold value for TimeGate: it should be positive");
+		throw Error<TimeGate>("Wrong time threshold value for TimeGate: it should be positive");
 	m_width=width;
 }
 TimeGate::~TimeGate(){}
@@ -178,7 +178,7 @@ inline bool operator>(Pair a,Pair b){return a.first>b.first;}
 inline bool operator<(Pair a,Pair b){return a.first<b.first;}
 void SignalSortAndSelect2::Process(const Vec&signals){
 	if(signals.size()<=m_number)
-		throw math_h_error<SignalSortAndSelect2>("SignalSortAndSelect: selected order statistics is greater than input slots count");
+		throw Error<SignalSortAndSelect2>("SignalSortAndSelect: selected order statistics is greater than input slots count");
 	vector<Pair> out;
 	for(size_t i=0,n=signals.size();i<n;i++)if(isfinite(signals[i])){
 		InsertSorted(make_pair(signals[i],i),out,std_size(out),std_insert(out,Pair));

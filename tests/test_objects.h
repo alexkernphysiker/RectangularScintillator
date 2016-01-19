@@ -3,7 +3,7 @@
 #ifndef bIRWVXRF
 #define bIRWVXRF
 #include <gtest/gtest.h>
-#include <math_h/exception_math_h.h>
+#include <math_h/error.h>
 #include <RectScin/geometry.h>
 #include <RectScin/rectscin.h>
 #include <RectScin/sensitive.h>

@@ -7,10 +7,10 @@ TEST(VecOpr,throwtest){
 	Vec B;
 	for(int i=0;i<10;i++){
 		A.push_back(Rand(engine));
-		EXPECT_THROW((A)+(B),math_h_error<Vec>);
-		EXPECT_THROW((A)-(B),math_h_error<Vec>);
-		EXPECT_THROW(SqDistance((A),(B)),math_h_error<Vec>);
-		EXPECT_THROW(Distance((A),(B)),math_h_error<Vec>);
+		EXPECT_THROW((A)+(B),Error<Vec>);
+		EXPECT_THROW((A)-(B),Error<Vec>);
+		EXPECT_THROW(SqDistance((A),(B)),Error<Vec>);
+		EXPECT_THROW(Distance((A),(B)),Error<Vec>);
 		B.push_back(Rand(engine));
 		EXPECT_NO_THROW((A)+(B));
 		EXPECT_NO_THROW((A)-(B));
@@ -20,8 +20,8 @@ TEST(VecOpr,throwtest){
 	A.clear();B.clear();
 	for(int i=0;i<10;i++){
 		B.push_back(Rand(engine));
-		EXPECT_THROW((A)+(B),math_h_error<Vec>);
-		EXPECT_THROW((A)-(B),math_h_error<Vec>);
+		EXPECT_THROW((A)+(B),Error<Vec>);
+		EXPECT_THROW((A)-(B),Error<Vec>);
 		A.push_back(Rand(engine));
 		EXPECT_NO_THROW((A)+(B));
 		EXPECT_NO_THROW((A)-(B));
@@ -95,9 +95,9 @@ TEST(VecOpr,Distances){
 TEST(RectDimensions,Dimensions){
 	RectDimensions A;
 	EXPECT_TRUE(A.NumberOfDimensions()==0);
-	EXPECT_THROW(A.Dimension(0),math_h_error<RectDimensions>);
-	EXPECT_THROW(A.Dimension(1),math_h_error<RectDimensions>);
-	EXPECT_THROW(A.Dimension(2),math_h_error<RectDimensions>);
+	EXPECT_THROW(A.Dimension(0),Error<RectDimensions>);
+	EXPECT_THROW(A.Dimension(1),Error<RectDimensions>);
+	EXPECT_THROW(A.Dimension(2),Error<RectDimensions>);
 	for(size_t i=1;i<10;i++){
 		EXPECT_TRUE(&A==&(A<<make_pair(i,2*i)));
 		EXPECT_TRUE(A.NumberOfDimensions()==i);
@@ -105,9 +105,9 @@ TEST(RectDimensions,Dimensions){
 			EXPECT_TRUE(A.Dimension(j-1).first==j);
 			EXPECT_TRUE(A.Dimension(j-1).second==2*j);
 		}
-		EXPECT_THROW(A.Dimension(i),math_h_error<RectDimensions>);
-		EXPECT_THROW(A.Dimension(i+1),math_h_error<RectDimensions>);
-		EXPECT_THROW(A.Dimension(i+2),math_h_error<RectDimensions>);
+		EXPECT_THROW(A.Dimension(i),Error<RectDimensions>);
+		EXPECT_THROW(A.Dimension(i+1),Error<RectDimensions>);
+		EXPECT_THROW(A.Dimension(i+2),Error<RectDimensions>);
 	}
 }
 TEST(RectDimensions,IsInside){
@@ -120,7 +120,7 @@ TEST(RectDimensions,IsInside){
 			for(size_t j=0,n=A.NumberOfDimensions();j<n;j++){
 				double x=Rand(engine);
 				test&=(x>=A.Dimension(j).first)&&(x<=A.Dimension(j).second);
-				EXPECT_THROW(A.IsInside((v)),math_h_error<RectDimensions>);
+				EXPECT_THROW(A.IsInside((v)),Error<RectDimensions>);
 				v.push_back(x);
 			}
 			EXPECT_TRUE(A.IsInside((v))==test);
@@ -132,9 +132,9 @@ TEST(RectDimensions,WhereIntersects_throwing1){
 	Vec O;Vec D;
 	for(size_t i=1;i<10;i++){
 		A<<make_pair(-10.0+i,double(i));
-		EXPECT_THROW(A.WhereIntersects((O),(D)),math_h_error<RectDimensions>);
+		EXPECT_THROW(A.WhereIntersects((O),(D)),Error<RectDimensions>);
 		O.push_back(0);
-		EXPECT_THROW(A.WhereIntersects((O),(D)),math_h_error<RectDimensions>);
+		EXPECT_THROW(A.WhereIntersects((O),(D)),Error<RectDimensions>);
 		D.push_back(0);
 		EXPECT_TRUE(A.WhereIntersects((O),(D)).surface==RectDimensions::None);
 	}
@@ -144,9 +144,9 @@ TEST(RectDimensions,WhereIntersects_throwing2){
 	Vec O;Vec D;
 	for(size_t i=1;i<10;i++){
 		A<<make_pair(-10.0+i,double(i));
-		EXPECT_THROW(A.WhereIntersects((O),(D)),math_h_error<RectDimensions>);
+		EXPECT_THROW(A.WhereIntersects((O),(D)),Error<RectDimensions>);
 		D.push_back(0);
-		EXPECT_THROW(A.WhereIntersects((O),(D)),math_h_error<RectDimensions>);
+		EXPECT_THROW(A.WhereIntersects((O),(D)),Error<RectDimensions>);
 		O.push_back(0);
 		EXPECT_TRUE(A.WhereIntersects((O),(D)).surface==RectDimensions::None);
 	}
