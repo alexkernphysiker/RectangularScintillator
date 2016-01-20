@@ -2,6 +2,9 @@
 // MIT license
 #include <math_h/functions.h>
 #include "test_objects.h"
+using namespace std;
+using namespace MathTemplates;
+using namespace RectangularScintillator;
 TEST(AmplitudeSignal,BaseTest){
 	auto test=make_shared<AmplitudeSignal>();
 	auto out=make_shared<Out>();

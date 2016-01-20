@@ -1,6 +1,9 @@
 // this file is distributed under 
 // MIT license
 #include "test_objects.h"
+using namespace std;
+using namespace MathTemplates;
+using namespace RectangularScintillator;
 RANDOM engine;
 uniform_real_distribution<double> Rand(-10,10);
 uniform_int_distribution<int> iRand(-10,10);
@@ -34,15 +37,15 @@ SignalSender& SignalSender::send(Vec&& signals){
 Out::Out(){event=false;}Out::~Out(){}
 double Out::value(){return signal;}
 void Out::AcceptEventStart(){
-	if(event)throw Error<Out>("Signal producent unusual behaviour");
+	if(event)throw Exception<Out>("Signal producent unusual behaviour");
 	event=true;
 	signal=INFINITY;
 }
 void Out::AcceptSignalValue(double s){
-	if(!event)throw Error<Out>("Signal producent unusual behaviour");
+	if(!event)throw Exception<Out>("Signal producent unusual behaviour");
 	signal=s;
 }
 void Out::AcceptEventEnd(){
-	if(!event)throw Error<Out>("Signal producent unusual behaviour");
+	if(!event)throw Exception<Out>("Signal producent unusual behaviour");
 	event=false;
 }

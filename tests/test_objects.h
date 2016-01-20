@@ -5,13 +5,15 @@
 #include <gtest/gtest.h>
 #include <math_h/error.h>
 #include <RectScin/geometry.h>
-#include <RectScin/rectscin.h>
+#include <RectScin/scintillator.h>
 #include <RectScin/sensitive.h>
 #include <RectScin/lightguide.h>
 #include <RectScin/photon2signal.h>
 #include <RectScin/signal_processing.h>
 #include <RectScin/signal_statistics.h>
 using namespace std;
+using namespace MathTemplates;
+using namespace RectangularScintillator;
 extern RANDOM engine;
 extern uniform_real_distribution<double> Rand;
 extern uniform_int_distribution<int> iRand;

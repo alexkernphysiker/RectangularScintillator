@@ -2,6 +2,9 @@
 // MIT license
 #include <math_h/functions.h>
 #include "test_objects.h"
+using namespace std;
+using namespace MathTemplates;
+using namespace RectangularScintillator;
 TEST(SignalPolinomialDistort,Base){
 	for(size_t p=0;p<10;p++){
 		Vec C;for(size_t i=0;i<=p;i++)C.push_back(Rand(engine));
@@ -122,8 +125,8 @@ TEST(SignalSortAndSelect2,BaseTest){
 		}
 }
 TEST(TimeGate,SimpleTest){
-	EXPECT_THROW(make_shared<TimeGate>(-1),Error<TimeGate>);
-	EXPECT_THROW(make_shared<TimeGate>(0),Error<TimeGate>);
+	EXPECT_THROW(make_shared<TimeGate>(-1),Exception<TimeGate>);
+	EXPECT_THROW(make_shared<TimeGate>(0),Exception<TimeGate>);
 	for(double d=1;d<10;d+=1){
 		auto test=make_shared<TimeGate>(d);
 		auto out1=make_shared<Out>(),out2=make_shared<Out>();

@@ -1,14 +1,16 @@
 // this file is distributed under 
 // MIT license
 #include <iostream>
-#include <RectScin/rectscin.h>
+#include <RectScin/scintillator.h>
 #include <RectScin/sensitive.h>
 #include <RectScin/photon2signal.h>
 #include <RectScin/signal_processing.h>
 #include <RectScin/signal_statistics.h>
 using namespace std;
+using namespace MathTemplates;
+using namespace RectangularScintillator;
 int main(int , char **){
-	RectangularScintillator scintillator(
+	Scintillator scintillator(
 		{make_pair(-15,15),make_pair(-7,7),make_pair(-7,7)},
 		TimeDistribution2(0.005,0.2,1.5),RandomValueGenerator<double>(300,500),
 		1.58,[](double l){return 0.08;}

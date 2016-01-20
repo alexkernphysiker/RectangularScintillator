@@ -1,6 +1,9 @@
 // this file is distributed under 
 // MIT license
 #include "test_objects.h"
+using namespace std;
+using namespace MathTemplates;
+using namespace RectangularScintillator;
 TEST(SignalStatictics,Base){
 	auto test=make_shared<SignalStatictics>();
 	SignalSender s;

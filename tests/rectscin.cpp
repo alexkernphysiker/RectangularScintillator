@@ -2,8 +2,11 @@
 // MIT license
 #include <math_h/functions.h>
 #include "test_objects.h"
-TEST(RectangularScintillator,reflection){
-	RectangularScintillator rsc(
+using namespace std;
+using namespace MathTemplates;
+using namespace RectangularScintillator;
+TEST(Scintillator,reflection){
+	Scintillator rsc(
 		{make_pair(0,1),make_pair(0,1),make_pair(0,1)},
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1.0+0.1*(rand()%10),[](double){return 0.0;}
@@ -11,17 +14,17 @@ TEST(RectangularScintillator,reflection){
 	for(Pair&p:rsc.ReflectionProbabilityFunction())
 		EXPECT_TRUE((p.second>=0)&&(p.second<=1));
 }
-TEST(RectangularScintillator,geometry){
-	RectangularScintillator rsc(
+TEST(Scintillator,geometry){
+	Scintillator rsc(
 		{make_pair(0,1),make_pair(0,1),make_pair(0,1)},
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1,[](double){return 0.0;}
 	);
 	EXPECT_NO_THROW(rsc.RegisterGamma({0.5,0.5,0.5},10,engine));
-	EXPECT_THROW(rsc.RegisterGamma({2,2,2},1,engine),Error<RectangularScintillator>);
+	EXPECT_THROW(rsc.RegisterGamma({2,2,2},1,engine),Exception<Scintillator>);
 }
-TEST(RectangularScintillator, Isotropic){
-	RectangularScintillator rsc(
+TEST(Scintillator, Isotropic){
+	Scintillator rsc(
 		{make_pair(0,1),make_pair(0,1),make_pair(0,1)},
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1.6,[](double){return 0.0;}
@@ -53,8 +56,8 @@ TEST(RectangularScintillator, Isotropic){
 	check_close(counts);
 	check_close(times);
 }
-TEST(RectangularScintillator, Isotropic2){
-	RectangularScintillator rsc(
+TEST(Scintillator, Isotropic2){
+	Scintillator rsc(
 		{make_pair(-1,1),make_pair(-1,1),make_pair(-1,1)},
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1.6,[](double){return 0.0;}
@@ -88,8 +91,8 @@ TEST(RectangularScintillator, Isotropic2){
 	check_close(counts);
 	check_close(times);
 }
-TEST(RectangularScintillator,Glue){
-	RectangularScintillator rsc(
+TEST(Scintillator,Glue){
+	Scintillator rsc(
 		{make_pair(-5,5),make_pair(-5,5),make_pair(-5,5)},
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1.6,[](double){return 0.0;}
@@ -115,8 +118,8 @@ TEST(RectangularScintillator,Glue){
 	EXPECT_TRUE(worst->data().getAverage()<middle->data().getAverage());
 	EXPECT_TRUE(middle->data().getAverage()<ideal->data().getAverage());
 }
-TEST(RectangularScintillator, oneD_symmetry_plus_concurrency){
-	RectangularScintillator rsc(
+TEST(Scintillator, oneD_symmetry_plus_concurrency){
+	Scintillator rsc(
 		{make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},
 		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
 		1.6,[](double){return 0.0;}
@@ -143,7 +146,7 @@ TEST(RectangularScintillator, oneD_symmetry_plus_concurrency){
 	auto timestat=make_shared<SignalStatictics>(),amplstat=make_shared<SignalStatictics>();
 	timediff>>timestat;ampldiff>>amplstat;
 	for(size_t threads=1;threads<3;threads++){
-		rsc.Configure(RectangularScintillator::Options(threads,5));
+		rsc.Configure(Scintillator::Options(threads,5));
 		cout<< threads<<" threads"<<endl;
 		timestat->Clear();amplstat->Clear();
 		for(size_t cnt=0;cnt<200;cnt++)

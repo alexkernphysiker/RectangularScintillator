@@ -61,10 +61,10 @@ The signals can be further processed with combinations of algorithms implemented
 
 Scintillator
 ============
-Class {RectangularScintillator} defined in rectscin.h implements generating emitted photons and tracing them inside the scintillator.
+Class {Scintillator} defined in rectscin.h implements generating emitted photons and tracing them inside the scintillator.
 For creating the instance of this class one should give the geometry of the scintillator ass {vector<pair<double,double>>}
 where each pair corresponds to a different dimension and the elements in the pair correspond to minimum and maximum coordinates occupied by the scintillator.
-The distribution of photon's emission time and wavelength are given as {RandomValueGenerator<double>} that is declared in math\_h/randomfunc.h (in submodule).
+The distribution of photon's emission time and wavelength are given as {RandomValueGenerator<double>} that is declared in math_h/randomfunc.h (in submodule).
 Refraction parameter is given as {double}. 
 Absorption coefficient is given as {function<double(double)>} because it depends on photon wavelength.
 
@@ -83,7 +83,7 @@ and quantum efficiency defined as {function<double(double)>} that depends on pho
 It's recommended to use {Photosensor} function for creating the instances of this class.
 Here's the example of using photosensors:
 
-RectangularScintillator scintillator({...geometry...},...other parameters...);
+Scintillator scintillator({...geometry...},...other parameters...);
 
 auto sensor=Photosensor({...surface~geometry...},...other parameters...);
 
