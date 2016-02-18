@@ -61,9 +61,10 @@ namespace RectangularScintillator{
 	public:
 		Scintillator(
 			vector<Pair>&&dimensions,
+			double refraction,
 			RandomValueGenerator<double>&&time_distribution,
-			RandomValueGenerator<double>&&lambda_distribution,
-			double refraction,Func absorption
+			RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
+			Func absorption=[](double){return 0.0;}
 		);
 		virtual ~Scintillator();
 		ScintillatorSurface&Surface(size_t dimension,Side side);

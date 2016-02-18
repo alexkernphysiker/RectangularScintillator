@@ -61,10 +61,11 @@ namespace RectangularScintillator{
 		return 1.0;
 	}
 	Scintillator::Scintillator(
-		std::vector<Pair>&&dimensions,
+		vector<Pair>&&dimensions,
+		double refraction,
 		RandomValueGenerator<double>&&time_distribution,
 		RandomValueGenerator<double>&&lambda_distribution,
-		double refraction,Func absorption
+		Func absorption
 	):RectDimensions(),
 		m_config(Defaults()),
 		m_time_distribution(time_distribution),

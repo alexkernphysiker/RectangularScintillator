@@ -6,29 +6,17 @@ using namespace std;
 using namespace MathTemplates;
 using namespace RectangularScintillator;
 TEST(Scintillator,reflection){
-	Scintillator rsc(
-		{make_pair(0,1),make_pair(0,1),make_pair(0,1)},
-		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
-		1.0+0.1*(rand()%10),[](double){return 0.0;}
-	);
+	Scintillator rsc({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.0+0.1*(rand()%10),TimeDistribution1(0.5,1.5));
 	for(Pair&p:rsc.ReflectionProbabilityFunction())
 		EXPECT_TRUE((p.second>=0)&&(p.second<=1));
 }
 TEST(Scintillator,geometry){
-	Scintillator rsc(
-		{make_pair(0,1),make_pair(0,1),make_pair(0,1)},
-		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
-		1,[](double){return 0.0;}
-	);
+	Scintillator rsc({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.0,TimeDistribution1(0.5,1.5));
 	EXPECT_NO_THROW(rsc.RegisterGamma({0.5,0.5,0.5},10,engine));
 	EXPECT_THROW(rsc.RegisterGamma({2,2,2},1,engine),Exception<Scintillator>);
 }
 TEST(Scintillator, Isotropic){
-	Scintillator rsc(
-		{make_pair(0,1),make_pair(0,1),make_pair(0,1)},
-		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
-		1.6,[](double){return 0.0;}
-	);
+	Scintillator rsc({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.6,TimeDistribution1(0.5,1.5));
 	vector<shared_ptr<SignalStatictics>> counts,times;
 	for(size_t dimension=0;dimension<3;dimension++)
 		for(auto side=RectDimensions::Left;side<=RectDimensions::Right;inc(side)){
@@ -57,11 +45,7 @@ TEST(Scintillator, Isotropic){
 	check_close(times);
 }
 TEST(Scintillator, Isotropic2){
-	Scintillator rsc(
-		{make_pair(-1,1),make_pair(-1,1),make_pair(-1,1)},
-		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
-		1.6,[](double){return 0.0;}
-	);
+	Scintillator rsc({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.6,TimeDistribution1(0.5,1.5));
 	vector<shared_ptr<SignalStatictics>> counts,times;
 	for(size_t dimension=0;dimension<3;dimension++)
 		for(auto side=RectDimensions::Left;side<=RectDimensions::Right;inc(side))
@@ -92,11 +76,7 @@ TEST(Scintillator, Isotropic2){
 	check_close(times);
 }
 TEST(Scintillator,Glue){
-	Scintillator rsc(
-		{make_pair(-5,5),make_pair(-5,5),make_pair(-5,5)},
-		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
-		1.6,[](double){return 0.0;}
-	);
+	Scintillator rsc({make_pair(-5,5),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5));
 	auto ideal=make_shared<SignalStatictics>(),
 		middle=make_shared<SignalStatictics>(),
 		worst=make_shared<SignalStatictics>();
@@ -119,11 +99,7 @@ TEST(Scintillator,Glue){
 	EXPECT_TRUE(middle->data().get().val()<ideal->data().get().val());
 }
 TEST(Scintillator, oneD_symmetry_plus_concurrency){
-	Scintillator rsc(
-		{make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},
-		TimeDistribution1(0.5,1.5),RandomValueGenerator<double>(100,200),
-		1.6,[](double){return 0.0;}
-	);
+	Scintillator rsc({make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5));
 	auto timediff=make_shared<SignalSumm>(),ampldiff=make_shared<SignalSumm>();
 	{
 		auto time=make_shared<Signal>(),ampl=make_shared<Signal>();
