@@ -257,20 +257,24 @@ namespace RectangularScintillator{
 			}
 		}
 	}
-	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,double maxtime,double dt){
-		auto func=[sigma,decay,maxtime,dt](double t){
+	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,vector<double>&&chain){
+		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
+		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size()*10);
+		auto func=[sigma,decay,max,min,dt](double t){
 			auto A=[sigma](double th){if(th<0)return 0.0;return Gaussian(th,2.5*sigma,sigma);};
 			auto B=[decay](double th){if(th<0)return 0.0;return exp(-th/decay);};
-			return Sympson([t,sigma,decay,A,B](double ksi){return A(ksi)*B(t-ksi);},-maxtime,maxtime,dt);
+			return Sympson([t,sigma,decay,A,B](double ksi){return A(ksi)*B(t-ksi);},min-sigma,max+sigma,dt);
 		};
-		return RandomValueGenerator<double>(func,ChainWithStep(0.0,dt,maxtime));
+		return RandomValueGenerator<double>(func,chain);
 	}
-	RandomValueGenerator<double> TimeDistribution2(double rize,double sigma, double decay,double maxtime,double dt){
-		auto func=[rize,sigma,decay,maxtime,dt](double t){
+	RandomValueGenerator<double> TimeDistribution2(double rize,double sigma, double decay,vector<double>&&chain){
+		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
+		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size()*10);
+		auto func=[rize,sigma,decay,min,max,dt](double t){
 			auto A=[sigma](double th){if(th<0)return 0.0;return Gaussian(th,2.5*sigma,sigma);};
 			auto B=[rize,decay](double th){if(th<0)return 0.0;return exp(-th/decay)-exp(-th/rize);};
-			return Sympson([t,sigma,decay,A,B](double ksi){return A(ksi)*B(t-ksi);},-maxtime,maxtime,dt);
+			return Sympson([t,sigma,decay,A,B](double ksi){return A(ksi)*B(t-ksi);},min-sigma,max+sigma,dt);
 		};
-		return RandomValueGenerator<double>(func,ChainWithStep(0.0,dt,maxtime));
+		return RandomValueGenerator<double>(func,chain);
 	}
 };

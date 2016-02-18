@@ -4,6 +4,7 @@
 #define WEXXxads
 #include <functional>
 #include <memory>
+#include <vector>
 #include "../math_h/randomfunc.h"
 #include "../math_h/interpolate.h"
 #include "geometry.h"
@@ -96,9 +97,7 @@ namespace RectangularScintillator{
 		vector<SurfPair> m_edges;
 		mutex trace_mutex;
 	};
-	const double max_emission_time=20;
-	const double emission_time_binwidth=0.01;
-	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,double maxtime=max_emission_time,double dt=emission_time_binwidth);
-	RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay,double maxtime=max_emission_time,double dt=emission_time_binwidth);
+	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,vector<double>&&time_chain=ChainWithStep(0.0,0.001,20.0));
+	RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay, vector<double>&&time_chain=ChainWithStep(0.0,0.001,20.0));
 };
 #endif
