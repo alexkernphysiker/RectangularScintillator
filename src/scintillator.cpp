@@ -61,10 +61,10 @@ namespace RectangularScintillator{
 		return 1.0;
 	}
 	Scintillator::Scintillator(
-		vector<Pair>&&dimensions,
+		const vector<Pair>&dimensions,
 		double refraction,
-		RandomValueGenerator<double>&&time_distribution,
-		RandomValueGenerator<double>&&lambda_distribution,
+		const RandomValueGenerator<double>&time_distribution,
+		const RandomValueGenerator<double>&lambda_distribution,
 		Func absorption
 	):RectDimensions(),
 		m_config(Defaults()),
@@ -89,8 +89,8 @@ namespace RectangularScintillator{
 			reflection_probability<<make_pair(x,ReflectionProbability(m_refraction,x));
 	}
 	Scintillator::~Scintillator(){}
-	LinearInterpolation<double>&Scintillator::ReflectionProbabilityFunction()const{
-		return const_cast<LinearInterpolation<double>&>(reflection_probability);
+	const LinearInterpolation<double>&Scintillator::ReflectionProbabilityFunction()const{
+		return reflection_probability;
 	}
 	Scintillator::Options::Options(size_t c, unsigned long refl):
 	concurrency(c),max_reflections(refl){}

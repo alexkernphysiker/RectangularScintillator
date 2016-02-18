@@ -60,11 +60,11 @@ namespace RectangularScintillator{
 	class Scintillator:protected RectDimensions{
 	public:
 		Scintillator(
-			vector<Pair>&&dimensions,
+			const vector<Pair>&dimensions,
 			double refraction,
-			RandomValueGenerator<double>&&time_distribution,
-			RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
-			Func absorption=[](double){return 0.0;}
+			const RandomValueGenerator<double>&time_distribution,
+			const RandomValueGenerator<double>&lambda_distribution,
+			Func absorption
 		);
 		virtual ~Scintillator();
 		ScintillatorSurface&Surface(size_t dimension,Side side);
@@ -83,7 +83,7 @@ namespace RectangularScintillator{
 		void Configure(Options&&conf);
 		Options&CurrentConfig()const;
 		
-		LinearInterpolation<double>&ReflectionProbabilityFunction()const;
+		const LinearInterpolation<double>&ReflectionProbabilityFunction()const;
 	protected:
 		Photon GeneratePhoton(const Vec&coord,RANDOM&R);
 		IntersectionSearchResults TraceGeometry(Photon &ph,RANDOM&R);//Changes Photon
@@ -99,20 +99,44 @@ namespace RectangularScintillator{
 		mutex trace_mutex;
 	};
 	inline shared_ptr<Scintillator> MakeScintillator(
+		const vector<Pair>&dimensions,
+		double refraction,
+		const RandomValueGenerator<double>&time_distribution,
+		const RandomValueGenerator<double>&lambda_distribution,
+		Func absorption
+	){
+		return shared_ptr<Scintillator>(
+			new Scintillator(dimensions,refraction,time_distribution,lambda_distribution,absorption)
+		);
+	}
+	inline shared_ptr<Scintillator> MakeScintillator(
+		vector<Pair>&&dimensions,
+		double refraction,
+		const RandomValueGenerator<double>&time_distribution,
+		const RandomValueGenerator<double>&lambda_distribution,
+		Func absorption
+	){return MakeScintillator(dimensions,refraction,time_distribution,lambda_distribution,absorption);}
+	inline shared_ptr<Scintillator> MakeScintillator(
+		const vector<Pair>&dimensions,
+		double refraction,
+		const RandomValueGenerator<double>&time_distribution,
+		RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
+		Func absorption=[](double){return 0.0;}
+	){return MakeScintillator(dimensions,refraction,time_distribution,lambda_distribution,absorption);}
+	inline shared_ptr<Scintillator> MakeScintillator(
+		vector<Pair>&&dimensions,
+		double refraction,
+		const RandomValueGenerator<double>&time_distribution,
+		RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
+		Func absorption=[](double){return 0.0;}
+	){return MakeScintillator(dimensions,refraction,time_distribution,lambda_distribution,absorption);}
+	inline shared_ptr<Scintillator> MakeScintillator(
 		vector<Pair>&&dimensions,
 		double refraction,
 		RandomValueGenerator<double>&&time_distribution,
 		RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
 		Func absorption=[](double){return 0.0;}
-	){
-		return shared_ptr<Scintillator>(new Scintillator(
-			static_cast<vector<Pair>&&>(dimensions),
-			refraction,
-			static_cast<RandomValueGenerator<double>&&>(time_distribution),
-			static_cast<RandomValueGenerator<double>&&>(lambda_distribution),
-			absorption
-		));
-	}
+	){return MakeScintillator(dimensions,refraction,time_distribution,lambda_distribution,absorption);}
 	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,vector<double>&&time_chain=ChainWithStep(0.0,0.01,20.0));
 	RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay, vector<double>&&time_chain=ChainWithStep(0.0,0.01,20.0));
 };
