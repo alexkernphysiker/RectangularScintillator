@@ -113,7 +113,7 @@ namespace RectangularScintillator{
 			absorption
 		));
 	}
-	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,vector<double>&&time_chain=ChainWithStep(0.0,0.001,20.0));
-	RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay, vector<double>&&time_chain=ChainWithStep(0.0,0.001,20.0));
+	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,vector<double>&&time_chain=ChainWithStep(0.0,0.01,20.0));
+	RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay, vector<double>&&time_chain=ChainWithStep(0.0,0.01,20.0));
 };
 #endif

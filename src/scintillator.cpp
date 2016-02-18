@@ -260,7 +260,7 @@ namespace RectangularScintillator{
 	}
 	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,vector<double>&&chain){
 		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
-		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size()*10);
+		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size());
 		auto func=[sigma,decay,max,min,dt](double t){
 			auto A=[sigma](double th){if(th<0)return 0.0;return Gaussian(th,2.5*sigma,sigma);};
 			auto B=[decay](double th){if(th<0)return 0.0;return exp(-th/decay);};
@@ -270,7 +270,7 @@ namespace RectangularScintillator{
 	}
 	RandomValueGenerator<double> TimeDistribution2(double rize,double sigma, double decay,vector<double>&&chain){
 		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
-		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size()*10);
+		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size());
 		auto func=[rize,sigma,decay,min,max,dt](double t){
 			auto A=[sigma](double th){if(th<0)return 0.0;return Gaussian(th,2.5*sigma,sigma);};
 			auto B=[rize,decay](double th){if(th<0)return 0.0;return exp(-th/decay)-exp(-th/rize);};
