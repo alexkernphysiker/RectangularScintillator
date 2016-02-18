@@ -18,9 +18,7 @@ namespace RectangularScintillator{
 		return *this;
 	}
 	double FlatLightguide::GlueEfficiency()const{return g_eff;}
-	RectDimensions&&FlatLightguide::Dimensions(){
-		return static_cast<RectDimensions&&>(*this);
-	}
+	const RectDimensions&FlatLightguide::Dimensions()const{return *this;}
 	void FlatLightguide::Start(){
 		ScintillatorSurface::Start();
 	}

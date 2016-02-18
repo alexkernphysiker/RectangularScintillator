@@ -43,9 +43,7 @@ namespace RectangularScintillator{
 			}
 			return 1.0;
 	}
-	RectDimensions&&ScintillatorSurface::Dimensions(){
-		return static_cast<RectDimensions&&>(*this);
-	}
+	const RectDimensions&ScintillatorSurface::Dimensions()const{return *this;}
 	
 	double ReflectionProbability(double refraction,double cos_){
 		double cos_phi=cos_;

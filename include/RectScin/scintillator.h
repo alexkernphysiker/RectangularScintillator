@@ -35,7 +35,7 @@ namespace RectangularScintillator{
 		virtual void Start()=0;
 		virtual void AbsorbPhoton(Photon&photon,RANDOM&R)=0;
 		virtual void End()=0;
-		virtual RectDimensions&&Dimensions()=0;
+		virtual const RectDimensions&Dimensions()const=0;
 		virtual double GlueEfficiency()const=0;
 	};
 	class Scintillator;
@@ -45,7 +45,7 @@ namespace RectangularScintillator{
 		ScintillatorSurface();
 		virtual ~ScintillatorSurface();
 		ScintillatorSurface&operator>>(std::shared_ptr<IPhotonAbsorber>sensor);
-		RectDimensions&&Dimensions();
+		const RectDimensions&Dimensions()const;
 	protected:
 		void Start();
 		void RegisterPhoton(Photon&photon,RANDOM&R);//changes photon

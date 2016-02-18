@@ -21,7 +21,7 @@ namespace RectangularScintillator{
 		virtual void Start()override;
 		virtual void AbsorbPhoton(Photon&photon,RANDOM&R)override;
 		virtual void End()override;
-		virtual RectDimensions&&Dimensions()override;
+		virtual const RectDimensions&Dimensions()const override;
 		virtual double GlueEfficiency()const override;
 		PhotoSensitiveSurface&operator>>(shared_ptr<PhotonTimeAcceptor>);
 	protected:

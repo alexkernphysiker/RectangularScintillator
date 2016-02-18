@@ -16,7 +16,7 @@ namespace RectangularScintillator{
 		virtual void AbsorbPhoton(Photon& photon,RANDOM&R)override;
 		virtual void End()override;
 		virtual double GlueEfficiency()const override;
-		virtual RectDimensions&&Dimensions()override;
+		virtual const RectDimensions&Dimensions()const override;
 	private:
 		
 		double g_eff,refr,height;

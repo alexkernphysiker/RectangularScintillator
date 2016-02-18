@@ -12,9 +12,7 @@ namespace RectangularScintillator{
 		m_glue=glue;
 	}
 	PhotoSensitiveSurface::~PhotoSensitiveSurface(){}
-	RectDimensions&&PhotoSensitiveSurface::Dimensions(){
-		return static_cast<RectDimensions&&>(*this);
-	}
+	const RectDimensions&PhotoSensitiveSurface::Dimensions()const{return *this;}
 	double PhotoSensitiveSurface::GlueEfficiency()const{return m_glue;}
 	PhotoSensitiveSurface& PhotoSensitiveSurface::operator>>(shared_ptr<PhotonTimeAcceptor> sig){
 		m_signal.push_back(sig);
