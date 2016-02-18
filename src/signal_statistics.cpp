@@ -11,15 +11,7 @@ namespace RectangularScintillator{
 	void SignalStatictics::AcceptSignalValue(double time){m_data<<time;}
 	void SignalStatictics::AcceptEventEnd(){}
 	void SignalStatictics::Clear(){m_data=Sigma<double>();}
-	const Sigma<double>&SignalStatictics::data()const{return const_cast<Sigma<double>&>(m_data);}
-	
-	SignalDistribution::SignalDistribution(double from, double to, size_t bincount):m_data(BinsByCount(bincount,from,to)){}
-	SignalDistribution::~SignalDistribution(){}
-	void SignalDistribution::AcceptEventStart(){}
-	void SignalDistribution::AcceptSignalValue(double time){m_data<<time;}
-	void SignalDistribution::AcceptEventEnd(){}
-	void SignalDistribution::Clear(){m_data=Distribution1D<double>(BinsByCount(cnt,f,t));}
-	const Distribution1D<double>&SignalDistribution::data()const{return const_cast<Distribution1D<double>&>(m_data);}
+	const Sigma<double>&SignalStatictics::data()const{return m_data;}
 	
 	SignalsToFile::SignalsToFile(){}
 	SignalsToFile::~SignalsToFile(){

@@ -57,7 +57,7 @@ namespace RectangularScintillator{
 	const Pair&RectDimensions::Dimension(size_t i)const{
 		if(i>=NumberOfDimensions())
 			throw Exception<RectDimensions>("RectDimensions: dimension index out of range");
-		return const_cast<Pair&>(m_dimensions[i]);
+		return m_dimensions[i];
 	}
 	bool RectDimensions::IsInside(const Vec&point)const{
 		if(point.size()!=NumberOfDimensions())
