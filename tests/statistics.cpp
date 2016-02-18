@@ -23,8 +23,8 @@ TEST(SignalDistribution,Base){
 		double f=Rand(engine),t=f+Rand(engine)+10;
 		int cnt=rand()%100+2;
 		SignalDistribution test(f,t,cnt);
-		EXPECT_CLOSE_VALUES(f+test.data().BinWidth()/2.0,test.data().min());
-		EXPECT_CLOSE_VALUES(t-test.data().BinWidth()/2.0,test.data().max());
+		EXPECT_CLOSE_VALUES(f,test.data()[0].X().min());
+		EXPECT_CLOSE_VALUES(t,test.data()[test.data().size()-1].X().max());
 		EXPECT_EQ(cnt,test.data().size());
 	}
 }

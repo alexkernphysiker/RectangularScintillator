@@ -2,7 +2,7 @@
 // MIT license
 #include <thread>
 #include <mutex>
-#include <math_h/sympson.h>
+#include <math_h/integrate.h>
 #include <math_h/functions.h>
 #include <math_h/error.h>
 #include <RectScin/scintillator.h>
@@ -265,7 +265,7 @@ namespace RectangularScintillator{
 			auto B=[decay](double th){if(th<0)return 0.0;return exp(-th/decay);};
 			return Sympson([t,sigma,decay,A,B](double ksi){return A(ksi)*B(t-ksi);},-maxtime,maxtime,dt);
 		};
-		return RandomValueGenerator<double>(func,0,maxtime,int(maxtime/dt));
+		return RandomValueGenerator<double>(func,ChainWithStep(0.0,dt,maxtime));
 	}
 	RandomValueGenerator<double> TimeDistribution2(double rize,double sigma, double decay,double maxtime,double dt){
 		auto func=[rize,sigma,decay,maxtime,dt](double t){
@@ -273,6 +273,6 @@ namespace RectangularScintillator{
 			auto B=[rize,decay](double th){if(th<0)return 0.0;return exp(-th/decay)-exp(-th/rize);};
 			return Sympson([t,sigma,decay,A,B](double ksi){return A(ksi)*B(t-ksi);},-maxtime,maxtime,dt);
 		};
-		return RandomValueGenerator<double>(func,0,maxtime,int(maxtime/dt));
+		return RandomValueGenerator<double>(func,ChainWithStep(0.0,dt,maxtime));
 	}
 };

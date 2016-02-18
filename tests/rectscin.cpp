@@ -47,10 +47,10 @@ TEST(Scintillator, Isotropic){
 		double val=INFINITY,err;
 		for(shared_ptr<SignalStatictics>one:vec)
 			if(isfinite(val)){
-				EXPECT_CLOSE_VALUES_with_error(one->data().getAverage(),val,err+one->data().getSigma());
+				EXPECT_CLOSE_VALUES_with_error(one->data().get().val(),val,err+one->data().get().val());
 			}else{
-				val=one->data().getAverage();
-				err=one->data().getSigma();
+				val=one->data().get().val();
+				err=one->data().get().delta();
 			}
 	};
 	check_close(counts);
@@ -82,10 +82,10 @@ TEST(Scintillator, Isotropic2){
 		double val=INFINITY,err;
 	for(shared_ptr<SignalStatictics>one:vec)
 		if(isfinite(val)){
-			EXPECT_CLOSE_VALUES_with_error(one->data().getAverage(),val,err+one->data().getSigma());
+			EXPECT_CLOSE_VALUES_with_error(one->data().get().val(),val,err+one->data().get().delta());
 		}else{
-			val=one->data().getAverage();
-			err=one->data().getSigma();
+			val=one->data().get().val();
+			err=one->data().get().delta();
 		}
 	};
 	check_close(counts);
@@ -114,9 +114,9 @@ TEST(Scintillator,Glue){
 	);
 	for(size_t cnt=0;cnt<200;cnt++)
 		rsc.RegisterGamma({0,0,0},3000,engine);
-	EXPECT_TRUE(worst->data().getAverage()<ideal->data().getAverage());
-	EXPECT_TRUE(worst->data().getAverage()<middle->data().getAverage());
-	EXPECT_TRUE(middle->data().getAverage()<ideal->data().getAverage());
+	EXPECT_TRUE(worst->data().get().val()<ideal->data().get().val());
+	EXPECT_TRUE(worst->data().get().val()<middle->data().get().val());
+	EXPECT_TRUE(middle->data().get().val()<ideal->data().get().val());
 }
 TEST(Scintillator, oneD_symmetry_plus_concurrency){
 	Scintillator rsc(
@@ -151,11 +151,11 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 		timestat->Clear();amplstat->Clear();
 		for(size_t cnt=0;cnt<200;cnt++)
 			rsc.RegisterGamma({-30,0,0},3000,engine);
-		double oldtime=timestat->data().getAverage(),oldampl=amplstat->data().getAverage();
+		double oldtime=timestat->data().get().val(),oldampl=amplstat->data().get().val();
 		timestat->Clear();amplstat->Clear();
 		for(size_t cnt=0;cnt<200;cnt++)
 			rsc.RegisterGamma({+30,0,0},3000,engine);
-		EXPECT_CLOSE_VALUES_with_error(-oldtime,timestat->data().getAverage(),timestat->data().getSigma());
-		EXPECT_CLOSE_VALUES_with_error(-oldampl,amplstat->data().getAverage(),amplstat->data().getSigma());
+		EXPECT_CLOSE_VALUES_with_error(-oldtime,timestat->data().get().val(),timestat->data().get().delta());
+		EXPECT_CLOSE_VALUES_with_error(-oldampl,amplstat->data().get().val(),amplstat->data().get().delta());
 	}
 }

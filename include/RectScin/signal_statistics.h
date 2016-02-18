@@ -6,6 +6,7 @@
 #include <string>
 #include "../math_h/sigma.h"
 #include "../math_h/interpolate.h"
+#include "../math_h/hist.h"
 #include "photon2signal.h"
 #include "signal_processing.h"
 namespace RectangularScintillator{
@@ -18,23 +19,23 @@ namespace RectangularScintillator{
 		virtual void AcceptEventStart()override;
 		virtual void AcceptSignalValue(double time)override;
 		virtual void AcceptEventEnd()override;
-		Sigma<double>&data()const;
+		const Sigma<double>&data()const;
 		void Clear();
 	private:
 		Sigma<double> m_data;
 	};
 	class SignalDistribution:public SignalAcceptor{
 	public:
-		SignalDistribution(double from, double to, int bincount);
+		SignalDistribution(double from, double to, size_t bincount);
 		virtual ~SignalDistribution();
 		virtual void AcceptEventStart()override;
 		virtual void AcceptSignalValue(double time)override;
 		virtual void AcceptEventEnd()override;
-		Distribution<double>&data()const;
+		const Distribution1D<double>&data()const;
 		void Clear();
 	private:
-		double f,t;int cnt;
-		Distribution<double> m_data;
+		double f,t;size_t cnt;
+		Distribution1D<double> m_data;
 	};
 	class SignalsToFile:public AbstractMultiInput{
 	public:

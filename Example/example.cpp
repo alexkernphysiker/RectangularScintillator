@@ -29,7 +29,7 @@ int main(int , char **){
 		scintillator.RegisterGamma({0,0,0},3000,engine);
 	cout<<"done."<<endl;
 	cout<<"Time difference = "
-	      <<time_difference->data().getAverage()<<" +/- "
-	      <<time_difference->data().getSigma()<<" [ns]"<<endl;
+	      <<time_difference->data().get().val()<<" +/- "
+	      <<time_difference->data().get().delta()<<" [ns]"<<endl;
 	return 0;
 }

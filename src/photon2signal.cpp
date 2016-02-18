@@ -24,7 +24,7 @@ namespace RectangularScintillator{
 	}
 	void OrderStatistics::AcceptPhotonTime(double time){
 		if(m_count<m_stat.size())
-			m_stat[m_count].AddValue(time);
+			m_stat[m_count]<<time;
 		m_count++;
 	}
 	void OrderStatistics::AcceptEventEnd(){}
