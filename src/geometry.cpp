@@ -45,18 +45,19 @@ namespace RectangularScintillator{
 	}
 	RectDimensions::RectDimensions(){}
 	RectDimensions::~RectDimensions(){}
-	RectDimensions& RectDimensions::operator<<(Pair&&dimension){
+	RectDimensions& RectDimensions::operator<<(const Pair&dimension){
 		if(dimension.first>dimension.second)
 			throw Exception<RectDimensions>("RectDimensions: wrong dimension left>right");
 		Lock lock(geom_mutex);
 		m_dimensions.push_back(dimension);
 		return *this;
 	}
+	RectDimensions& RectDimensions::operator<<(Pair&&dimension){return operator<<(dimension);}
 	size_t RectDimensions::NumberOfDimensions()const{return m_dimensions.size();}
-	Pair&&RectDimensions::Dimension(size_t i)const{
+	const Pair&RectDimensions::Dimension(size_t i)const{
 		if(i>=NumberOfDimensions())
 			throw Exception<RectDimensions>("RectDimensions: dimension index out of range");
-		return const_cast<Pair&&>(m_dimensions[i]);
+		return const_cast<Pair&>(m_dimensions[i]);
 	}
 	bool RectDimensions::IsInside(const Vec&point)const{
 		if(point.size()!=NumberOfDimensions())

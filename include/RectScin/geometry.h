@@ -29,9 +29,10 @@ namespace RectangularScintillator{
 		};
 		RectDimensions();
 		virtual ~RectDimensions();
+		RectDimensions &operator<<(const Pair&dimension);
 		RectDimensions &operator<<(Pair&&dimension);
 		size_t NumberOfDimensions()const;
-		Pair&&Dimension(size_t i)const;
+		const Pair&Dimension(size_t i)const;
 		bool IsInside(const Vec&point)const;
 		IntersectionSearchResults WhereIntersects(const Vec&point,const Vec&dir);
 	private:
