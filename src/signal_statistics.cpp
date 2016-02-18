@@ -10,7 +10,6 @@ namespace RectangularScintillator{
 	void SignalStatictics::AcceptEventStart(){}
 	void SignalStatictics::AcceptSignalValue(double time){m_data<<time;}
 	void SignalStatictics::AcceptEventEnd(){}
-	void SignalStatictics::Clear(){m_data=Sigma<double>();}
 	const Sigma<double>&SignalStatictics::data()const{return m_data;}
 	
 	SignalsToFile::SignalsToFile(){}

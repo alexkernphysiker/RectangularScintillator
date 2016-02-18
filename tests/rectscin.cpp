@@ -99,39 +99,43 @@ TEST(Scintillator,Glue){
 	EXPECT_TRUE(middle->data().get().val()<ideal->data().get().val());
 }
 TEST(Scintillator, oneD_symmetry_plus_concurrency){
-	Scintillator rsc({make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5));
-	auto timediff=make_shared<SignalSumm>(),ampldiff=make_shared<SignalSumm>();
-	{
-		auto time=make_shared<Signal>(),ampl=make_shared<Signal>();
-		rsc.Surface(0,RectDimensions::Left)>>(
-			Photosensor({make_pair(0,1),make_pair(0,1)},1.0,[](double){return 1.0;})
-				>>(make_shared<AmplitudeSignal>()>>ampl)
-				>>(TimeSignal({make_pair(0,1)})>>time)
-		);
-		timediff<<time;ampldiff<<ampl;
+	vector<shared_ptr<Scintillator>> rsc{
+		MakeScintillator({make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5)),
+		MakeScintillator({make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5))
+	};
+	vector<shared_ptr<SignalStatictics>>
+		timestat{make_shared<SignalStatictics>(),make_shared<SignalStatictics>()},
+		amplstat{make_shared<SignalStatictics>(),make_shared<SignalStatictics>()};
+	for(size_t index=0;index<2;index++){
+		auto timediff=make_shared<SignalSumm>(),ampldiff=make_shared<SignalSumm>();
+		{
+			auto time=make_shared<Signal>(),ampl=make_shared<Signal>();
+			rsc[index]->Surface(0,RectDimensions::Left)>>(
+				Photosensor({make_pair(0,1),make_pair(0,1)},1.0,[](double){return 1.0;})
+					>>(make_shared<AmplitudeSignal>()>>ampl)
+					>>(TimeSignal({make_pair(0,1)})>>time)
+			);
+			timediff<<time;ampldiff<<ampl;
+		}
+		{
+			auto time=make_shared<Signal>(),ampl=make_shared<Signal>();
+			rsc[index]->Surface(0,RectDimensions::Right)>>(
+				Photosensor({make_pair(0,1),make_pair(0,1)},1.0,[](double){return 1.0;})
+					>>(make_shared<AmplitudeSignal>()>>(SignalInvert()>>ampl))
+					>>(TimeSignal({make_pair(0,1)})>>(SignalInvert()>>time))
+			);
+			timediff<<time;ampldiff<<ampl;
+		}
+		timediff>>(timestat[index]);ampldiff>>(amplstat[index]);
 	}
-	{
-		auto time=make_shared<Signal>(),ampl=make_shared<Signal>();
-		rsc.Surface(0,RectDimensions::Right)>>(
-			Photosensor({make_pair(0,1),make_pair(0,1)},1.0,[](double){return 1.0;})
-				>>(make_shared<AmplitudeSignal>()>>(SignalInvert()>>ampl))
-				>>(TimeSignal({make_pair(0,1)})>>(SignalInvert()>>time))
-		);
-		timediff<<time;ampldiff<<ampl;
-	}
-	auto timestat=make_shared<SignalStatictics>(),amplstat=make_shared<SignalStatictics>();
-	timediff>>timestat;ampldiff>>amplstat;
 	for(size_t threads=1;threads<3;threads++){
-		rsc.Configure(Scintillator::Options(threads,5));
+		for(size_t index=0;index<2;index++)rsc[index]->Configure(Scintillator::Options(threads,5));
 		cout<< threads<<" threads"<<endl;
-		timestat->Clear();amplstat->Clear();
 		for(size_t cnt=0;cnt<200;cnt++)
-			rsc.RegisterGamma({-30,0,0},3000,engine);
-		double oldtime=timestat->data().get().val(),oldampl=amplstat->data().get().val();
-		timestat->Clear();amplstat->Clear();
+			rsc[0]->RegisterGamma({-30,0,0},3000,engine);
 		for(size_t cnt=0;cnt<200;cnt++)
-			rsc.RegisterGamma({+30,0,0},3000,engine);
-		EXPECT_CLOSE_VALUES_with_error(-oldtime,timestat->data().get().val(),timestat->data().get().delta());
-		EXPECT_CLOSE_VALUES_with_error(-oldampl,amplstat->data().get().val(),amplstat->data().get().delta());
+			rsc[1]->RegisterGamma({+30,0,0},3000,engine);
+		EXPECT_TRUE(amplstat[0]->data().get().contains(amplstat[1]->data().get()));
+		EXPECT_TRUE(timestat[0]->data().get().contains(timestat[1]->data().get()));
 	}
 }

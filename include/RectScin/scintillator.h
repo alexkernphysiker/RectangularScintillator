@@ -98,6 +98,21 @@ namespace RectangularScintillator{
 		vector<SurfPair> m_edges;
 		mutex trace_mutex;
 	};
+	inline shared_ptr<Scintillator> MakeScintillator(
+		vector<Pair>&&dimensions,
+		double refraction,
+		RandomValueGenerator<double>&&time_distribution,
+		RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
+		Func absorption=[](double){return 0.0;}
+	){
+		return shared_ptr<Scintillator>(new Scintillator(
+			static_cast<vector<Pair>&&>(dimensions),
+			refraction,
+			static_cast<RandomValueGenerator<double>&&>(time_distribution),
+			static_cast<RandomValueGenerator<double>&&>(lambda_distribution),
+			absorption
+		));
+	}
 	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,vector<double>&&time_chain=ChainWithStep(0.0,0.001,20.0));
 	RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay, vector<double>&&time_chain=ChainWithStep(0.0,0.001,20.0));
 };

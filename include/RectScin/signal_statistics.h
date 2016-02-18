@@ -21,7 +21,6 @@ namespace RectangularScintillator{
 		virtual void AcceptSignalValue(double time)override;
 		virtual void AcceptEventEnd()override;
 		const Sigma<double>&data()const;
-		void Clear();
 	private:
 		Sigma<double> m_data;
 	};
