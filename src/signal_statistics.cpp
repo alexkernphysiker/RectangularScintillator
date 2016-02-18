@@ -36,4 +36,6 @@ namespace RectangularScintillator{
 		if(!file.is_open())
 			throw Exception<SignalsToFile>("cannot open output file");
 	}
+	
+	
 };

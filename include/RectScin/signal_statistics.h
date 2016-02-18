@@ -6,8 +6,6 @@
 #include <string>
 #include <functional>
 #include "../math_h/sigma.h"
-#include "../math_h/interpolate.h"
-#include "../math_h/hist.h"
 #include "photon2signal.h"
 #include "signal_processing.h"
 namespace RectangularScintillator{
@@ -35,6 +33,29 @@ namespace RectangularScintillator{
 		virtual void Finish()override;
 	private:
 		ofstream file;
+	};
+	
+	class SignalAnalyse:public SignalAcceptor{
+	public:
+		SignalAnalyse(function<void(double)> f);
+		virtual ~SignalAnalyse();
+		virtual void AcceptEventStart()override;
+		virtual void AcceptSignalValue(double time)override;
+		virtual void AcceptEventEnd()override;
+	private:
+		function<void(double)> func;
+	};
+
+	class SignalsAnalyse:public AbstractMultiInput{
+	public:
+		SignalsAnalyse(function<void(const Vec&)> f);
+		virtual ~SignalsAnalyse();
+	protected:
+		virtual void Start()override;
+		virtual void Process(const Vec&signals)override;
+		virtual void Finish()override;
+	private:
+		function<void(const Vec&)> func;
 	};
 	
 };

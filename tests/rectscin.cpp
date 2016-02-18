@@ -63,14 +63,9 @@ TEST(Scintillator, Isotropic2){
 	for(size_t cnt=0;cnt<400;cnt++)
 		rsc.RegisterGamma({0,0,0},3000,engine);
 	auto check_close=[](vector<shared_ptr<SignalStatictics>>&vec){
-		double val=INFINITY,err;
-	for(shared_ptr<SignalStatictics>one:vec)
-		if(isfinite(val)){
-			EXPECT_CLOSE_VALUES_with_error(one->data().get().val(),val,err+one->data().get().delta());
-		}else{
-			val=one->data().get().val();
-			err=one->data().get().delta();
-		}
+		value<double> val=vec[0]->data().get();
+		for(shared_ptr<SignalStatictics>one:vec)
+			EXPECT_TRUE(val.contains(one->data().get()));
 	};
 	check_close(counts);
 	check_close(times);
