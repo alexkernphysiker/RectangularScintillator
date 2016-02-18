@@ -13,7 +13,7 @@ namespace RectangularScintillator{
 	using namespace MathTemplates;
 	class SignalStatictics:public SignalAcceptor{
 	public:
-		SignalStatictics();
+		SignalStatictics(double error_scale=1);
 		virtual ~SignalStatictics();
 		virtual void AcceptEventStart()override;
 		virtual void AcceptSignalValue(double time)override;

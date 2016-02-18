@@ -51,7 +51,7 @@ TEST(Scintillator, Isotropic2){
 		for(auto side=RectDimensions::Left;side<=RectDimensions::Right;inc(side))
 			for(double x1=-1;x1<1;x1+=1)
 				for(double x2=-1;x2<1;x2+=1){
-					auto ampl=make_shared<SignalStatictics>(),time=make_shared<SignalStatictics>();
+					auto ampl=make_shared<SignalStatictics>(2),time=make_shared<SignalStatictics>(2);
 					rsc.Surface(dimension,side)>>(
 						Photosensor({make_pair(x1,x1+1),make_pair(x2,x2+1)},1.0,[](double){return 1.0;})
 							>>(make_shared<AmplitudeSignal>()>>ampl)
@@ -99,8 +99,8 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 		MakeScintillator({make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5))
 	};
 	vector<shared_ptr<SignalStatictics>>
-		timestat{make_shared<SignalStatictics>(),make_shared<SignalStatictics>()},
-		amplstat{make_shared<SignalStatictics>(),make_shared<SignalStatictics>()};
+		timestat{make_shared<SignalStatictics>(2),make_shared<SignalStatictics>(2)},
+		amplstat{make_shared<SignalStatictics>(2),make_shared<SignalStatictics>(2)};
 	for(size_t index=0;index<2;index++){
 		auto timediff=make_shared<SignalSumm>(),ampldiff=make_shared<SignalSumm>();
 		{

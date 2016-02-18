@@ -5,7 +5,7 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	SignalStatictics::SignalStatictics(){}
+	SignalStatictics::SignalStatictics(double error_scale):m_data(error_scale){}
 	SignalStatictics::~SignalStatictics(){}
 	void SignalStatictics::AcceptEventStart(){}
 	void SignalStatictics::AcceptSignalValue(double time){m_data<<time;}
