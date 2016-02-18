@@ -57,17 +57,17 @@ namespace RectangularScintillator{
 	private:
 		class Slot:public SignalAcceptor{
 		public:
-			Slot(std::shared_ptr<AbstractMultiInput>father);
+			Slot(shared_ptr<AbstractMultiInput>father);
 			virtual ~Slot();
 			virtual void AcceptEventStart()override;
 			virtual void AcceptSignalValue(double signal)override;
 			virtual void AcceptEventEnd()override;
-			double Value();
+			double Value()const;
 		private:
-			std::shared_ptr<AbstractMultiInput>master;
+			shared_ptr<AbstractMultiInput>master;
 			double m_value;
 		};
-		vector<std::shared_ptr<Slot>> m_input_slots;
+		vector<shared_ptr<Slot>> m_input_slots;
 		int m_state;
 	};
 	class Multi2SingleSignal:public AbstractMultiInput,public SignalProducent{

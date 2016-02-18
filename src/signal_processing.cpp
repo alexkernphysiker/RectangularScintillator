@@ -67,7 +67,7 @@ namespace RectangularScintillator{
 	void AbstractMultiInput::Slot::AcceptEventStart(){master->OneChannelBegin();m_value=INFINITY;}
 	void AbstractMultiInput::Slot::AcceptSignalValue(double signal){m_value=signal;}
 	void AbstractMultiInput::Slot::AcceptEventEnd(){master->OneChannelEnd();}
-	double AbstractMultiInput::Slot::Value(){return m_value;}
+	double AbstractMultiInput::Slot::Value()const{return m_value;}
 	
 	Multi2SingleSignal::Multi2SingleSignal(){}
 	Multi2SingleSignal::~Multi2SingleSignal(){}
