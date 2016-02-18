@@ -55,7 +55,7 @@ namespace RectangularScintillator{
 		virtual void Process(const Vec&signals)override;
 		virtual void Finish()override;
 	private:
-		function<void(const Vec&)> func;
+		function<void(const Vec&)> fnc;
 	};
 	
 };

@@ -37,5 +37,14 @@ namespace RectangularScintillator{
 			throw Exception<SignalsToFile>("cannot open output file");
 	}
 	
-	
+	SignalAnalyse::SignalAnalyse(function<void(double)> f){func=f;}
+	SignalAnalyse::~SignalAnalyse(){}
+	void SignalAnalyse::AcceptEventStart(){}
+	void SignalAnalyse::AcceptSignalValue(double time){func(time);}
+	void SignalAnalyse::AcceptEventEnd(){}
+	SignalsAnalyse::SignalsAnalyse(function<void(const Vec&)> f){fnc=f;}
+	SignalsAnalyse::~SignalsAnalyse(){}
+	void SignalsAnalyse::Start(){}
+	void SignalsAnalyse::Process(const Vec& signals){fnc(signals);}
+	void SignalsAnalyse::Finish(){}
 };
