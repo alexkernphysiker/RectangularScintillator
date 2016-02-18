@@ -5,29 +5,29 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	OrderStatistics::OrderStatistics(size_t count){
+	OrderStatisticsSigmaAnalyser::OrderStatisticsSigmaAnalyser(size_t count){
 		m_count=0;
 		for(size_t i=0;i<count;i++)
 			m_stat.push_back(Sigma<double>());
 	}
-	OrderStatistics::~OrderStatistics(){}
-	size_t OrderStatistics::count(){
+	OrderStatisticsSigmaAnalyser::~OrderStatisticsSigmaAnalyser(){}
+	size_t OrderStatisticsSigmaAnalyser::count()const{
 		return m_stat.size();
 	}
-	Sigma< double >&& OrderStatistics::At(size_t i){
+	const Sigma< double >& OrderStatisticsSigmaAnalyser::At(size_t i)const{
 		if(i>=count())
-			throw Exception<OrderStatistics>("Order statistics range check error");
-		return static_cast<Sigma<double>&&>(m_stat[i]);
+			throw Exception<OrderStatisticsSigmaAnalyser>("Order statistics range check error");
+		return m_stat[i];
 	}
-	void OrderStatistics::AcceptEventStart(){
+	void OrderStatisticsSigmaAnalyser::AcceptEventStart(){
 		m_count=0;
 	}
-	void OrderStatistics::AcceptPhotonTime(double time){
+	void OrderStatisticsSigmaAnalyser::AcceptPhotonTime(double time){
 		if(m_count<m_stat.size())
 			m_stat[m_count]<<time;
 		m_count++;
 	}
-	void OrderStatistics::AcceptEventEnd(){}
+	void OrderStatisticsSigmaAnalyser::AcceptEventEnd(){}
 	
 	SignalProducent& SignalProducent::operator>>(shared_ptr<SignalAcceptor> out){
 		m_out_slots.push_back(out);

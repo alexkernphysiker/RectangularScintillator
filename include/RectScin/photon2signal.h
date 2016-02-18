@@ -7,12 +7,12 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	class OrderStatistics:public PhotonTimeAcceptor{
+	class OrderStatisticsSigmaAnalyser:public PhotonTimeAcceptor{
 	public:
-		OrderStatistics(size_t count);
-		virtual ~OrderStatistics();
-		size_t count();
-		Sigma<double>&& At(size_t i);
+		OrderStatisticsSigmaAnalyser(size_t count);
+		virtual ~OrderStatisticsSigmaAnalyser();
+		size_t count()const;
+		const Sigma<double>& At(size_t i)const;
 		virtual void AcceptEventStart()override;
 		virtual void AcceptPhotonTime(double time)override;
 		virtual void AcceptEventEnd()override;
