@@ -11,7 +11,7 @@ private:
 public:
 	PhotonCheck(){}
 	virtual ~PhotonCheck(){}
-	Vec& data()const{return const_cast<Vec&>(times);}
+	const Vec& data()const{return times;}
 	virtual void AcceptEventStart()override{times.clear();}
 	virtual void AcceptPhotonTime(double time)override{times.push_back(time);}
 	virtual void AcceptEventEnd()override{}

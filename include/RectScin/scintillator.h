@@ -81,7 +81,7 @@ namespace RectangularScintillator{
 		static Options Concurrency(size_t c);
 		static Options Reflections(unsigned long r);
 		void Configure(Options&&conf);
-		Options&CurrentConfig()const;
+		const Options&CurrentConfig()const;
 		
 		const LinearInterpolation<double>&ReflectionProbabilityFunction()const;
 	protected:

@@ -108,8 +108,8 @@ namespace RectangularScintillator{
 	void Scintillator::Configure(Scintillator::Options&& conf){
 		m_config=conf;
 	}
-	Scintillator::Options& Scintillator::CurrentConfig()const{
-		return const_cast<Options&>(m_config);
+	const Scintillator::Options& Scintillator::CurrentConfig()const{
+		return m_config;
 	}
 	ScintillatorSurface& Scintillator::Surface(size_t dimension, Side side){
 		if(dimension>=NumberOfDimensions())
