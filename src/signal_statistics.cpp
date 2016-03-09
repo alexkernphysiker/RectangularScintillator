@@ -5,10 +5,10 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	SignalStatictics::SignalStatictics(double error_scale):m_data(error_scale){}
+	SignalStatictics::SignalStatictics(const double error_scale):m_data(error_scale){}
 	SignalStatictics::~SignalStatictics(){}
 	void SignalStatictics::AcceptEventStart(){}
-	void SignalStatictics::AcceptSignalValue(double time){m_data<<time;}
+	void SignalStatictics::AcceptSignalValue(const double time){m_data<<time;}
 	void SignalStatictics::AcceptEventEnd(){}
 	const Sigma<double>&SignalStatictics::data()const{return m_data;}
 	
@@ -30,19 +30,19 @@ namespace RectangularScintillator{
 		}
 	}
 	void SignalsToFile::Finish(){}
-	void SignalsToFile::Redirect(string name){
+	void SignalsToFile::Redirect(const string&&name){
 		if(file.is_open())file.close();
 		file.open(name.c_str());
 		if(!file.is_open())
 			throw Exception<SignalsToFile>("cannot open output file");
 	}
 	
-	SignalAnalyse::SignalAnalyse(function<void(double)> f){func=f;}
+	SignalAnalyse::SignalAnalyse(const function<void(double)> f){func=f;}
 	SignalAnalyse::~SignalAnalyse(){}
 	void SignalAnalyse::AcceptEventStart(){}
-	void SignalAnalyse::AcceptSignalValue(double time){func(time);}
+	void SignalAnalyse::AcceptSignalValue(const double time){func(time);}
 	void SignalAnalyse::AcceptEventEnd(){}
-	SignalsAnalyse::SignalsAnalyse(function<void(const Vec&)> f){fnc=f;}
+	SignalsAnalyse::SignalsAnalyse(const function<void(const Vec&)> f){fnc=f;}
 	SignalsAnalyse::~SignalsAnalyse(){}
 	void SignalsAnalyse::Start(){}
 	void SignalsAnalyse::Process(const Vec& signals){fnc(signals);}

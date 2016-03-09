@@ -8,10 +8,9 @@ namespace RectangularScintillator{
 	using namespace MathTemplates;
 	class FlatLightguide:public virtual IPhotonAbsorber,protected virtual ScintillatorSurface{
 	public:
-		FlatLightguide(vector<Pair>&&dimensions,double glue_eff,double n,double H);
+		FlatLightguide(const vector<Pair>&dimensions,const double glue_eff,const double n,const double H);
 		virtual ~FlatLightguide();
-		FlatLightguide&operator>>(shared_ptr<IPhotonAbsorber>sensor);
-		//IPhotoSensitive
+		FlatLightguide&operator>>(const shared_ptr<IPhotonAbsorber>sensor);
 		virtual void Start()override;
 		virtual void AbsorbPhoton(Photon& photon,RANDOM&R)override;
 		virtual void End()override;
@@ -21,9 +20,8 @@ namespace RectangularScintillator{
 		
 		double g_eff,refr,height;
 	};
-	//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-	inline shared_ptr<FlatLightguide> LightGuide(vector<Pair>&&dimensions,double glue_eff,double n,double H){
-		return shared_ptr<FlatLightguide>(new FlatLightguide(static_cast<vector<Pair>&&>(dimensions),glue_eff,n,H));
+	inline shared_ptr<FlatLightguide> LightGuide(const vector<Pair>&&dimensions,const double glue_eff,const double n,const double H){
+		return shared_ptr<FlatLightguide>(new FlatLightguide(dimensions,glue_eff,n,H));
 	}
 };
 #endif

@@ -9,12 +9,12 @@ namespace RectangularScintillator{
 	using namespace MathTemplates;
 	class OrderStatisticsSigmaAnalyser:public PhotonTimeAcceptor{
 	public:
-		OrderStatisticsSigmaAnalyser(size_t count);
+		OrderStatisticsSigmaAnalyser(const size_t count);
 		virtual ~OrderStatisticsSigmaAnalyser();
-		size_t count()const;
+		const size_t count()const;
 		const Sigma<double>& At(size_t i)const;
 		virtual void AcceptEventStart()override;
-		virtual void AcceptPhotonTime(double time)override;
+		virtual void AcceptPhotonTime(const double time)override;
 		virtual void AcceptEventEnd()override;
 	private:
 		size_t m_count;
@@ -24,16 +24,16 @@ namespace RectangularScintillator{
 	public:
 		virtual ~SignalAcceptor(){}
 		virtual void AcceptEventStart()=0;
-		virtual void AcceptSignalValue(double signal)=0;
+		virtual void AcceptSignalValue(const double signal)=0;
 		virtual void AcceptEventEnd()=0;
 	};
 	class SignalProducent{
 	public:
 		virtual ~SignalProducent(){}
-		SignalProducent&operator>>(shared_ptr<SignalAcceptor>);
+		SignalProducent&operator>>(const shared_ptr<SignalAcceptor>);
 	protected:
 		void SendEventStart();
-		void SendSignalValue(double time);
+		void SendSignalValue(const double time);
 		void SendEventEnd();
 	private:
 		vector<shared_ptr<SignalAcceptor>> m_out_slots;
@@ -42,9 +42,9 @@ namespace RectangularScintillator{
 	public:
 		WeightedTimeSignal();
 		virtual ~WeightedTimeSignal();
-		WeightedTimeSignal&AddSummand(size_t order_statistics,double weight);
+		WeightedTimeSignal&AddSummand(const size_t order_statistics,const double weight);
 		virtual void AcceptEventStart()override;
-		virtual void AcceptPhotonTime(double time)override;
+		virtual void AcceptPhotonTime(const double time)override;
 		virtual void AcceptEventEnd()override;
 	private:
 		vector<pair<size_t,double>> m_config;
@@ -53,7 +53,7 @@ namespace RectangularScintillator{
 		double m_sum;
 	};
 	//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-	inline shared_ptr<WeightedTimeSignal> TimeSignal(vector<pair<size_t,double>>&&params){
+	inline shared_ptr<WeightedTimeSignal> TimeSignal(const vector<pair<size_t,double>>&&params){
 		auto res=make_shared<WeightedTimeSignal>();
 		for(auto p:params)
 			res->AddSummand(p.first,p.second);
@@ -64,7 +64,7 @@ namespace RectangularScintillator{
 		AmplitudeSignal();
 		virtual ~AmplitudeSignal();
 		virtual void AcceptEventStart()override;
-		virtual void AcceptPhotonTime(double time)override;
+		virtual void AcceptPhotonTime(const double time)override;
 		virtual void AcceptEventEnd()override;
 	private:
 		size_t m_count;

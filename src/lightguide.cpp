@@ -4,16 +4,16 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	FlatLightguide::FlatLightguide(vector<Pair>&& dimensions, double glue_eff, double n, double H):
+	FlatLightguide::FlatLightguide(const vector<Pair>&dimensions,const double glue_eff,const double n,const double H):
 	ScintillatorSurface(){
 		g_eff=glue_eff;
 		refr=n;
 		height=H;
-		for(Pair D:dimensions)
-			RectDimensions::operator<<(static_cast<Pair&&>(D));
+		for(const Pair&D:dimensions)
+			RectDimensions::operator<<(D);
 	}
 	FlatLightguide::~FlatLightguide(){}
-	FlatLightguide& FlatLightguide::operator>>(shared_ptr<IPhotonAbsorber> sensor){
+	FlatLightguide& FlatLightguide::operator>>(const shared_ptr<IPhotonAbsorber> sensor){
 		ScintillatorSurface::operator>>(sensor);
 		return *this;
 	}

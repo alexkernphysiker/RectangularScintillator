@@ -5,13 +5,13 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	OrderStatisticsSigmaAnalyser::OrderStatisticsSigmaAnalyser(size_t count){
+	OrderStatisticsSigmaAnalyser::OrderStatisticsSigmaAnalyser(const size_t count){
 		m_count=0;
 		for(size_t i=0;i<count;i++)
 			m_stat.push_back(Sigma<double>());
 	}
 	OrderStatisticsSigmaAnalyser::~OrderStatisticsSigmaAnalyser(){}
-	size_t OrderStatisticsSigmaAnalyser::count()const{
+	const size_t OrderStatisticsSigmaAnalyser::count()const{
 		return m_stat.size();
 	}
 	const Sigma< double >& OrderStatisticsSigmaAnalyser::At(size_t i)const{
@@ -22,14 +22,14 @@ namespace RectangularScintillator{
 	void OrderStatisticsSigmaAnalyser::AcceptEventStart(){
 		m_count=0;
 	}
-	void OrderStatisticsSigmaAnalyser::AcceptPhotonTime(double time){
+	void OrderStatisticsSigmaAnalyser::AcceptPhotonTime(const double time){
 		if(m_count<m_stat.size())
 			m_stat[m_count]<<time;
 		m_count++;
 	}
 	void OrderStatisticsSigmaAnalyser::AcceptEventEnd(){}
 	
-	SignalProducent& SignalProducent::operator>>(shared_ptr<SignalAcceptor> out){
+	SignalProducent&SignalProducent::operator>>(const shared_ptr<SignalAcceptor> out){
 		m_out_slots.push_back(out);
 		return *this;
 	}
@@ -37,7 +37,7 @@ namespace RectangularScintillator{
 		for(auto out:m_out_slots)
 			out->AcceptEventStart();
 	}
-	void SignalProducent::SendSignalValue(double time){
+	void SignalProducent::SendSignalValue(const double time){
 		for(auto out:m_out_slots)
 			out->AcceptSignalValue(time);
 	}
@@ -59,7 +59,7 @@ namespace RectangularScintillator{
 		for(auto element:m_config)m_state.push_back(false);
 		SendEventStart();
 	}
-	void WeightedTimeSignal::AcceptPhotonTime(double time){
+	void WeightedTimeSignal::AcceptPhotonTime(const double time){
 		for(int i=0,n=m_config.size();i<n;i++){
 			auto p=&(m_config[i]);
 			if(p->first==m_count){
@@ -82,7 +82,7 @@ namespace RectangularScintillator{
 		m_count=0;
 		SendEventStart();
 	}
-	void AmplitudeSignal::AcceptPhotonTime(double time){
+	void AmplitudeSignal::AcceptPhotonTime(const double time){
 		m_count++;
 	}
 	void AmplitudeSignal::AcceptEventEnd(){

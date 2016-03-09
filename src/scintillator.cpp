@@ -28,12 +28,12 @@ namespace RectangularScintillator{
 		for(auto handler:m_handlers)
 			handler->End();
 	}
-	ScintillatorSurface& ScintillatorSurface::operator>>(shared_ptr<IPhotonAbsorber> sensor){
+	ScintillatorSurface& ScintillatorSurface::operator>>(const shared_ptr<IPhotonAbsorber> sensor){
 		Lock lock(surface_mutex);
 		m_handlers.push_back(sensor);
 		return *this;
 	}
-	double ScintillatorSurface::ReflectionProbabilityCoeff(const Vec&point)const{
+	const double ScintillatorSurface::ReflectionProbabilityCoeff(const Vec&point)const{
 		for(auto sensor:m_handlers)
 			if(sensor->Dimensions().IsInside(point)){
 				double eff=sensor->GlueEfficiency();
@@ -45,7 +45,7 @@ namespace RectangularScintillator{
 	}
 	const RectDimensions&ScintillatorSurface::Dimensions()const{return *this;}
 	
-	double ReflectionProbability(double refraction,double cos_){
+	const double ReflectionProbability(const double refraction,const double cos_){
 		double cos_phi=cos_;
 		if(cos_phi<0.0)cos_phi=-cos_phi;
 		if(cos_phi>1.0)cos_phi=1;
@@ -62,18 +62,19 @@ namespace RectangularScintillator{
 	}
 	Scintillator::Scintillator(
 		const vector<Pair>&dimensions,
-		double refraction,
+		const double refraction,
 		const RandomValueGenerator<double>&time_distribution,
 		const RandomValueGenerator<double>&lambda_distribution,
-		Func absorption
+		const Func absorption
 	):RectDimensions(),
 		m_config(Defaults()),
 		m_time_distribution(time_distribution),
 		m_lambda_distribution(lambda_distribution)
 	{
+		trace_mutex=make_shared<mutex>();
 		if(dimensions.size()==0)
 			throw Exception<Scintillator>("Cannot create scintillator with no dimensions");
-		for(Pair D:dimensions)RectDimensions::operator<<(static_cast<Pair&&>(D));
+		for(const Pair&D:dimensions)RectDimensions::operator<<(D);
 		m_refraction=refraction;
 		m_absorption=absorption;
 		for(size_t i=0,n=NumberOfDimensions();i<n;i++){
@@ -92,35 +93,35 @@ namespace RectangularScintillator{
 	const LinearInterpolation<double>&Scintillator::ReflectionProbabilityFunction()const{
 		return reflection_probability;
 	}
-	Scintillator::Options::Options(size_t c, unsigned long refl):
+	Scintillator::Options::Options(const size_t c,const unsigned long refl):
 	concurrency(c),max_reflections(refl){}
-	Scintillator::Options::Options(Scintillator::Options&& source):
+	Scintillator::Options::Options(const Scintillator::Options&& source):
 	concurrency(source.concurrency),max_reflections(source.max_reflections){}
 	void Scintillator::Options::operator=(const Scintillator::Options& source){
 		concurrency=source.concurrency;
 		max_reflections=source.max_reflections;
 	}
 	Scintillator::Options Scintillator::Defaults(){return Options(1,0);}
-	Scintillator::Options Scintillator::Concurrency(size_t c){return Options(c,0);}
-	Scintillator::Options Scintillator::Reflections(long unsigned int r){return Options(1,r);}
+	Scintillator::Options Scintillator::Concurrency(const size_t c){return Options(c,0);}
+	Scintillator::Options Scintillator::Reflections(const long unsigned int r){return Options(1,r);}
 	
 	
-	void Scintillator::Configure(Scintillator::Options&& conf){
+	void Scintillator::Configure(const Scintillator::Options&& conf){
 		m_config=conf;
 	}
 	const Scintillator::Options& Scintillator::CurrentConfig()const{
 		return m_config;
 	}
-	ScintillatorSurface& Scintillator::Surface(size_t dimension, Side side){
+	ScintillatorSurface& Scintillator::Surface(size_t dimension, Side side)const{
 		if(dimension>=NumberOfDimensions())
 			throw Exception<Scintillator>("Scintillator: dimension index out of range");
-		Lock lock(trace_mutex);
+		Lock lock(*trace_mutex);
 		if(side==Left)return *(m_edges[dimension].first);
 		if(side==Right)return *(m_edges[dimension].second);
 		throw Exception<Scintillator>("Scintillator: surface index out of range");
 	}
-	void Scintillator::RegisterGamma(Vec&&coord,size_t N,RANDOM&R){
-		for(SurfPair&sp:m_edges){
+	void Scintillator::RegisterGamma(const Vec&&coord,const size_t N,RANDOM&R)const{
+		for(const SurfPair&sp:m_edges){
 			sp.first->Start();
 			sp.second->Start();
 		}
@@ -148,12 +149,12 @@ namespace RectangularScintillator{
 			process(part+rest);
 			for(auto thr:thread_vector)thr->join();
 		}
-		for(SurfPair&sp:m_edges){
+		for(const SurfPair&sp:m_edges){
 			sp.first->End();
 			sp.second->End();
 		}
 	}
-	Photon Scintillator::GeneratePhoton(const Vec&coord,RANDOM&R){
+	Photon Scintillator::GeneratePhoton(const Vec&coord,RANDOM&R)const{
 		Photon res;
 		res.coord=coord;
 		if(NumberOfDimensions()==1){
@@ -173,7 +174,7 @@ namespace RectangularScintillator{
 			uniform_real_distribution<double> get_angle(0,2.0*3.1415926);
 			uniform_real_distribution<double> get_secondangle(-1,1);
 			double cos_theta,phi;
-			{Lock lock(trace_mutex);
+			{Lock lock(*trace_mutex);
 				phi=get_angle(R);
 				cos_theta=get_secondangle(R);
 			}
@@ -185,16 +186,16 @@ namespace RectangularScintillator{
 		if(NumberOfDimensions()>=4)
 			throw Exception<Scintillator>("Scintillator: isotropic 4D and higher random directions not implemented");
 		{
-			Lock lock(trace_mutex);
+			Lock lock(*trace_mutex);
 			res.time=m_time_distribution(R);
 			res.lambda=m_lambda_distribution(R);
 		}
 		return res;
 	}
-	RectDimensions::IntersectionSearchResults Scintillator::TraceGeometry(Photon&ph,RANDOM&R){
+	RectDimensions::IntersectionSearchResults Scintillator::TraceGeometry(Photon&ph,RANDOM&R)const{
 		uniform_real_distribution<double> prob_(0,1);
 		double absorption;{
-			Lock lock(trace_mutex);
+			Lock lock(*trace_mutex);
 			absorption=m_absorption(ph.lambda);
 		}
 		double refl_p[NumberOfDimensions()];
@@ -204,7 +205,7 @@ namespace RectangularScintillator{
 				cos_angle=-cos_angle;
 			if(cos_angle>1.0)
 				throw Exception<Scintillator>("Trace: cosine error");
-			Lock lock(trace_mutex);
+			Lock lock(*trace_mutex);
 			refl_p[dimension]=reflection_probability(cos_angle);
 		}
 		unsigned long refl_counter=0;
@@ -224,7 +225,7 @@ namespace RectangularScintillator{
 				ph.coord[dimension]=Dimension(dimension).second;
 			//check for other effects
 			double absorption_prob=1.0-exp(-path_length*absorption);
-			{Lock lock(trace_mutex);
+			{Lock lock(*trace_mutex);
 				if(prob_(R)<absorption_prob){
 					//Photon is absopbed
 					res.surface=None;
@@ -237,7 +238,7 @@ namespace RectangularScintillator{
 				point.erase(point.begin()+dimension);
 				refl_prob*=Surface(dimension,res.surface).ReflectionProbabilityCoeff(point);
 			}
-			{Lock lock(trace_mutex);
+			{Lock lock(*trace_mutex);
 				if(prob_(R)<refl_prob){
 					//Photon is reflected back
 					ph.dir[dimension]=-ph.dir[dimension];
@@ -258,7 +259,7 @@ namespace RectangularScintillator{
 			}
 		}
 	}
-	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,vector<double>&&chain){
+	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,const vector<double>&&chain){
 		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
 		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size());
 		auto func=[sigma,decay,max,min,dt](double t){
@@ -268,7 +269,7 @@ namespace RectangularScintillator{
 		};
 		return RandomValueGenerator<double>(func,chain);
 	}
-	RandomValueGenerator<double> TimeDistribution2(double rize,double sigma, double decay,vector<double>&&chain){
+	RandomValueGenerator<double> TimeDistribution2(double rize,double sigma, double decay,const vector<double>&&chain){
 		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
 		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size());
 		auto func=[rize,sigma,decay,min,max,dt](double t){

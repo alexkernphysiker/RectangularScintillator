@@ -9,7 +9,7 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	Vec operator*(const Vec&p,double c){
+	Vec operator*(const Vec&p,const double c){
 		Vec res;
 		for(double x:p)
 			res.push_back(x*c);
@@ -43,23 +43,23 @@ namespace RectangularScintillator{
 		val=static_cast<RectDimensions::Side>(val+1);
 		return val;
 	}
-	RectDimensions::RectDimensions(){}
+	RectDimensions::RectDimensions(){geom_mutex=make_shared<mutex>();}
 	RectDimensions::~RectDimensions(){}
 	RectDimensions& RectDimensions::operator<<(const Pair&dimension){
 		if(dimension.first>dimension.second)
 			throw Exception<RectDimensions>("RectDimensions: wrong dimension left>right");
-		Lock lock(geom_mutex);
+		Lock lock(*geom_mutex);
 		m_dimensions.push_back(dimension);
 		return *this;
 	}
-	RectDimensions& RectDimensions::operator<<(Pair&&dimension){return operator<<(dimension);}
-	size_t RectDimensions::NumberOfDimensions()const{return m_dimensions.size();}
+	RectDimensions& RectDimensions::operator<<(const Pair&&dimension){return operator<<(dimension);}
+	const size_t RectDimensions::NumberOfDimensions()const{return m_dimensions.size();}
 	const Pair&RectDimensions::Dimension(size_t i)const{
 		if(i>=NumberOfDimensions())
 			throw Exception<RectDimensions>("RectDimensions: dimension index out of range");
 		return m_dimensions[i];
 	}
-	bool RectDimensions::IsInside(const Vec&point)const{
+	const bool RectDimensions::IsInside(const Vec&point)const{
 		if(point.size()!=NumberOfDimensions())
 			throw Exception<RectDimensions>("RectDimensions::IsInside: wrong point size");
 		for(size_t i=0,n=NumberOfDimensions();i<n;i++)
@@ -67,7 +67,7 @@ namespace RectangularScintillator{
 				return false;
 			return true;
 	}
-	RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(const Vec&point,const Vec&dir){
+	const RectDimensions::IntersectionSearchResults RectDimensions::WhereIntersects(const Vec&point,const Vec&dir)const{
 		if(NumberOfDimensions()!=dir.size())
 			throw Exception<RectDimensions>("RectDimensions trace: wrong direction vector size");
 		if(!IsInside(point)){
@@ -80,7 +80,7 @@ namespace RectangularScintillator{
 		vector<dist_dim> dim_order;
 		for(size_t i=0,n=NumberOfDimensions();i<n;i++){
 			dist_dim newdim;
-			Lock lock(geom_mutex);
+			Lock lock(*geom_mutex);
 			newdim.second=i;
 			if(dir[i]<0)
 				newdim.first=point[i]-m_dimensions[i].first;

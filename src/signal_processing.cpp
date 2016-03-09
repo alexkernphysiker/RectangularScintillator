@@ -11,23 +11,23 @@ namespace RectangularScintillator{
 	void Single2SingleSignal::AcceptEventEnd(){SendEventEnd();}
 	Signal::Signal(){}
 	Signal::~Signal(){}
-	void Signal::AcceptSignalValue(double signal){SendSignalValue(signal);}
+	void Signal::AcceptSignalValue(const double signal){SendSignalValue(signal);}
 	
-	SignalPolinomialDistort::SignalPolinomialDistort(Vec&& coefs){
+	SignalPolinomialDistort::SignalPolinomialDistort(const Vec& coefs){
 		if(coefs.size()==0)
 			throw Exception<SignalPolinomialDistort>("Distortion: empty coefficients");
 		m_coefs=coefs;
 	}
 	SignalPolinomialDistort::~SignalPolinomialDistort(){}
-	void SignalPolinomialDistort::AcceptSignalValue(double signal){
+	void SignalPolinomialDistort::AcceptSignalValue(const double signal){
 		SendSignalValue(Polynom(signal,m_coefs,m_coefs.size()-1));
 	}
 	
-	AmplitudeDiscriminator::AmplitudeDiscriminator(double thr){
+	AmplitudeDiscriminator::AmplitudeDiscriminator(const double thr){
 		threshold=thr;
 	}
 	AmplitudeDiscriminator::~AmplitudeDiscriminator(){}
-	void AmplitudeDiscriminator::AcceptSignalValue(double signal){
+	void AmplitudeDiscriminator::AcceptSignalValue(const double signal){
 		if(isfinite(signal))
 			if(signal>=threshold)
 				SendSignalValue(signal);
@@ -36,7 +36,7 @@ namespace RectangularScintillator{
 	
 	AbstractMultiInput::AbstractMultiInput(){m_state=0;}
 	AbstractMultiInput::~AbstractMultiInput(){}
-	AbstractMultiInput& AbstractMultiInput::operator<<(shared_ptr<SignalProducent> input){
+	AbstractMultiInput& AbstractMultiInput::operator<<(const shared_ptr<SignalProducent> input){
 		auto slot=make_shared<Slot>(shared_from_this());
 		input>>slot;
 		m_input_slots.push_back(slot);
@@ -65,9 +65,9 @@ namespace RectangularScintillator{
 	AbstractMultiInput::Slot::Slot(std::shared_ptr<AbstractMultiInput>father){master=father;}
 	AbstractMultiInput::Slot::~Slot(){}
 	void AbstractMultiInput::Slot::AcceptEventStart(){master->OneChannelBegin();m_value=INFINITY;}
-	void AbstractMultiInput::Slot::AcceptSignalValue(double signal){m_value=signal;}
+	void AbstractMultiInput::Slot::AcceptSignalValue(const double signal){m_value=signal;}
 	void AbstractMultiInput::Slot::AcceptEventEnd(){master->OneChannelEnd();}
-	double AbstractMultiInput::Slot::Value()const{return m_value;}
+	const double AbstractMultiInput::Slot::Value()const{return m_value;}
 	
 	Multi2SingleSignal::Multi2SingleSignal(){}
 	Multi2SingleSignal::~Multi2SingleSignal(){}
@@ -116,10 +116,10 @@ namespace RectangularScintillator{
 		for(auto slot:m_output_slots)
 			slot->Start();
 	}
-	size_t AbstractMultiOutput::GetOutSlotsCount(){
+	const size_t AbstractMultiOutput::GetOutSlotsCount(){
 		return m_output_slots.size();
 	}
-	void AbstractMultiOutput::SendSignalValue(size_t i, double signal){
+	void AbstractMultiOutput::SendSignalValue(const size_t i,const double signal){
 		if(i>=m_output_slots.size())
 			throw Exception<AbstractMultiOutput>("Mutli output range check error.");
 		m_output_slots[i]->Value(signal);
@@ -131,7 +131,7 @@ namespace RectangularScintillator{
 	AbstractMultiOutput::Slot::Slot(){}
 	AbstractMultiOutput::Slot::~Slot(){}
 	void AbstractMultiOutput::Slot::Start(){SendEventStart();}
-	void AbstractMultiOutput::Slot::Value(double signal){SendSignalValue(signal);}
+	void AbstractMultiOutput::Slot::Value(const double signal){SendSignalValue(signal);}
 	void AbstractMultiOutput::Slot::End(){SendEventEnd();}
 	
 	Single2MultiSignal::Single2MultiSignal(){}
@@ -144,7 +144,7 @@ namespace RectangularScintillator{
 	void Multi2MultiSignal::Start(){SendEventStart();}
 	void Multi2MultiSignal::Finish(){SendEventEnd();}
 	
-	TimeGate::TimeGate(double width){
+	TimeGate::TimeGate(const double width){
 		if(width<=0)
 			throw Exception<TimeGate>("Wrong time threshold value for TimeGate: it should be positive");
 		m_width=width;
@@ -174,10 +174,10 @@ namespace RectangularScintillator{
 			SendSignalValue(i,signals[i]);
 	}
 	
-	SignalSortAndSelect2::SignalSortAndSelect2(size_t number){m_number=number;}
+	SignalSortAndSelect2::SignalSortAndSelect2(const size_t number){m_number=number;}
 	SignalSortAndSelect2::~SignalSortAndSelect2(){}
-	inline bool operator>(Pair a,Pair b){return a.first>b.first;}
-	inline bool operator<(Pair a,Pair b){return a.first<b.first;}
+	inline bool operator>(const Pair&a,const Pair&b){return a.first>b.first;}
+	inline bool operator<(const Pair&a,const Pair&b){return a.first<b.first;}
 	void SignalSortAndSelect2::Process(const Vec&signals){
 		if(signals.size()<=m_number)
 			throw Exception<SignalSortAndSelect2>("SignalSortAndSelect: selected order statistics is greater than input slots count");
@@ -212,7 +212,7 @@ namespace RectangularScintillator{
 			i++;
 		}
 		i=0;
-		for(Pair&signal:out){
+		for(const Pair&signal:out){
 			if(i<(GetOutSlotsCount()/2)){
 				SendSignalValue(i*2,signal.second);
 				SendSignalValue(i*2+1,signal.first);

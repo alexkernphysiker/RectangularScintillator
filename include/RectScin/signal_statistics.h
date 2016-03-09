@@ -13,10 +13,10 @@ namespace RectangularScintillator{
 	using namespace MathTemplates;
 	class SignalStatictics:public SignalAcceptor{
 	public:
-		SignalStatictics(double error_scale=1);
+		SignalStatictics(const double error_scale=1);
 		virtual ~SignalStatictics();
 		virtual void AcceptEventStart()override;
-		virtual void AcceptSignalValue(double time)override;
+		virtual void AcceptSignalValue(const double time)override;
 		virtual void AcceptEventEnd()override;
 		const Sigma<double>&data()const;
 	private:
@@ -26,7 +26,7 @@ namespace RectangularScintillator{
 	public:
 		SignalsToFile();
 		virtual ~SignalsToFile();
-		void Redirect(string name);
+		void Redirect(const string&&name);
 	protected:
 		virtual void Start()override;
 		virtual void Process(const Vec&signals)override;
@@ -37,10 +37,10 @@ namespace RectangularScintillator{
 	
 	class SignalAnalyse:public SignalAcceptor{
 	public:
-		SignalAnalyse(function<void(double)> f);
+		SignalAnalyse(const function<void(double)> f);
 		virtual ~SignalAnalyse();
 		virtual void AcceptEventStart()override;
-		virtual void AcceptSignalValue(double time)override;
+		virtual void AcceptSignalValue(const double time)override;
 		virtual void AcceptEventEnd()override;
 	private:
 		function<void(double)> func;
@@ -48,7 +48,7 @@ namespace RectangularScintillator{
 
 	class SignalsAnalyse:public AbstractMultiInput{
 	public:
-		SignalsAnalyse(function<void(const Vec&)> f);
+		SignalsAnalyse(const function<void(const Vec&)> f);
 		virtual ~SignalsAnalyse();
 	protected:
 		virtual void Start()override;
@@ -57,6 +57,5 @@ namespace RectangularScintillator{
 	private:
 		function<void(const Vec&)> fnc;
 	};
-	
 };
 #endif 

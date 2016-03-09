@@ -21,12 +21,12 @@ namespace RectangularScintillator{
 		double lambda;
 	};
 	template<class source,class dest>
-	shared_ptr<source> operator<<(shared_ptr<source> s,shared_ptr<dest> d){
+	shared_ptr<source> operator<<(shared_ptr<source> s,const shared_ptr<dest> d){
 		s->operator<<(d);
 		return s;
 	}
 	template<class source,class dest>
-	shared_ptr<source> operator>>(shared_ptr<source> s,shared_ptr<dest> d){
+	shared_ptr<source> operator>>(shared_ptr<source> s,const shared_ptr<dest> d){
 		s->operator>>(d);
 		return s;
 	}
@@ -45,48 +45,48 @@ namespace RectangularScintillator{
 	public:
 		ScintillatorSurface();
 		virtual ~ScintillatorSurface();
-		ScintillatorSurface&operator>>(std::shared_ptr<IPhotonAbsorber>sensor);
+		ScintillatorSurface&operator>>(const std::shared_ptr<IPhotonAbsorber>sensor);
 		const RectDimensions&Dimensions()const;
 	protected:
 		void Start();
 		void RegisterPhoton(Photon&photon,RANDOM&R);//changes photon
 		void End();
-		double ReflectionProbabilityCoeff(const Vec&point)const;
+		const double ReflectionProbabilityCoeff(const Vec&point)const;
 	private:
 		vector<std::shared_ptr<IPhotonAbsorber>> m_handlers;
 		mutex surface_mutex;
 	};
-	double ReflectionProbability(double refraction,double cos_);
+	const double ReflectionProbability(const double refraction,const double cos_);
 	class Scintillator:protected RectDimensions{
 	public:
 		Scintillator(
 			const vector<Pair>&dimensions,
-			double refraction,
+			const double refraction,
 			const RandomValueGenerator<double>&time_distribution,
 			const RandomValueGenerator<double>&lambda_distribution,
-			Func absorption
+			const Func absorption
 		);
 		virtual ~Scintillator();
-		ScintillatorSurface&Surface(size_t dimension,Side side);
-		void RegisterGamma(Vec&&coord,size_t N,RANDOM&R);
+		ScintillatorSurface&Surface(const size_t dimension,const Side side)const;
+		void RegisterGamma(const Vec&&coord,const size_t N,RANDOM&R)const;
 		
 		struct Options{
 			size_t concurrency;
 			unsigned long max_reflections;
-			Options(size_t c,unsigned long refl);
-			Options(Options&&source);
+			Options(const size_t c,const unsigned long refl);
+			Options(const Options&&source);
 			void operator=(const Options&source);
 		};
 		static Options Defaults();
-		static Options Concurrency(size_t c);
-		static Options Reflections(unsigned long r);
-		void Configure(Options&&conf);
+		static Options Concurrency(const size_t c);
+		static Options Reflections(const unsigned long r);
+		void Configure(const Options&&conf);
 		const Options&CurrentConfig()const;
 		
 		const LinearInterpolation<double>&ReflectionProbabilityFunction()const;
 	protected:
-		Photon GeneratePhoton(const Vec&coord,RANDOM&R);
-		IntersectionSearchResults TraceGeometry(Photon &ph,RANDOM&R);//Changes Photon
+		Photon GeneratePhoton(const Vec&coord,RANDOM&R)const;
+		IntersectionSearchResults TraceGeometry(Photon &ph,RANDOM&R)const;
 	private:
 		Options m_config;
 		RandomValueGenerator<double> m_time_distribution;
@@ -96,7 +96,7 @@ namespace RectangularScintillator{
 		LinearInterpolation<double> reflection_probability;
 		typedef pair<shared_ptr<ScintillatorSurface>,shared_ptr<ScintillatorSurface>> SurfPair;
 		vector<SurfPair> m_edges;
-		mutex trace_mutex;
+		shared_ptr<mutex> trace_mutex;
 	};
 	inline shared_ptr<Scintillator> MakeScintillator(
 		const vector<Pair>&dimensions,
@@ -124,20 +124,20 @@ namespace RectangularScintillator{
 		Func absorption=[](double){return 0.0;}
 	){return MakeScintillator(dimensions,refraction,time_distribution,lambda_distribution,absorption);}
 	inline shared_ptr<Scintillator> MakeScintillator(
-		vector<Pair>&&dimensions,
-		double refraction,
+		const vector<Pair>&&dimensions,
+		const double refraction,
 		const RandomValueGenerator<double>&time_distribution,
-		RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
-		Func absorption=[](double){return 0.0;}
+		const RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
+		const Func absorption=[](double){return 0.0;}
 	){return MakeScintillator(dimensions,refraction,time_distribution,lambda_distribution,absorption);}
 	inline shared_ptr<Scintillator> MakeScintillator(
-		vector<Pair>&&dimensions,
+		const vector<Pair>&&dimensions,
 		double refraction,
-		RandomValueGenerator<double>&&time_distribution,
-		RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
-		Func absorption=[](double){return 0.0;}
+		const RandomValueGenerator<double>&&time_distribution,
+		const RandomValueGenerator<double>&&lambda_distribution=RandomValueGenerator<double>(1,2),
+		const Func absorption=[](double){return 0.0;}
 	){return MakeScintillator(dimensions,refraction,time_distribution,lambda_distribution,absorption);}
-	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,vector<double>&&time_chain=ChainWithStep(0.0,0.01,20.0));
-	RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay, vector<double>&&time_chain=ChainWithStep(0.0,0.01,20.0));
+	RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,const vector<double>&&time_chain=ChainWithStep(0.0,0.01,20.0));
+	RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay,const vector<double>&&time_chain=ChainWithStep(0.0,0.01,20.0));
 };
 #endif
