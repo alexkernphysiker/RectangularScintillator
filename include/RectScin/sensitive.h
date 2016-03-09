@@ -35,7 +35,7 @@ namespace RectangularScintillator{
 		Vec times;
 	};
 	//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-	inline shared_ptr<PhotoSensitiveSurface> Photosensor(const vector<Pair>&&dimensions,const double glue,const Func efficiency){
+	inline const shared_ptr<PhotoSensitiveSurface> Photosensor(const vector<Pair>&&dimensions,const double glue,const Func efficiency){
 		return shared_ptr<PhotoSensitiveSurface>(new PhotoSensitiveSurface(dimensions,glue,efficiency));
 	}
 	class PhotoSensitiveSurfaceWithTTS:public PhotoSensitiveSurface{
@@ -48,7 +48,7 @@ namespace RectangularScintillator{
 		normal_distribution<double> m_tts;;
 	};
 	//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-	inline shared_ptr<PhotoSensitiveSurface> Photosensor(const vector<Pair>&&dimensions,const double glue,const Func efficiency,const double tts){
+	inline const shared_ptr<PhotoSensitiveSurface> Photosensor(const vector<Pair>&&dimensions,const double glue,const Func efficiency,const double tts){
 		return shared_ptr<PhotoSensitiveSurfaceWithTTS>(new PhotoSensitiveSurfaceWithTTS(dimensions,glue,efficiency,tts));
 	}
 };

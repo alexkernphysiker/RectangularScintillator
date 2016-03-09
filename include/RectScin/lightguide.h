@@ -20,7 +20,7 @@ namespace RectangularScintillator{
 		
 		double g_eff,refr,height;
 	};
-	inline shared_ptr<FlatLightguide> LightGuide(const vector<Pair>&&dimensions,const double glue_eff,const double n,const double H){
+	inline const shared_ptr<FlatLightguide> LightGuide(const vector<Pair>&&dimensions,const double glue_eff,const double n,const double H){
 		return shared_ptr<FlatLightguide>(new FlatLightguide(dimensions,glue_eff,n,H));
 	}
 };

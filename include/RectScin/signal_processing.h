@@ -26,12 +26,12 @@ namespace RectangularScintillator{
 		Vec m_coefs;
 	};
 	//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-	inline shared_ptr<SignalPolinomialDistort> PolynomDistort(const Vec&&coefs){
+	inline const shared_ptr<SignalPolinomialDistort> PolynomDistort(const Vec&&coefs){
 		return shared_ptr<SignalPolinomialDistort>(new SignalPolinomialDistort(coefs));
 	}
-	inline shared_ptr<SignalPolinomialDistort> SignalAdd(const double v){return PolynomDistort({v,1});}
-	inline shared_ptr<SignalPolinomialDistort> SignalMultiply(const double c){return PolynomDistort({0,c});}
-	inline shared_ptr<SignalPolinomialDistort> SignalInvert(){return SignalMultiply(-1);}
+	inline const shared_ptr<SignalPolinomialDistort> SignalAdd(const double v){return PolynomDistort({v,1});}
+	inline const shared_ptr<SignalPolinomialDistort> SignalMultiply(const double c){return PolynomDistort({0,c});}
+	inline const shared_ptr<SignalPolinomialDistort> SignalInvert(){return SignalMultiply(-1);}
 	class AmplitudeDiscriminator:public Single2SingleSignal{
 	public:
 		AmplitudeDiscriminator(const double thr);

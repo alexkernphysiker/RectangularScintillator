@@ -53,7 +53,7 @@ namespace RectangularScintillator{
 		double m_sum;
 	};
 	//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-	inline shared_ptr<WeightedTimeSignal> TimeSignal(const vector<pair<size_t,double>>&&params){
+	inline const shared_ptr<WeightedTimeSignal> TimeSignal(const vector<pair<size_t,double>>&&params){
 		auto res=make_shared<WeightedTimeSignal>();
 		for(auto p:params)
 			res->AddSummand(p.first,p.second);
