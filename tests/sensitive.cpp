@@ -43,8 +43,8 @@ TEST(PhotoSensitiveSurface,Efficiency){
 			stat<<(check->data().size());
 		}
 		if((eff==0)||(eff==1))
-			EXPECT_EQ(eff*1000,stat.get().val());
-		EXPECT_CLOSE_VALUES_with_error(eff*1000,stat.get().val(),stat.get().delta()*2);
+			EXPECT_EQ(eff*1000,stat().val());
+		EXPECT_CLOSE_VALUES_with_error(eff*1000,stat().val(),stat().delta()*2);
 	}
 }
 TEST(PhotoSensitiveSurface,Geometry){
@@ -114,6 +114,6 @@ TEST(PhotoSensitiveSurfaceWithTTS,tts){
 			Phm->End();
 			sig<<(check->data()[0]);
 		}
-		EXPECT_CLOSE_VALUES_with_error(tts,sig.get().delta(),tts*0.2);
+		EXPECT_CLOSE_VALUES_with_error(tts,sig().delta(),tts*0.2);
 	}
 }

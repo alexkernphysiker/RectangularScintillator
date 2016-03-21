@@ -87,7 +87,7 @@ namespace RectangularScintillator{
 				m_edges.push_back(surfaces);
 		}
 		for(double x=-0.01;x<=1.01;x+=0.01)
-			reflection_probability<<make_pair(x,ReflectionProbability(m_refraction,x));
+			reflection_probability<<point<double>(x,ReflectionProbability(m_refraction,x));
 	}
 	Scintillator::~Scintillator(){}
 	const LinearInterpolation<double>&Scintillator::ReflectionProbabilityFunction()const{

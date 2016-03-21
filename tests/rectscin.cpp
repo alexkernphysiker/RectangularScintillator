@@ -7,8 +7,8 @@ using namespace MathTemplates;
 using namespace RectangularScintillator;
 TEST(Scintillator,reflection){
 	auto rsc=MakeScintillator({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.0+0.1*(rand()%10),TimeDistribution1(0.5,1.5));
-	for(const Pair&p:rsc->ReflectionProbabilityFunction())
-		EXPECT_TRUE((p.second>=0)&&(p.second<=1));
+	for(const auto&p:rsc->ReflectionProbabilityFunction())
+		EXPECT_TRUE((p.Y()>=0)&&(p.Y()<=1));
 }
 TEST(Scintillator,geometry){
 	auto rsc=MakeScintillator({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.0,TimeDistribution1(0.5,1.5));
@@ -35,10 +35,10 @@ TEST(Scintillator, Isotropic){
 		double val=INFINITY,err;
 		for(shared_ptr<SignalStatictics>one:vec)
 			if(isfinite(val)){
-				EXPECT_CLOSE_VALUES_with_error(one->data().get().val(),val,err+one->data().get().val());
+				EXPECT_CLOSE_VALUES_with_error(one->data()().val(),val,err+one->data()().val());
 			}else{
-				val=one->data().get().val();
-				err=one->data().get().delta();
+				val=one->data()().val();
+				err=one->data()().delta();
 			}
 	};
 	check_close(counts);
@@ -63,9 +63,9 @@ TEST(Scintillator, Isotropic2){
 	for(size_t cnt=0;cnt<400;cnt++)
 		rsc->RegisterGamma({0,0,0},3000,engine);
 	auto check_close=[](vector<shared_ptr<SignalStatictics>>&vec){
-		value<double> val=vec[0]->data().get();
+		value<double> val=vec[0]->data()();
 		for(shared_ptr<SignalStatictics>one:vec)
-			EXPECT_TRUE(val.contains(one->data().get()));
+			EXPECT_TRUE(val.contains(one->data()()));
 	};
 	check_close(counts);
 	check_close(times);
@@ -89,9 +89,9 @@ TEST(Scintillator,Glue){
 	);
 	for(size_t cnt=0;cnt<200;cnt++)
 		rsc->RegisterGamma({0,0,0},3000,engine);
-	EXPECT_TRUE(worst->data().get().val()<ideal->data().get().val());
-	EXPECT_TRUE(worst->data().get().val()<middle->data().get().val());
-	EXPECT_TRUE(middle->data().get().val()<ideal->data().get().val());
+	EXPECT_TRUE(worst->data()().val()<ideal->data()().val());
+	EXPECT_TRUE(worst->data()().val()<middle->data()().val());
+	EXPECT_TRUE(middle->data()().val()<ideal->data()().val());
 }
 TEST(Scintillator, oneD_symmetry_plus_concurrency){
 	vector<shared_ptr<Scintillator>> rsc{
@@ -130,7 +130,7 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 			rsc[0]->RegisterGamma({-30,0,0},3000,engine);
 		for(size_t cnt=0;cnt<200;cnt++)
 			rsc[1]->RegisterGamma({+30,0,0},3000,engine);
-		EXPECT_TRUE(amplstat[0]->data().get().contains(amplstat[1]->data().get()));
-		EXPECT_TRUE(timestat[0]->data().get().contains(timestat[1]->data().get()));
+		EXPECT_TRUE(amplstat[0]->data()().contains(amplstat[1]->data()()));
+		EXPECT_TRUE(timestat[0]->data()().contains(timestat[1]->data()()));
 	}
 }
