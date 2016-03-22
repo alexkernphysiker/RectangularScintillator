@@ -114,9 +114,8 @@ or such way:
 	
 or another way:
 
-scintillator.Surface(...one...) >> ( sensor1 >> (make_shared < SignalStatictics > () >> statistics1 ) );
-
-scintillator.Surface(...another...) >> ( sensor2 >> ( make_shared < SignalStatictics > () >> statistics2 ) );
+	scintillator.Surface(...one...) >> ( sensor1 >> (make_shared < SignalStatictics > () >> statistics1 ) );
+	scintillator.Surface(...another...) >> ( sensor2 >> ( make_shared < SignalStatictics > () >> statistics2 ) );
 
 Here template "make_shared" must have type of used signal analysing class as a parameter.
 
