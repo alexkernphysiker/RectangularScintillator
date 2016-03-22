@@ -1,17 +1,21 @@
 cmake_minimum_required(VERSION 2.6)
 project(RectangularScintillator)
+
 option(debug "Compile in debug mode" OFF)
 if(debug)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
+
 set(CMAKE_CXX_FLAGS "-pthread -std=gnu++11")
 include_directories(include)
 add_subdirectory(math_h)
 add_subdirectory(src)
+
 option(test "Build all tests." OFF) 
 if(test)
 	add_subdirectory(tests)
 endif()
+
 option(example "Compile example(s)." OFF) 
 if(example)
 	add_subdirectory(Example)

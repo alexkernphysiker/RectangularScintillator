@@ -4,27 +4,17 @@ Library for Monte Carlo simulation of photons movement in scintillator of rectan
 
 Compiling
 =========
-For using this library, please run:
 
-git clone https://github.com/alexkernphysiker/RectangularScintillator.git
+For using this library in your git repository with cmake project please run:
 
-cd RectangularScintillator
+	git submodule add https://github.com/alexkernphysiker/RectangularScintillator.git
+	git submodule update --init --recursive
 
-git submodule update --init --recursive
+Then add to CMakeLists.txt the following lines
 
-cmake .
+	add_subdirectory(RectangularScintillator)
+	include_directories(RectangularScintillator/include)
 
-make
-
-
-For using this library in your git repository please run:
-
-git submodule add https://github.com/alexkernphysiker/RectangularScintillator.git
-
-git submodule update --init --recursive
-
-If you have your own cmake project, you can use this library by adding add_subdirectory instruction.
-But you will have to add path RectangularScintillator/include to your include directories.
 
 
 
