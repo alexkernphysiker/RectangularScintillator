@@ -23,8 +23,10 @@ CMake Options
 
 	debug
 if ON the project is compiled in debug mode
+
 	example
 if ON the example is compiled
+
 	test
 if ON the tests are compiled
 
