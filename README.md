@@ -21,11 +21,12 @@ Then add to CMakeLists.txt the following lines
 CMake Options
 =============
 
-debug - if ON the project is compiled in debug mode
-
-example - if ON the example is compiled
-
-test - if ON the tests are compiled
+	debug
+if ON the project is compiled in debug mode
+	example
+if ON the example is compiled
+	test
+if ON the tests are compiled
 
 
 
@@ -75,11 +76,9 @@ and quantum efficiency defined as function < double (double) > that depends on p
 It's recommended to use Photosensor function for creating the instances of this class.
 Here's the example of using photosensors:
 
-Scintillator scintillator({...geometry...},...other parameters...);
-
-auto sensor=Photosensor({...surface geometry...},...other parameters...);
-
-scintillator.Surface(dimension,RectDimensions::Left)>>sensor;
+	Scintillator scintillator({...geometry...},...other parameters...);
+	auto sensor=Photosensor({...surface geometry...},...other parameters...);
+	scintillator.Surface(dimension,RectDimensions::Left)>>sensor;
 
 
 
@@ -90,9 +89,8 @@ All classes declared in photon2signal.h inheriting PhotonTimeAcceptor and Signal
 PhotonTimeAcceptor is an interface for accepting registered photons and SignalProducent implements transfering signal (defined as double value) for further analysis.
 After creating and configuring such object can be connected to PhotoSensitiveSurface instance:
 
-auto timesignal=TimeSignal({make_pair(0,0.5),make_pair(1,0.5)});//average of 1st and 2nd photon times
-
-scintillator.Surface(...) >> ( sensor >> timesignal );
+	auto timesignal=TimeSignal({make_pair(0,0.5),make_pair(1,0.5)});//average of 1st and 2nd photon times
+	scintillator.Surface(...) >> ( sensor >> timesignal );
 
 
 
@@ -103,13 +101,12 @@ Signal analyse
 File signal_statistics.h contains classes inheriting {SignalAcceptor} and using for analysis of simulated events.
 Example:
 
-auto statistics=make_shared<SignalStatictics>();
-
-scintillator.Surface(...) >> ( sensor >> ( timesignal >> statistics ) );
+	auto statistics=make_shared<SignalStatictics>();
+	scintillator.Surface(...) >> ( sensor >> ( timesignal >> statistics ) );
 
 or such way:
 
-scintillator.Surface(...)
+	scintillator.Surface(...)
 	>> ( sensor1 >> ( make_shared < SignalStatictics > () >> statistics1 ) )
 	>> ( sensor2 >> ( make_shared < SignalStatictics > () >> statistics2 ) );
 	
