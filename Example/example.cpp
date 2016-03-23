@@ -25,7 +25,7 @@ int main(int , char **){
 		scintillator->RegisterGamma({0,0,0},3000,engine);
 	cout<<"done."<<endl;
 	cout<<"Time difference = "
-	      <<time_difference->data()().val()<<" +/- "
-	      <<time_difference->data()().delta()<<" [ns]"<<endl;
+	      <<time_difference->data().val()<<" +/- "
+	      <<time_difference->data().delta()<<" [ns]"<<endl;
 	return 0;
 }

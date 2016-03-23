@@ -4,13 +4,12 @@
 #define XSAYaAus
 #include "scintillator.h"
 namespace RectangularScintillator{
-	using namespace std;
 	using namespace MathTemplates;
 	class FlatLightguide:public virtual IPhotonAbsorber,protected virtual ScintillatorSurface{
 	public:
-		FlatLightguide(const vector<Pair>&dimensions,const double glue_eff,const double n,const double H);
+		FlatLightguide(const std::vector<Pair>&dimensions,const double glue_eff,const double n,const double H);
 		virtual ~FlatLightguide();
-		FlatLightguide&operator>>(const shared_ptr<IPhotonAbsorber>sensor);
+		FlatLightguide&operator>>(const std::shared_ptr<IPhotonAbsorber>sensor);
 		virtual void Start()override;
 		virtual void AbsorbPhoton(Photon& photon,RANDOM&R)override;
 		virtual void End()override;
@@ -20,8 +19,8 @@ namespace RectangularScintillator{
 		
 		double g_eff,refr,height;
 	};
-	inline const shared_ptr<FlatLightguide> LightGuide(const vector<Pair>&&dimensions,const double glue_eff,const double n,const double H){
-		return shared_ptr<FlatLightguide>(new FlatLightguide(dimensions,glue_eff,n,H));
+	inline const std::shared_ptr<FlatLightguide> LightGuide(const std::vector<Pair>&&dimensions,const double glue_eff,const double n,const double H){
+		return std::shared_ptr<FlatLightguide>(new FlatLightguide(dimensions,glue_eff,n,H));
 	}
 };
 #endif

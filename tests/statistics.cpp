@@ -9,10 +9,11 @@ TEST(SignalStatictics,Base){
 		auto test=make_shared<SignalStatictics>();
 		SignalSender s;
 		s>>test;
-		EXPECT_EQ(0,test->data().count());
+		s.send({Rand(engine)});
 		for(size_t j=1;j<=i;j++){
 			s.send({Rand(engine)});
-			EXPECT_EQ(j,test->data().count());
+			EXPECT_TRUE(test->data().val()>=Rand.min());
+			EXPECT_TRUE(test->data().val()<=Rand.max());
 		}
 	}
 }

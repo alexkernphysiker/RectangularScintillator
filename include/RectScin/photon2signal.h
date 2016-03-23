@@ -5,7 +5,6 @@
 #include "../math_h/sigma.h"
 #include "sensitive.h"
 namespace RectangularScintillator{
-	using namespace std;
 	using namespace MathTemplates;
 	class OrderStatisticsSigmaAnalyser:public PhotonTimeAcceptor{
 	public:
@@ -18,7 +17,7 @@ namespace RectangularScintillator{
 		virtual void AcceptEventEnd()override;
 	private:
 		size_t m_count;
-		vector<Sigma<double>> m_stat;
+		std::vector<Sigma<double>> m_stat;
 	};
 	class SignalAcceptor{
 	public:
@@ -30,13 +29,13 @@ namespace RectangularScintillator{
 	class SignalProducent{
 	public:
 		virtual ~SignalProducent(){}
-		SignalProducent&operator>>(const shared_ptr<SignalAcceptor>);
+		SignalProducent&operator>>(const std::shared_ptr<SignalAcceptor>);
 	protected:
 		void SendEventStart();
 		void SendSignalValue(const double time);
 		void SendEventEnd();
 	private:
-		vector<shared_ptr<SignalAcceptor>> m_out_slots;
+		std::vector<std::shared_ptr<SignalAcceptor>> m_out_slots;
 	};
 	class WeightedTimeSignal:public PhotonTimeAcceptor,public SignalProducent{
 	public:
@@ -47,14 +46,14 @@ namespace RectangularScintillator{
 		virtual void AcceptPhotonTime(const double time)override;
 		virtual void AcceptEventEnd()override;
 	private:
-		vector<pair<size_t,double>> m_config;
-		vector<bool> m_state;
+		std::vector<std::pair<size_t,double>> m_config;
+		std::vector<bool> m_state;
 		size_t m_count;
 		double m_sum;
 	};
 	//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-	inline const shared_ptr<WeightedTimeSignal> TimeSignal(const vector<pair<size_t,double>>&&params){
-		auto res=make_shared<WeightedTimeSignal>();
+	inline const std::shared_ptr<WeightedTimeSignal> TimeSignal(const std::vector<std::pair<size_t,double>>&&params){
+		auto res=std::make_shared<WeightedTimeSignal>();
 		for(auto p:params)
 			res->AddSummand(p.first,p.second);
 		return res;

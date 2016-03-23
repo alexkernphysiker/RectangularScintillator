@@ -35,10 +35,10 @@ TEST(Scintillator, Isotropic){
 		double val=INFINITY,err;
 		for(shared_ptr<SignalStatictics>one:vec)
 			if(isfinite(val)){
-				EXPECT_CLOSE_VALUES_with_error(one->data()().val(),val,err+one->data()().val());
+				EXPECT_CLOSE_VALUES_with_error(one->data().val(),val,err+one->data().val());
 			}else{
-				val=one->data()().val();
-				err=one->data()().delta();
+				val=one->data().val();
+				err=one->data().delta();
 			}
 	};
 	check_close(counts);
@@ -63,9 +63,9 @@ TEST(Scintillator, Isotropic2){
 	for(size_t cnt=0;cnt<400;cnt++)
 		rsc->RegisterGamma({0,0,0},3000,engine);
 	auto check_close=[](vector<shared_ptr<SignalStatictics>>&vec){
-		value<double> val=vec[0]->data()();
+		value<double> val=vec[0]->data();
 		for(shared_ptr<SignalStatictics>one:vec)
-			EXPECT_TRUE(val.contains(one->data()()));
+			EXPECT_TRUE(val.contains(one->data()));
 	};
 	check_close(counts);
 	check_close(times);
@@ -89,9 +89,9 @@ TEST(Scintillator,Glue){
 	);
 	for(size_t cnt=0;cnt<200;cnt++)
 		rsc->RegisterGamma({0,0,0},3000,engine);
-	EXPECT_TRUE(worst->data()().val()<ideal->data()().val());
-	EXPECT_TRUE(worst->data()().val()<middle->data()().val());
-	EXPECT_TRUE(middle->data()().val()<ideal->data()().val());
+	EXPECT_TRUE(worst->data().val()<ideal->data().val());
+	EXPECT_TRUE(worst->data().val()<middle->data().val());
+	EXPECT_TRUE(middle->data().val()<ideal->data().val());
 }
 TEST(Scintillator, oneD_symmetry_plus_concurrency){
 	vector<shared_ptr<Scintillator>> rsc{
@@ -130,7 +130,7 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 			rsc[0]->RegisterGamma({-30,0,0},3000,engine);
 		for(size_t cnt=0;cnt<200;cnt++)
 			rsc[1]->RegisterGamma({+30,0,0},3000,engine);
-		EXPECT_TRUE(amplstat[0]->data()().contains(amplstat[1]->data()()));
-		EXPECT_TRUE(timestat[0]->data()().contains(timestat[1]->data()()));
+		EXPECT_TRUE(amplstat[0]->data().contains(amplstat[1]->data()));
+		EXPECT_TRUE(timestat[0]->data().contains(timestat[1]->data()));
 	}
 }

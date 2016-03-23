@@ -7,10 +7,9 @@
 #include <thread>
 #include <mutex>
 namespace RectangularScintillator{
-	using namespace std;
-	typedef lock_guard<mutex> Lock;
-	typedef vector<double> Vec;
-	typedef pair<double,double> Pair;
+	typedef std::lock_guard<std::mutex> Lock;
+	typedef std::vector<double> Vec;
+	typedef std::pair<double,double> Pair;
 	Vec operator*(const Vec&p,const double c);
 	Vec operator+(const Vec&p1,const Vec&p2);
 	Vec operator-(const Vec&p1,const Vec&p2);
@@ -51,8 +50,8 @@ namespace RectangularScintillator{
 		const bool IsInside(const Vec&point)const;
 		const IntersectionSearchResults WhereIntersects(const Vec&point,const Vec&dir)const;
 	private:
-		vector<Pair> m_dimensions;
-		shared_ptr<mutex> geom_mutex;
+		std::vector<Pair> m_dimensions;
+		std::shared_ptr<std::mutex> geom_mutex;
 	};
 	RectDimensions::Side&inc(RectDimensions::Side&val);
 };
