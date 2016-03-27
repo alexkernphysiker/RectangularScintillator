@@ -5,19 +5,18 @@
 #include "../math_h/sigma.h"
 #include "sensitive.h"
 namespace RectangularScintillator{
-	using namespace MathTemplates;
 	class OrderStatisticsSigmaAnalyser:public PhotonTimeAcceptor{
 	public:
 		OrderStatisticsSigmaAnalyser(const size_t count);
 		virtual ~OrderStatisticsSigmaAnalyser();
 		const size_t count()const;
-		const Sigma<double>& At(size_t i)const;
+		const MathTemplates::value<double>& At(size_t i)const;
 		virtual void AcceptEventStart()override;
 		virtual void AcceptPhotonTime(const double time)override;
 		virtual void AcceptEventEnd()override;
 	private:
 		size_t m_count;
-		std::vector<Sigma<double>> m_stat;
+		std::vector<MathTemplates::Sigma<double>> m_stat;
 	};
 	class SignalAcceptor{
 	public:

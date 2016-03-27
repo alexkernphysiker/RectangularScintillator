@@ -4,7 +4,6 @@
 #define XSAYaAus
 #include "scintillator.h"
 namespace RectangularScintillator{
-	using namespace MathTemplates;
 	class FlatLightguide:public virtual IPhotonAbsorber,protected virtual ScintillatorSurface{
 	public:
 		FlatLightguide(const std::vector<Pair>&dimensions,const double glue_eff,const double n,const double H);

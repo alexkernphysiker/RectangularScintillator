@@ -4,7 +4,6 @@
 #define fXIVCFLg
 #include "scintillator.h"
 namespace RectangularScintillator{
-	using namespace MathTemplates;
 	class PhotonTimeAcceptor{
 	public:
 		virtual ~PhotonTimeAcceptor(){}

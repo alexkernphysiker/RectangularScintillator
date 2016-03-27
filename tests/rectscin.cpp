@@ -29,43 +29,12 @@ TEST(Scintillator, Isotropic){
 			counts.push_back(ampl);
 			times.push_back(time);
 		}
-	for(size_t cnt=0;cnt<200;cnt++)
+	for(size_t cnt=0;cnt<300;cnt++)
 		rsc->RegisterGamma({0.5,0.5,0.5},3000,engine);
 	auto check_close=[](vector<shared_ptr<SignalStatictics>>&vec){
-		double val=INFINITY,err;
+		value<double> for_cmp=vec[0]->data();
 		for(shared_ptr<SignalStatictics>one:vec)
-			if(isfinite(val)){
-				EXPECT_CLOSE_VALUES_with_error(one->data().val(),val,err+one->data().val());
-			}else{
-				val=one->data().val();
-				err=one->data().delta();
-			}
-	};
-	check_close(counts);
-	check_close(times);
-}
-TEST(Scintillator, Isotropic2){
-	auto rsc=MakeScintillator({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.6,TimeDistribution1(0.5,1.5));
-	vector<shared_ptr<SignalStatictics>> counts,times;
-	for(size_t dimension=0;dimension<3;dimension++)
-		for(auto side=RectDimensions::Left;side<=RectDimensions::Right;inc(side))
-			for(double x1=-1;x1<1;x1+=1)
-				for(double x2=-1;x2<1;x2+=1){
-					auto ampl=make_shared<SignalStatictics>(2),time=make_shared<SignalStatictics>(2);
-					rsc->Surface(dimension,side)>>(
-						Photosensor({make_pair(x1,x1+1),make_pair(x2,x2+1)},1.0,[](double){return 1.0;})
-							>>(make_shared<AmplitudeSignal>()>>ampl)
-							>>(TimeSignal({make_pair(0,1)})>>time)
-					);
-					counts.push_back(ampl);
-					times.push_back(time);
-				}
-	for(size_t cnt=0;cnt<400;cnt++)
-		rsc->RegisterGamma({0,0,0},3000,engine);
-	auto check_close=[](vector<shared_ptr<SignalStatictics>>&vec){
-		value<double> val=vec[0]->data();
-		for(shared_ptr<SignalStatictics>one:vec)
-			EXPECT_TRUE(val.contains(one->data()));
+			EXPECT_TRUE(one->data().contains(for_cmp));
 	};
 	check_close(counts);
 	check_close(times);
@@ -123,7 +92,7 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 		}
 		timediff>>(timestat[index]);ampldiff>>(amplstat[index]);
 	}
-	for(size_t threads=1;threads<3;threads++){
+	for(size_t threads=1;threads<5;threads++){
 		for(size_t index=0;index<2;index++)rsc[index]->Configure(Scintillator::Options(threads,5));
 		cout<< threads<<" threads"<<endl;
 		for(size_t cnt=0;cnt<200;cnt++)

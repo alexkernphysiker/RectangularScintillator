@@ -17,7 +17,6 @@ using namespace RectangularScintillator;
 extern RANDOM engine;
 extern uniform_real_distribution<double> Rand;
 extern uniform_int_distribution<int> iRand;
-#define EXPECT_CLOSE_VALUES_with_error(A,B,e) EXPECT_TRUE(((A)>=((B)-(e)))&&((A)<=((B)+(e))));
 #define EXPECT_CLOSE_VALUES(A,B) EXPECT_TRUE(((A)>=((B)-(0.000001)))&&((A)<=((B)+(0.000001))));
 class SignalSender{
 public:

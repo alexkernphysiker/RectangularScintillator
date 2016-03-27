@@ -9,7 +9,6 @@
 #include "photon2signal.h"
 #include "signal_processing.h"
 namespace RectangularScintillator{
-	using namespace MathTemplates;
 	class SignalStatictics:public SignalAcceptor{
 	public:
 		SignalStatictics(const double error_scale=1);
@@ -17,9 +16,9 @@ namespace RectangularScintillator{
 		virtual void AcceptEventStart()override;
 		virtual void AcceptSignalValue(const double time)override;
 		virtual void AcceptEventEnd()override;
-		const value<double>&data()const;
+		const MathTemplates::value<double>&data()const;
 	private:
-		Sigma<double> m_data;
+		MathTemplates::Sigma<double> m_data;
 	};
 	class SignalsToFile:public AbstractMultiInput{
 	public:

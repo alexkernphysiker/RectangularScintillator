@@ -5,7 +5,6 @@
 #include <random>
 #include "photon2signal.h"
 namespace RectangularScintillator{
-	using namespace MathTemplates;
 	class Single2SingleSignal:public SignalAcceptor,public SignalProducent{
 		virtual void AcceptEventStart()override;
 		virtual void AcceptEventEnd()override;
