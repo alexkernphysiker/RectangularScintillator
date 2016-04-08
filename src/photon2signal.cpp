@@ -8,7 +8,7 @@ namespace RectangularScintillator{
 	OrderStatisticsSigmaAnalyser::OrderStatisticsSigmaAnalyser(const size_t count){
 		m_count=0;
 		for(size_t i=0;i<count;i++)
-			m_stat.push_back(Sigma<double>());
+			m_stat.push_back(StandardDeviation<double>());
 	}
 	OrderStatisticsSigmaAnalyser::~OrderStatisticsSigmaAnalyser(){}
 	const size_t OrderStatisticsSigmaAnalyser::count()const{

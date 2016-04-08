@@ -28,7 +28,7 @@ TEST(PhotoSensitiveSurface,Efficiency){
 		auto Phm=Photosensor({make_pair(-1,1),make_pair(-1,1)},1,[eff](double){return eff;});
 		auto check=make_shared<PhotonCheck>();
 		Phm>>check;
-		Sigma<double> stat;
+		StandardDeviation<double> stat;
 		for(size_t cnt=0;cnt<1000;cnt++){
 			Phm->Start();
 			for(size_t i=0;i<1000;i++){
@@ -102,7 +102,7 @@ TEST(PhotoSensitiveSurfaceWithTTS,tts){
 		auto Phm=Photosensor({make_pair(-1,1),make_pair(-1,1)},1,[](double){return 1;},tts);
 		auto check=make_shared<PhotonCheck>();
 		Phm>>check;
-		Sigma<double> sig;
+		StandardDeviation<double> sig;
 		for(size_t cnt=0;cnt<1000;cnt++){
 			Phm->Start();
 			Photon ph;

@@ -16,7 +16,7 @@ namespace RectangularScintillator{
 		virtual void AcceptEventEnd()override;
 	private:
 		size_t m_count;
-		std::vector<MathTemplates::Sigma<double>> m_stat;
+		std::vector<MathTemplates::StandardDeviation<double>> m_stat;
 	};
 	class SignalAcceptor{
 	public:

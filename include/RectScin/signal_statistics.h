@@ -18,7 +18,7 @@ namespace RectangularScintillator{
 		virtual void AcceptEventEnd()override;
 		const MathTemplates::value<double>&data()const;
 	private:
-		MathTemplates::Sigma<double> m_data;
+		MathTemplates::StandardDeviation<double> m_data;
 	};
 	class SignalsToFile:public AbstractMultiInput{
 	public:
