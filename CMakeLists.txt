@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
 project(RectangularScintillator)
 
+add_subdirectory(math_h)
 file(GLOB SOURCES src/*.cpp)
 file(GLOB TESTS tests/*.cpp)
 file(GLOB EXAMPLES Example/*.cpp)
-
 set(CMAKE_CXX_FLAGS -pthread)
 add_definitions(-std=c++11 -Wall -Wunused-parameter)
 include_directories(include)
-
-add_subdirectory(math_h)
 add_library(rectscin SHARED ${SOURCES})
 
 foreach(example ${EXAMPLES})
