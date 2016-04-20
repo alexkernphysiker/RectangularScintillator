@@ -1,7 +1,0 @@
-enable_testing()
-find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS})
-set(CMAKE_CXX_FLAGS "-fprofile-arcs -ftest-coverage -g -Wall -pthread -std=gnu++11")
-add_executable(rs_test test_objects.cpp geometry.cpp sensitive.cpp photon2signal.cpp processing.cpp statistics.cpp rectscin.cpp)
-target_link_libraries(rs_test rectscin ${GTEST_BOTH_LIBRARIES})
-add_test(RectScin rs_test)

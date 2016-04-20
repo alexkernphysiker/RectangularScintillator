@@ -29,7 +29,7 @@ namespace RectangularScintillator{
 			if(P(R)<m_efficiency(photon.lambda))
 				PhotonTimeAccepted(photon.time,R);
 	}
-	void PhotoSensitiveSurface::PhotonTimeAccepted(const double time,RANDOM&R){
+	void PhotoSensitiveSurface::PhotonTimeAccepted(const double time,RANDOM&){
 		InsertSorted(time,times,field_size(times),field_insert(times,double));
 	}
 	void PhotoSensitiveSurface::End(){
