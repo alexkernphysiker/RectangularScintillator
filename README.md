@@ -13,9 +13,7 @@ For using this library in your git repository with cmake project please run:
 Then add to CMakeLists.txt the following lines
 
 	add_subdirectory(RectangularScintillator)
-	include_directories(RectangularScintillator/include)
-
-
+	include_directories(${RECTSCIN_INC})
 
 
 CMake Options
