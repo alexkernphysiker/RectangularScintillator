@@ -13,7 +13,7 @@ int main(int , char **){
 	auto scintillator=MakeScintillator({make_pair(-15,15),make_pair(-7,7),make_pair(-7,7)},1.58,TimeDistribution2(0.005,0.2,1.5));
 	auto time_difference=make_shared<SignalStatictics>();
 	{
-		auto photosensor=[](){return Photosensor({make_pair(-7,7),make_pair(-7,7)},1,[](double l){return 0.3;});};
+		auto photosensor=[](){return Photosensor({make_pair(-7,7),make_pair(-7,7)},1,[](double){return 0.3;});};
 		auto left=make_shared<Signal>(),right=make_shared<Signal>();
 		scintillator->Surface(0,RectDimensions::Left)>>(photosensor()>>(TimeSignal({make_pair(0,1)})>>left));
 		scintillator->Surface(0,RectDimensions::Right)>>(photosensor()>>(TimeSignal({make_pair(0,1)})>>(SignalInvert()>>right)));

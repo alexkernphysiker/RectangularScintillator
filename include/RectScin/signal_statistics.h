@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 #include <functional>
-#include "../math_h/sigma.h"
+#include <math_h/sigma.h>
 #include "photon2signal.h"
 #include "signal_processing.h"
 namespace RectangularScintillator{

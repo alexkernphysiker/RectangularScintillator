@@ -5,8 +5,8 @@
 #include <functional>
 #include <memory>
 #include <vector>
-#include "../math_h/randomfunc.h"
-#include "../math_h/interpolate.h"
+#include <math_h/randomfunc.h>
+#include <math_h/interpolate.h>
 #include "geometry.h"
 namespace RectangularScintillator{
 	const double speed_of_light=300;//mm/ns

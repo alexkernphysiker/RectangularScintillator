@@ -2,7 +2,7 @@
 // MIT license
 #ifndef oRsHdaNh
 #define oRsHdaNh
-#include "../math_h/sigma.h"
+#include <math_h/sigma.h>
 #include "sensitive.h"
 namespace RectangularScintillator{
 	class OrderStatisticsSigmaAnalyser:public PhotonTimeAcceptor{

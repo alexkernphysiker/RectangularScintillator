@@ -1,1 +1,0 @@
-../math_h/include/gnuplot_wrap.h
