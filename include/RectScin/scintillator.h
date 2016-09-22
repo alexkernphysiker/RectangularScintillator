@@ -135,7 +135,7 @@ namespace RectangularScintillator{
 		const MathTemplates::RandomValueGenerator<double>&&lambda_distribution=MathTemplates::RandomValueGenerator<double>(1,2),
 		const Func absorption=[](double){return 0.0;}
 	){return MakeScintillator(dimensions,refraction,time_distribution,lambda_distribution,absorption);}
-	const MathTemplates::RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,const std::vector<double>&&time_chain=MathTemplates::ChainWithStep(0.0,0.01,20.0));
-	const MathTemplates::RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay,const std::vector<double>&&time_chain=MathTemplates::ChainWithStep(0.0,0.01,20.0));
+	const MathTemplates::RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,const MathTemplates::SortedChain<double>&&time_chain=MathTemplates::ChainWithStep(0.0,0.01,20.0));
+	const MathTemplates::RandomValueGenerator<double> TimeDistribution2(double rize, double sigma, double decay,const MathTemplates::SortedChain<double>&&time_chain=MathTemplates::ChainWithStep(0.0,0.01,20.0));
 };
 #endif

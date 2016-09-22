@@ -101,7 +101,7 @@ namespace RectangularScintillator{
 			throw Exception<SignalSortAndSelect>("SignalSortAndSelect: selected order statistics is greater than input slots count");
 		Vec out;
 		for(double v:signals)if(isfinite(v))
-			InsertSorted(v,out,std_size(out),std_insert(out,double));
+			details::InsertSorted(v,out,std_size(out),std_insert(out,double));
 		if(out.size()>m_number)
 			SendSignalValue(out[m_number]);
 	}
@@ -183,7 +183,7 @@ namespace RectangularScintillator{
 			throw Exception<SignalSortAndSelect2>("SignalSortAndSelect: selected order statistics is greater than input slots count");
 		vector<Pair> out;
 		for(size_t i=0,n=signals.size();i<n;i++)if(isfinite(signals[i])){
-			InsertSorted(make_pair(signals[i],double(i)),out,std_size(out),std_insert(out,Pair));
+			details::InsertSorted(make_pair(signals[i],double(i)),out,std_size(out),std_insert(out,Pair));
 		}
 		if(out.size()>m_number){
 			SendSignalValue(0,out[m_number].second);
@@ -195,7 +195,7 @@ namespace RectangularScintillator{
 		Vec out;
 		for(double signal:signals)
 			if(isfinite(signal))
-				InsertSorted(signal,out,std_size(out),std_insert(out,double));
+				details::InsertSorted(signal,out,std_size(out),std_insert(out,double));
 			size_t i=0;
 		for(double signal:out){
 			if(i<GetOutSlotsCount())
@@ -208,7 +208,7 @@ namespace RectangularScintillator{
 		size_t i=0;
 		for(double signal:signals){
 			if(isfinite(signal))
-				InsertSorted(make_pair(signal,double(i)),out,std_size(out),std_insert(out,Pair));
+				details::InsertSorted(make_pair(signal,double(i)),out,std_size(out),std_insert(out,Pair));
 			i++;
 		}
 		i=0;

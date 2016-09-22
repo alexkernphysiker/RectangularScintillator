@@ -44,7 +44,7 @@ TEST(PhotoSensitiveSurface,Efficiency){
 		}
 		if((eff==0)||(eff==1))
 			EXPECT_EQ(eff*1000,stat().val());
-		EXPECT_TRUE(stat().contains(eff*1000));
+		EXPECT_TRUE(stat().Contains(eff*1000));
 	}
 }
 TEST(PhotoSensitiveSurface,Geometry){
@@ -114,6 +114,6 @@ TEST(PhotoSensitiveSurfaceWithTTS,tts){
 			Phm->End();
 			sig<<(check->data()[0]);
 		}
-		EXPECT_TRUE(value<double>(tts,0.2*tts).contains(sig().delta()));
+		EXPECT_TRUE(value<double>(tts,0.2*tts).Contains(sig().uncertainty()));
 	}
 }

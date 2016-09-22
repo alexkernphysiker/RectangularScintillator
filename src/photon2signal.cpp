@@ -82,7 +82,7 @@ namespace RectangularScintillator{
 		m_count=0;
 		SendEventStart();
 	}
-	void AmplitudeSignal::AcceptPhotonTime(const double time){
+	void AmplitudeSignal::AcceptPhotonTime(const double /*time*/){
 		m_count++;
 	}
 	void AmplitudeSignal::AcceptEventEnd(){

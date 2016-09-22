@@ -34,7 +34,7 @@ TEST(Scintillator, Isotropic){
 	auto check_close=[](vector<shared_ptr<SignalStatictics>>&vec){
 		value<double> for_cmp=vec[0]->data();
 		for(shared_ptr<SignalStatictics>one:vec)
-			EXPECT_TRUE(one->data().contains(for_cmp));
+			EXPECT_TRUE(one->data().Contains(for_cmp));
 	};
 	check_close(counts);
 	check_close(times);
@@ -99,7 +99,7 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 			rsc[0]->RegisterGamma({-30,0,0},3000,engine);
 		for(size_t cnt=0;cnt<200;cnt++)
 			rsc[1]->RegisterGamma({+30,0,0},3000,engine);
-		EXPECT_TRUE(amplstat[0]->data().contains(amplstat[1]->data()));
-		EXPECT_TRUE(timestat[0]->data().contains(timestat[1]->data()));
+		EXPECT_TRUE(amplstat[0]->data().Contains(amplstat[1]->data()));
+		EXPECT_TRUE(timestat[0]->data().Contains(timestat[1]->data()));
 	}
 }

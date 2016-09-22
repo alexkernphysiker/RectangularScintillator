@@ -259,7 +259,7 @@ namespace RectangularScintillator{
 			}
 		}
 	}
-	const RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,const vector<double>&&chain){
+	const RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,const SortedChain<double>&&chain){
 		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
 		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size());
 		auto func=[sigma,decay,max,min,dt](double t){
@@ -269,7 +269,7 @@ namespace RectangularScintillator{
 		};
 		return RandomValueGenerator<double>(func,chain);
 	}
-	const RandomValueGenerator<double> TimeDistribution2(double rize,double sigma, double decay,const vector<double>&&chain){
+	const RandomValueGenerator<double> TimeDistribution2(double rize,double sigma, double decay,const SortedChain<double>&&chain){
 		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
 		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size());
 		auto func=[rize,sigma,decay,min,max,dt](double t){

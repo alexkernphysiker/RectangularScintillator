@@ -26,6 +26,6 @@ int main(int , char **){
 	cout<<"done."<<endl;
 	cout<<"Time difference = "
 	      <<time_difference->data().val()<<" +/- "
-	      <<time_difference->data().delta()<<" [ns]"<<endl;
+	      <<time_difference->data().uncertainty()<<" [ns]"<<endl;
 	return 0;
 }

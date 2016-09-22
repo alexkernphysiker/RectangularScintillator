@@ -87,7 +87,7 @@ namespace RectangularScintillator{
 			if(dir[i]>0)
 				newdim.first=m_dimensions[i].second-point[i];
 			if(dir[i]!=0)
-				InsertSorted(newdim,dim_order,std_size(dim_order),std_insert(dim_order,dist_dim));
+				details::InsertSorted(newdim,dim_order,std_size(dim_order),std_insert(dim_order,dist_dim));
 		}
 		if(dim_order.size()==0){
 			IntersectionSearchResults res;
