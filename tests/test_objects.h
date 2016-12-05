@@ -33,7 +33,7 @@ public:
 	Out();
 	virtual ~Out();
 	virtual void AcceptEventStart()final;
-	virtual void AcceptSignalValue(double s)final;
+	virtual void AcceptSignalValue(const double&s)override;
 	virtual void AcceptEventEnd()final;
 	double value();
 private:

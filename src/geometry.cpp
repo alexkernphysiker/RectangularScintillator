@@ -9,7 +9,7 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	Vec operator*(const Vec&p,const double c){
+	Vec operator*(const Vec&p,const double&c){
 		Vec res;
 		for(double x:p)
 			res.push_back(x*c);
@@ -52,7 +52,6 @@ namespace RectangularScintillator{
 		m_dimensions.push_back(dimension);
 		return *this;
 	}
-	RectDimensions& RectDimensions::operator<<(const Pair&&dimension){return operator<<(dimension);}
 	const size_t RectDimensions::NumberOfDimensions()const{return m_dimensions.size();}
 	const Pair&RectDimensions::Dimension(size_t i)const{
 		if(i>=NumberOfDimensions())

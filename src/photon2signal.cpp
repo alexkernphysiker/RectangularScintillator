@@ -22,7 +22,7 @@ namespace RectangularScintillator{
 	void OrderStatisticsSigmaAnalyser::AcceptEventStart(){
 		m_count=0;
 	}
-	void OrderStatisticsSigmaAnalyser::AcceptPhotonTime(const double time){
+	void OrderStatisticsSigmaAnalyser::AcceptPhotonTime(const double&time){
 		if(m_count<m_stat.size())
 			m_stat[m_count]<<time;
 		m_count++;
@@ -37,7 +37,7 @@ namespace RectangularScintillator{
 		for(auto out:m_out_slots)
 			out->AcceptEventStart();
 	}
-	void SignalProducent::SendSignalValue(const double time){
+	void SignalProducent::SendSignalValue(const double&time){
 		for(auto out:m_out_slots)
 			out->AcceptSignalValue(time);
 	}
@@ -48,7 +48,7 @@ namespace RectangularScintillator{
 	
 	WeightedTimeSignal::WeightedTimeSignal(){}
 	WeightedTimeSignal::~WeightedTimeSignal(){}
-	WeightedTimeSignal& WeightedTimeSignal::AddSummand(size_t order_statistics, double weight){
+	WeightedTimeSignal& WeightedTimeSignal::AddSummand(size_t order_statistics,const double&weight){
 		m_config.push_back(make_pair(order_statistics,weight));
 		return *this;
 	}
@@ -59,7 +59,7 @@ namespace RectangularScintillator{
 		for(auto element:m_config)m_state.push_back(false);
 		SendEventStart();
 	}
-	void WeightedTimeSignal::AcceptPhotonTime(const double time){
+	void WeightedTimeSignal::AcceptPhotonTime(const double&time){
 		for(int i=0,n=m_config.size();i<n;i++){
 			auto p=&(m_config[i]);
 			if(p->first==m_count){
@@ -82,7 +82,7 @@ namespace RectangularScintillator{
 		m_count=0;
 		SendEventStart();
 	}
-	void AmplitudeSignal::AcceptPhotonTime(const double /*time*/){
+	void AmplitudeSignal::AcceptPhotonTime(const double& /*time*/){
 		m_count++;
 	}
 	void AmplitudeSignal::AcceptEventEnd(){

@@ -13,7 +13,7 @@ public:
 	virtual ~PhotonCheck(){}
 	const Vec& data()const{return times;}
 	virtual void AcceptEventStart()override{times.clear();}
-	virtual void AcceptPhotonTime(double time)override{times.push_back(time);}
+	virtual void AcceptPhotonTime(const double&time)override{times.push_back(time);}
 	virtual void AcceptEventEnd()override{}
 };
 TEST(PhotoSensitiveSurface,Glue_eff){

@@ -13,28 +13,28 @@ namespace RectangularScintillator{
 	public:
 		Signal();
 		virtual ~Signal();
-		virtual void AcceptSignalValue(const double signal)override;
+		virtual void AcceptSignalValue(const double&signal)override;
 	};
 	class SignalPolinomialDistort:public Single2SingleSignal{
 	public:
 		SignalPolinomialDistort(const Vec&coefs);
 		virtual ~SignalPolinomialDistort();
-		virtual void AcceptSignalValue(const double signal)override;
+		virtual void AcceptSignalValue(const double&signal)override;
 	private:
 		Vec m_coefs;
 	};
 	//There's a problem with transfering vector<smth>&& parameter as {val1,val2,...} to make_Shared template function
-	inline const std::shared_ptr<SignalPolinomialDistort> PolynomDistort(const Vec&&coefs){
+	inline const std::shared_ptr<SignalPolinomialDistort> PolynomDistort(const Vec&coefs){
 		return std::shared_ptr<SignalPolinomialDistort>(new SignalPolinomialDistort(coefs));
 	}
-	inline const std::shared_ptr<SignalPolinomialDistort> SignalAdd(const double v){return PolynomDistort({v,1});}
-	inline const std::shared_ptr<SignalPolinomialDistort> SignalMultiply(const double c){return PolynomDistort({0,c});}
+	inline const std::shared_ptr<SignalPolinomialDistort> SignalAdd(const double&v){return PolynomDistort({v,1});}
+	inline const std::shared_ptr<SignalPolinomialDistort> SignalMultiply(const double&c){return PolynomDistort({0,c});}
 	inline const std::shared_ptr<SignalPolinomialDistort> SignalInvert(){return SignalMultiply(-1);}
 	class AmplitudeDiscriminator:public Single2SingleSignal{
 	public:
-		AmplitudeDiscriminator(const double thr);
+		AmplitudeDiscriminator(const double&thr);
 		virtual ~AmplitudeDiscriminator();
-		virtual void AcceptSignalValue(const double signal)override;
+		virtual void AcceptSignalValue(const double&signal)override;
 	private:
 		double threshold;
 	};
@@ -57,7 +57,7 @@ namespace RectangularScintillator{
 			Slot(std::shared_ptr<AbstractMultiInput>father);
 			virtual ~Slot();
 			virtual void AcceptEventStart()override;
-			virtual void AcceptSignalValue(const double signal)override;
+			virtual void AcceptSignalValue(const double&signal)override;
 			virtual void AcceptEventEnd()override;
 			const double Value()const;
 		private:
@@ -106,7 +106,7 @@ namespace RectangularScintillator{
 	protected:
 		void SendEventStart();
 		const size_t GetOutSlotsCount();
-		void SendSignalValue(const size_t i,const double signal);
+		void SendSignalValue(const size_t i,const double&signal);
 		void SendEventEnd();
 	private:
 		class Slot:public SignalProducent{
@@ -114,7 +114,7 @@ namespace RectangularScintillator{
 			Slot();
 			virtual ~Slot();
 			void Start();
-			void Value(double signal);
+			void Value(const double&signal);
 			void End();
 		};
 		std::vector<std::shared_ptr<Slot>> m_output_slots;
@@ -124,7 +124,7 @@ namespace RectangularScintillator{
 		Single2MultiSignal();
 		virtual ~Single2MultiSignal();
 		virtual void AcceptEventStart()override;
-		virtual void AcceptSignalValue(const double time)=0;
+		virtual void AcceptSignalValue(const double&time)=0;
 		virtual void AcceptEventEnd()override;
 	};
 	class Multi2MultiSignal:public AbstractMultiInput,public AbstractMultiOutput{
@@ -137,7 +137,7 @@ namespace RectangularScintillator{
 	};
 	class TimeGate:public Multi2MultiSignal{
 	public:
-		TimeGate(const double width);
+		TimeGate(const double&width);
 		virtual ~TimeGate();
 	protected:
 		virtual void Process(const Vec&signals)override;

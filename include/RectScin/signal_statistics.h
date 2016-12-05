@@ -11,10 +11,10 @@
 namespace RectangularScintillator{
 	class SignalStatictics:public SignalAcceptor{
 	public:
-		SignalStatictics(const double error_scale=1);
+		SignalStatictics(const double&&error_scale=1.0);
 		virtual ~SignalStatictics();
 		virtual void AcceptEventStart()override;
-		virtual void AcceptSignalValue(const double time)override;
+		virtual void AcceptSignalValue(const double&time)override;
 		virtual void AcceptEventEnd()override;
 		const MathTemplates::value<double>&data()const;
 	private:
@@ -24,7 +24,7 @@ namespace RectangularScintillator{
 	public:
 		SignalsToFile();
 		virtual ~SignalsToFile();
-		void Redirect(const std::string&&name);
+		void Redirect(const std::string&name);
 	protected:
 		virtual void Start()override;
 		virtual void Process(const Vec&signals)override;
@@ -38,7 +38,7 @@ namespace RectangularScintillator{
 		SignalAnalyse(const std::function<void(double)> f);
 		virtual ~SignalAnalyse();
 		virtual void AcceptEventStart()override;
-		virtual void AcceptSignalValue(const double time)override;
+		virtual void AcceptSignalValue(const double&time)override;
 		virtual void AcceptEventEnd()override;
 	private:
 		std::function<void(double)> func;
