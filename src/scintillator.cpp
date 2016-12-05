@@ -35,17 +35,17 @@ namespace RectangularScintillator{
 	}
 	const double ScintillatorSurface::ReflectionProbabilityCoeff(const Vec&point)const{
 		for(auto sensor:m_handlers)
-			if(sensor->Dimensions().IsInside(point)){
-				double eff=sensor->GlueEfficiency();
-				if((eff<0)||(eff>1))
-					throw Exception<ScintillatorSurface>("Optical glue efficiency must be in the range [0;1]");
-				return 1.0-eff;
-			}
-			return 1.0;
+		    if(sensor->Dimensions().IsInside(point)){
+			double eff=sensor->GlueEfficiency();
+			if((eff<0)||(eff>1))
+			    throw Exception<ScintillatorSurface>("Optical glue efficiency must be in the range [0;1]");
+			return 1.0-eff;
+		    }
+		return 1.0;
 	}
 	const RectDimensions&ScintillatorSurface::Dimensions()const{return *this;}
 	
-	const double ReflectionProbability(const double refraction,const double cos_){
+	const double ReflectionProbability(const double&refraction,const double&cos_){
 		double cos_phi=cos_;
 		if(cos_phi<0.0)cos_phi=-cos_phi;
 		if(cos_phi>1.0)cos_phi=1;
@@ -63,8 +63,8 @@ namespace RectangularScintillator{
 	Scintillator::Scintillator(
 		const vector<Pair>&dimensions,
 		const double refraction,
-		const RandomValueGenerator<double>&time_distribution,
-		const RandomValueGenerator<double>&lambda_distribution,
+		const shared_ptr<Distrib>time_distribution,
+		const shared_ptr<Distrib>lambda_distribution,
 		const Func absorption
 	):RectDimensions(),
 		m_config(Defaults()),
@@ -78,13 +78,13 @@ namespace RectangularScintillator{
 		m_refraction=refraction;
 		m_absorption=absorption;
 		for(size_t i=0,n=NumberOfDimensions();i<n;i++){
-			SurfPair surfaces=make_pair(make_shared<ScintillatorSurface>(),make_shared<ScintillatorSurface>());
-			for(size_t j=0,n=NumberOfDimensions();j<n;j++)
-				if(j!=i){
-					static_cast<RectDimensions&>(*(surfaces.first))<<Dimension(i);
-					static_cast<RectDimensions&>(*(surfaces.second))<<Dimension(i);
-				}
-				m_edges.push_back(surfaces);
+		    SurfPair surfaces=make_pair(make_shared<ScintillatorSurface>(),make_shared<ScintillatorSurface>());
+		    for(size_t j=0,n=NumberOfDimensions();j<n;j++)
+			if(j!=i){
+			    static_cast<RectDimensions&>(*(surfaces.first))<<Dimension(i);
+			    static_cast<RectDimensions&>(*(surfaces.second))<<Dimension(i);
+			}
+		    m_edges.push_back(surfaces);
 		}
 		for(double x=-0.01;x<=1.01;x+=0.01)
 			reflection_probability<<point<double>(x,ReflectionProbability(m_refraction,x));
@@ -95,7 +95,7 @@ namespace RectangularScintillator{
 	}
 	Scintillator::Options::Options(const size_t c,const unsigned long refl):
 	concurrency(c),max_reflections(refl){}
-	Scintillator::Options::Options(const Scintillator::Options&& source):
+	Scintillator::Options::Options(const Scintillator::Options&source):
 	concurrency(source.concurrency),max_reflections(source.max_reflections){}
 	void Scintillator::Options::operator=(const Scintillator::Options& source){
 		concurrency=source.concurrency;
@@ -187,8 +187,8 @@ namespace RectangularScintillator{
 			throw Exception<Scintillator>("Scintillator: isotropic 4D and higher random directions not implemented");
 		{
 			Lock lock(*trace_mutex);
-			res.time=m_time_distribution(R);
-			res.lambda=m_lambda_distribution(R);
+			res.time=m_time_distribution->operator()(R);
+			res.lambda=m_lambda_distribution->operator()(R);
 		}
 		return res;
 	}
@@ -259,24 +259,24 @@ namespace RectangularScintillator{
 			}
 		}
 	}
-	const RandomValueGenerator<double> TimeDistribution1(double sigma, double decay,const SortedChain<double>&&chain){
-		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
+	const std::shared_ptr<Distrib> TimeDistribution1(const double& sigma, const double& decay,const SortedChain<double>&&chain){
+		if((sigma<=0)||(decay<=0))throw Exception<Distrib>("wrong distribution parameters");
 		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size());
-		auto func=[sigma,decay,max,min,dt](double t){
-			auto A=[sigma](double th){if(th<0)return 0.0;return Gaussian(th,2.5*sigma,sigma);};
-			auto B=[decay](double th){if(th<0)return 0.0;return exp(-th/decay);};
-			return Sympson([t,sigma,decay,A,B](double ksi){return A(ksi)*B(t-ksi);},min-sigma,max+sigma,dt);
+		auto func=[sigma,decay,max,min,dt](const double&t){
+			auto A=[&sigma](const double& th){if(th<0)return 0.0;return Gaussian(th,2.5*sigma,sigma);};
+			auto B=[&decay](const double& th){if(th<0)return 0.0;return exp(-th/decay);};
+			return Sympson([&t,&sigma,&decay,&A,&B](double ksi){return A(ksi)*B(t-ksi);},min-sigma,max+sigma,dt);
 		};
-		return RandomValueGenerator<double>(func,chain);
+		return make_shared<DistribTable>(func,chain);
 	}
-	const RandomValueGenerator<double> TimeDistribution2(double rize,double sigma, double decay,const SortedChain<double>&&chain){
-		if((sigma<=0)||(decay<=0))throw Exception<RandomValueGenerator<double>>("wrong distribution parameters");
+	const std::shared_ptr<Distrib> TimeDistribution2(const double&rize,const double&sigma,const double&decay,const SortedChain<double>&&chain){
+		if((sigma<=0)||(decay<=0))throw Exception<Distrib>("wrong distribution parameters");
 		double min=chain[0],max=chain[chain.size()-1],dt=(max-min)/double(chain.size());
-		auto func=[rize,sigma,decay,min,max,dt](double t){
-			auto A=[sigma](double th){if(th<0)return 0.0;return Gaussian(th,2.5*sigma,sigma);};
-			auto B=[rize,decay](double th){if(th<0)return 0.0;return exp(-th/decay)-exp(-th/rize);};
-			return Sympson([t,sigma,decay,A,B](double ksi){return A(ksi)*B(t-ksi);},min-sigma,max+sigma,dt);
+		auto func=[rize,sigma,decay,min,max,dt](const double&t){
+			auto A=[&sigma](const double& th){if(th<0)return 0.0;return Gaussian(th,2.5*sigma,sigma);};
+			auto B=[&rize,&decay](const double& th){if(th<0)return 0.0;return exp(-th/decay)-exp(-th/rize);};
+			return Sympson([&t,&sigma,&decay,&A,&B](const double& ksi){return A(ksi)*B(t-ksi);},min-sigma,max+sigma,dt);
 		};
-		return RandomValueGenerator<double>(func,chain);
+		return make_shared<DistribTable>(func,chain);
 	}
 };

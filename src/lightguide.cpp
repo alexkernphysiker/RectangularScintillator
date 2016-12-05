@@ -4,7 +4,7 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	FlatLightguide::FlatLightguide(const vector<Pair>&dimensions,const double glue_eff,const double n,const double H):
+	FlatLightguide::FlatLightguide(const vector<Pair>&dimensions,const double&glue_eff,const double&n,const double&H):
 	ScintillatorSurface(){
 		g_eff=glue_eff;
 		refr=n;

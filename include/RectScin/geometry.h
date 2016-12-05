@@ -10,28 +10,13 @@ namespace RectangularScintillator{
 	typedef std::lock_guard<std::mutex> Lock;
 	typedef std::vector<double> Vec;
 	typedef std::pair<double,double> Pair;
-	Vec operator*(const Vec&p,const double c);
+	Vec operator*(const Vec&p,const double&c);
 	Vec operator+(const Vec&p1,const Vec&p2);
 	Vec operator-(const Vec&p1,const Vec&p2);
-	inline Vec operator*(const Vec&&p,const double c){return p*c;}
-	inline Vec operator+(const Vec&&p1,const Vec&p2){return p1+p2;}
-	inline Vec operator-(const Vec&&p1,const Vec&p2){return p1-p2;}
-	inline Vec operator+(const Vec&p1,const Vec&&p2){return p1+p2;}
-	inline Vec operator-(const Vec&p1,const Vec&&p2){return p1-p2;}
-	inline Vec operator+(const Vec&&p1,const Vec&&p2){return p1+p2;}
-	inline Vec operator-(const Vec&&p1,const Vec&&p2){return p1-p2;}
 	double SqAbs(const Vec&p);
 	double Abs(const Vec&p);
-	inline double SqAbs(const Vec&&p){return SqAbs(p);}
-	inline double Abs(const Vec&&p){return Abs(p);}
 	double SqDistance(const Vec&p1,const Vec&p2);
-	inline double SqDistance(const Vec&&p1,const Vec&p2){return SqDistance(p1,p2);}
-	inline double SqDistance(const Vec&p1,const Vec&&p2){return SqDistance(p1,p2);}
-	inline double SqDistance(const Vec&&p1,const Vec&&p2){return SqDistance(p1,p2);}
 	double Distance(const Vec&p1,const Vec&p2);
-	inline double Distance(const Vec&&p1,const Vec&p2){return Distance(p1,p2);}
-	inline double Distance(const Vec&p1,const Vec&&p2){return Distance(p1,p2);}
-	inline double Distance(const Vec&&p1,const Vec&&p2){return Distance(p1,p2);}
 	class RectDimensions{
 	public:
 		enum Side{None=-1,Left=0,Right=1};
@@ -44,7 +29,6 @@ namespace RectangularScintillator{
 		RectDimensions();
 		virtual ~RectDimensions();
 		RectDimensions&operator<<(const Pair&dimension);
-		RectDimensions&operator<<(const Pair&&dimension);
 		const size_t NumberOfDimensions()const;
 		const Pair&Dimension(size_t i)const;
 		const bool IsInside(const Vec&point)const;

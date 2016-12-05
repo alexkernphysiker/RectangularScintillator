@@ -41,7 +41,7 @@ void Out::AcceptEventStart(){
 	event=true;
 	signal=INFINITY;
 }
-void Out::AcceptSignalValue(double s){
+void Out::AcceptSignalValue(const double&s){
 	if(!event)throw Exception<Out>("Signal producent unusual behaviour");
 	signal=s;
 }

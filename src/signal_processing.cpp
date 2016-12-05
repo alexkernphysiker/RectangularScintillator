@@ -11,7 +11,7 @@ namespace RectangularScintillator{
 	void Single2SingleSignal::AcceptEventEnd(){SendEventEnd();}
 	Signal::Signal(){}
 	Signal::~Signal(){}
-	void Signal::AcceptSignalValue(const double signal){SendSignalValue(signal);}
+	void Signal::AcceptSignalValue(const double&signal){SendSignalValue(signal);}
 	
 	SignalPolinomialDistort::SignalPolinomialDistort(const Vec& coefs){
 		if(coefs.size()==0)
@@ -19,15 +19,15 @@ namespace RectangularScintillator{
 		m_coefs=coefs;
 	}
 	SignalPolinomialDistort::~SignalPolinomialDistort(){}
-	void SignalPolinomialDistort::AcceptSignalValue(const double signal){
+	void SignalPolinomialDistort::AcceptSignalValue(const double&signal){
 		SendSignalValue(Polynom(signal,m_coefs,m_coefs.size()-1));
 	}
 	
-	AmplitudeDiscriminator::AmplitudeDiscriminator(const double thr){
+	AmplitudeDiscriminator::AmplitudeDiscriminator(const double& thr){
 		threshold=thr;
 	}
 	AmplitudeDiscriminator::~AmplitudeDiscriminator(){}
-	void AmplitudeDiscriminator::AcceptSignalValue(const double signal){
+	void AmplitudeDiscriminator::AcceptSignalValue(const double& signal){
 		if(isfinite(signal))
 			if(signal>=threshold)
 				SendSignalValue(signal);
@@ -65,7 +65,7 @@ namespace RectangularScintillator{
 	AbstractMultiInput::Slot::Slot(std::shared_ptr<AbstractMultiInput>father){master=father;}
 	AbstractMultiInput::Slot::~Slot(){}
 	void AbstractMultiInput::Slot::AcceptEventStart(){master->OneChannelBegin();m_value=INFINITY;}
-	void AbstractMultiInput::Slot::AcceptSignalValue(const double signal){m_value=signal;}
+	void AbstractMultiInput::Slot::AcceptSignalValue(const double& signal){m_value=signal;}
 	void AbstractMultiInput::Slot::AcceptEventEnd(){master->OneChannelEnd();}
 	const double AbstractMultiInput::Slot::Value()const{return m_value;}
 	
@@ -79,20 +79,22 @@ namespace RectangularScintillator{
 	void SignalSumm::Process(const Vec&signals){
 		double val=0;
 		for(double signal:signals)
-			if(isfinite(signal))
-				val+=signal;
-			else return;
-			SendSignalValue(val);
+		    if(isfinite(signal))
+			val+=signal;
+		    else
+			return;
+		SendSignalValue(val);
 	}
 	SignalProduct::SignalProduct(){}
 	SignalProduct::~SignalProduct(){}
 	void SignalProduct::Process(const Vec&signals){
 		double val=1;
 		for(double signal:signals)
-			if(isfinite(signal))
-				val*=signal;
-			else return;
-			SendSignalValue(val);
+		    if(isfinite(signal))
+			val*=signal;
+		    else
+			return;
+		SendSignalValue(val);
 	}
 	SignalSortAndSelect::SignalSortAndSelect(size_t number){m_number=number;}
 	SignalSortAndSelect::~SignalSortAndSelect(){}
@@ -119,7 +121,7 @@ namespace RectangularScintillator{
 	const size_t AbstractMultiOutput::GetOutSlotsCount(){
 		return m_output_slots.size();
 	}
-	void AbstractMultiOutput::SendSignalValue(const size_t i,const double signal){
+	void AbstractMultiOutput::SendSignalValue(const size_t i,const double& signal){
 		if(i>=m_output_slots.size())
 			throw Exception<AbstractMultiOutput>("Mutli output range check error.");
 		m_output_slots[i]->Value(signal);
@@ -131,7 +133,7 @@ namespace RectangularScintillator{
 	AbstractMultiOutput::Slot::Slot(){}
 	AbstractMultiOutput::Slot::~Slot(){}
 	void AbstractMultiOutput::Slot::Start(){SendEventStart();}
-	void AbstractMultiOutput::Slot::Value(const double signal){SendSignalValue(signal);}
+	void AbstractMultiOutput::Slot::Value(const double& signal){SendSignalValue(signal);}
 	void AbstractMultiOutput::Slot::End(){SendEventEnd();}
 	
 	Single2MultiSignal::Single2MultiSignal(){}
@@ -144,7 +146,7 @@ namespace RectangularScintillator{
 	void Multi2MultiSignal::Start(){SendEventStart();}
 	void Multi2MultiSignal::Finish(){SendEventEnd();}
 	
-	TimeGate::TimeGate(const double width){
+	TimeGate::TimeGate(const double& width){
 		if(width<=0)
 			throw Exception<TimeGate>("Wrong time threshold value for TimeGate: it should be positive");
 		m_width=width;
@@ -194,13 +196,13 @@ namespace RectangularScintillator{
 	void SignalSort::Process(const Vec&signals){
 		Vec out;
 		for(double signal:signals)
-			if(isfinite(signal))
-				details::InsertSorted(signal,out,std_size(out),std_insert(out,double));
-			size_t i=0;
+		    if(isfinite(signal))
+			details::InsertSorted(signal,out,std_size(out),std_insert(out,double));
+		size_t i=0;
 		for(double signal:out){
-			if(i<GetOutSlotsCount())
-				SendSignalValue(i,signal);
-			i++;
+		    if(i<GetOutSlotsCount())
+			SendSignalValue(i,signal);
+		    i++;
 		}
 	}
 	void SignalSort2::Process(const Vec&signals){

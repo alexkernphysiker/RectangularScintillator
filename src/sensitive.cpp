@@ -6,7 +6,7 @@
 namespace RectangularScintillator{
 	using namespace std;
 	using namespace MathTemplates;
-	PhotoSensitiveSurface::PhotoSensitiveSurface(const vector<Pair>&dimensions,const double glue,const Func efficiency):RectDimensions(),P(0,1){
+	PhotoSensitiveSurface::PhotoSensitiveSurface(const vector<Pair>&dimensions,const double&glue,const Func efficiency):RectDimensions(),P(0,1){
 		for(const Pair&D:dimensions)
 			RectDimensions::operator<<(D);
 		m_efficiency=efficiency;
@@ -29,21 +29,22 @@ namespace RectangularScintillator{
 			if(P(R)<m_efficiency(photon.lambda))
 				PhotonTimeAccepted(photon.time,R);
 	}
-	void PhotoSensitiveSurface::PhotonTimeAccepted(const double time,RANDOM&){
+	void PhotoSensitiveSurface::PhotonTimeAccepted(const double&time,RANDOM&){
 		details::InsertSorted(time,times,field_size(times),field_insert(times,double));
 	}
 	void PhotoSensitiveSurface::End(){
 		for(double time:times)
 			for(auto sig:m_signal)
 				sig->AcceptPhotonTime(time);
-			for(auto sig:m_signal)
-				sig->AcceptEventEnd();
+		for(auto sig:m_signal)
+			sig->AcceptEventEnd();
 	}
 	
-	PhotoSensitiveSurfaceWithTTS::PhotoSensitiveSurfaceWithTTS(const vector<Pair>&dimensions,const double glue,const Func efficiency,const double tts):
-	PhotoSensitiveSurface(dimensions,glue,efficiency),m_tts(5*tts,tts){}
+	PhotoSensitiveSurfaceWithTTS::PhotoSensitiveSurfaceWithTTS(
+	    const vector<Pair>&dimensions,const double&glue,const Func efficiency,const double&tts
+	):PhotoSensitiveSurface(dimensions,glue,efficiency),m_tts(5*tts,tts){}
 	PhotoSensitiveSurfaceWithTTS::~PhotoSensitiveSurfaceWithTTS(){}
-	void PhotoSensitiveSurfaceWithTTS::PhotonTimeAccepted(const double time, RANDOM& R){
+	void PhotoSensitiveSurfaceWithTTS::PhotonTimeAccepted(const double&time, RANDOM& R){
 		double offs=m_tts(R);if(offs<0)offs=0;
 		PhotoSensitiveSurface::PhotonTimeAccepted(time+offs, R);
 	}
