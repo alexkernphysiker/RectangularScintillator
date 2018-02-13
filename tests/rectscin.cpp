@@ -97,9 +97,9 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 		cout<< threads<<" threads"<<endl;
 		for(size_t cnt=0;cnt<1000;cnt++)
 			rsc[0]->RegisterGamma({-30,0,0},3000);
-		for(size_t cnt=0;cnt<200;cnt++)
+		for(size_t cnt=0;cnt<1000;cnt++)
 			rsc[1]->RegisterGamma({+30,0,0},3000);
-		EXPECT_TRUE(amplstat[0]->data().Contains(amplstat[1]->data()));
+		EXPECT_TRUE(value<>(amplstat[0]->data()).make_wider(2).Contains(amplstat[1]->data()));
 		EXPECT_TRUE(timestat[0]->data().Contains(timestat[1]->data()));
 	}
 }
