@@ -6,17 +6,17 @@ using namespace std;
 using namespace MathTemplates;
 using namespace RectangularScintillator;
 TEST(Scintillator,reflection){
-	auto rsc=MakeScintillator({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.0+0.1*(rand()%10),TimeDistribution1(0.5,1.5));
+	auto rsc=MakeScintillator_absorptionless({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.0+0.1*(rand()%10),TimeDistribution1(0.5,1.5));
 	for(const auto&p:rsc->ReflectionProbabilityFunction())
 		EXPECT_TRUE((p.Y()>=0)&&(p.Y()<=1));
 }
 TEST(Scintillator,geometry){
-	auto rsc=MakeScintillator({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.0,TimeDistribution1(0.5,1.5));
+	auto rsc=MakeScintillator_absorptionless({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.0,TimeDistribution1(0.5,1.5));
 	EXPECT_NO_THROW(rsc->RegisterGamma({0.5,0.5,0.5},10));
 	EXPECT_THROW(rsc->RegisterGamma({2,2,2},1),Exception<Scintillator>);
 }
 TEST(Scintillator, Isotropic){
-	auto rsc=MakeScintillator({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.6,TimeDistribution1(0.5,1.5));
+	auto rsc=MakeScintillator_absorptionless({make_pair(0,1),make_pair(0,1),make_pair(0,1)},1.6,TimeDistribution1(0.5,1.5));
 	vector<shared_ptr<SignalStatictics>> counts,times;
 	for(size_t dimension=0;dimension<3;dimension++)
 		for(auto side=RectDimensions::Left;side<=RectDimensions::Right;inc(side)){
@@ -40,7 +40,7 @@ TEST(Scintillator, Isotropic){
 	check_close(times);
 }
 TEST(Scintillator,Glue){
-	auto rsc=MakeScintillator({make_pair(-5,5),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5));
+	auto rsc=MakeScintillator_absorptionless({make_pair(-5,5),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5));
 	auto ideal=make_shared<SignalStatictics>(),
 		middle=make_shared<SignalStatictics>(),
 		worst=make_shared<SignalStatictics>();
@@ -64,8 +64,8 @@ TEST(Scintillator,Glue){
 }
 TEST(Scintillator, oneD_symmetry_plus_concurrency){
 	vector<shared_ptr<Scintillator>> rsc{
-		MakeScintillator({make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5)),
-		MakeScintillator({make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5))
+		MakeScintillator_absorptionless({make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5)),
+		MakeScintillator_absorptionless({make_pair(-50,50),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5))
 	};
 	vector<shared_ptr<SignalStatictics>>
 		timestat{make_shared<SignalStatictics>(2),make_shared<SignalStatictics>(2)},
