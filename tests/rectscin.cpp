@@ -93,13 +93,15 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 		}
 		rsc->Configure(Scintillator::Concurrency(threads));
 		cout<< threads<<" threads"<<endl;
-		for(size_t cnt=0;cnt<500;cnt++)
-			rsc->RegisterGamma({-30,0,0},3000);
+		for(size_t cnt=0;cnt<1000;cnt++){
+			if((cnt%50)==0) cout<<cnt<<endl;
+			rsc->RegisterGamma({-50,0,0},3000);
+		}
 		EXPECT_TRUE(amplstat_left->data().Contains(amplstat_right->data()));
 		EXPECT_TRUE(timestat->data().Contains(0.0));
 		for(const auto& prev:results){
-			EXPECT_TRUE(prev.make_wider(0.05).Contains(timestat->data().val()));
-			EXPECT_TRUE(value<>(prev.uncertainty(),prev.uncertainty()*0.05).Contains(timestat->data().uncertainty()));
+			EXPECT_TRUE(prev.make_wider(0.02).Contains(timestat->data().val()));
+			EXPECT_TRUE(value<>(prev.uncertainty(),prev.uncertainty()*0.01).Contains(timestat->data().uncertainty()));
 		}
 		results.push_back(timestat->data());
 	}
