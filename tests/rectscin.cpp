@@ -101,7 +101,7 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 		EXPECT_TRUE(timestat->data().Contains(0.0));
 		for(const auto& prev:results){
 			EXPECT_TRUE(prev.make_wider(0.02).Contains(timestat->data().val()));
-			EXPECT_TRUE(value<>(prev.uncertainty(),prev.uncertainty()*0.01).Contains(timestat->data().uncertainty()));
+			EXPECT_TRUE(value<>(prev.uncertainty(),prev.uncertainty()*0.02).Contains(timestat->data().uncertainty()));
 		}
 		results.push_back(timestat->data());
 	}
