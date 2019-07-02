@@ -93,7 +93,7 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 		}
 		rsc->Configure(Scintillator::Concurrency(threads));
 		cout<< threads<<" threads"<<endl;
-		for(size_t cnt=0;cnt<1000;cnt++){
+		for(size_t cnt=0;cnt<2000;cnt++){
 			if((cnt%50)==0) cout<<cnt<<endl;
 			rsc->RegisterGamma({-50,0,0},3000);
 		}
