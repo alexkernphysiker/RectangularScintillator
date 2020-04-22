@@ -62,9 +62,9 @@ TEST(Scintillator,Glue){
 	EXPECT_TRUE(worst->data().val()<middle->data().val());
 	EXPECT_TRUE(middle->data().val()<ideal->data().val());
 }
-TEST(Scintillator, oneD_symmetry_plus_concurrency){
+TEST(Scintillator, oneD_symmetry){
 	vector<value<>> results;
-	for(size_t threads=1;threads<5;threads++){
+	for(size_t threads=1;threads<3;threads++){
 		auto rsc=MakeScintillator_absorptionless({make_pair(-250,250),make_pair(-5,5),make_pair(-5,5)},1.6,TimeDistribution1(0.5,1.5));
 		auto timestat = make_shared<SignalStatictics>();
 		auto amplstat_left = make_shared<SignalStatictics>();
@@ -93,15 +93,15 @@ TEST(Scintillator, oneD_symmetry_plus_concurrency){
 		}
 		rsc->Configure(Scintillator::Concurrency(threads));
 		cout<< threads<<" threads"<<endl;
-		for(size_t cnt=0;cnt<2000;cnt++){
+		for(size_t cnt=0;cnt<200;cnt++){
 			if((cnt%50)==0) cout<<cnt<<endl;
 			rsc->RegisterGamma({-50,0,0},3000);
 		}
 		EXPECT_TRUE(amplstat_left->data().Contains(amplstat_right->data()));
 		EXPECT_TRUE(timestat->data().Contains(0.0));
 		for(const auto& prev:results){
-			EXPECT_TRUE(prev.make_wider(0.05).Contains(timestat->data().val()));
-			EXPECT_TRUE(value<>(prev.uncertainty(),prev.uncertainty()*0.05).Contains(timestat->data().uncertainty()));
+			EXPECT_TRUE(prev.make_wider(0.1).Contains(timestat->data().val()));
+			EXPECT_TRUE(value<>(prev.uncertainty(),prev.uncertainty()*0.1).Contains(timestat->data().uncertainty()));
 		}
 		results.push_back(timestat->data());
 	}
