@@ -76,7 +76,7 @@ namespace RectangularScintillator{
 	void AbstractMultiInput::Slot::AcceptEventStart(){master->OneChannelBegin();m_value=INFINITY;}
 	void AbstractMultiInput::Slot::AcceptSignalValue(const double& signal){m_value=signal;}
 	void AbstractMultiInput::Slot::AcceptEventEnd(){master->OneChannelEnd();}
-	const double AbstractMultiInput::Slot::Value()const{return m_value;}
+    double AbstractMultiInput::Slot::Value()const{return m_value;}
 	
 	Multi2SingleSignal::Multi2SingleSignal(){}
 	Multi2SingleSignal::~Multi2SingleSignal(){}
@@ -127,7 +127,7 @@ namespace RectangularScintillator{
 		for(auto slot:m_output_slots)
 			slot->Start();
 	}
-	const size_t AbstractMultiOutput::GetOutSlotsCount(){
+    size_t AbstractMultiOutput::GetOutSlotsCount(){
 		return m_output_slots.size();
 	}
 	void AbstractMultiOutput::SendSignalValue(const size_t i,const double& signal){
@@ -190,8 +190,8 @@ namespace RectangularScintillator{
 	inline bool operator>(const Pair&a,const Pair&b){return a.first>b.first;}
 	inline bool operator<(const Pair&a,const Pair&b){return a.first<b.first;}
 	void SignalSortAndSelect2::Process(const Vec&signals){
-		if(signals.size()<=m_number)
-			throw Exception<SignalSortAndSelect2>("SignalSortAndSelect: selected order statistics is greater than input slots count");
+        if(signals.size()<=m_number)
+            throw Exception<SignalSortAndSelect2>("SignalSortAndSelect2: signals count is less then expected");
 		vector<Pair> out;
 		for(size_t i=0,n=signals.size();i<n;i++)if(isfinite(signals[i])){
 			table_data_details::InsertSorted(make_pair(signals[i],double(i)),out,std_size(out),std_insert(out,Pair));

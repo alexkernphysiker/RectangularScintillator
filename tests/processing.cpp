@@ -36,7 +36,7 @@ TEST(SignalSumm,Base){
 		SignalSender sender;auto out=make_shared<Out>();
 		test>>out;
 		sender.Connect2MultiInput(test,n);
-		sender.send(static_cast<Vec&&>(signals));
+        sender.send(std::move(signals));
 		EXPECT_CLOSE_VALUES(out->value(),expected);
 	}
 }
@@ -54,7 +54,7 @@ TEST(SignalProduct,Base){
 		SignalSender sender;auto out=make_shared<Out>();
 		test>>out;
 		sender.Connect2MultiInput(test,n);
-		sender.send(static_cast<Vec&&>(signals));
+        sender.send(std::move(signals));
 		EXPECT_CLOSE_VALUES(out->value(),expected);
 	}
 }
@@ -87,9 +87,9 @@ TEST(SignalSortAndSelect,BaseTest){
 					else
 						signals.insert(signals.begin()+size_t(indexr())%(signals.size()+1),v);
 				if(orderstatistics<n)
-					EXPECT_NO_THROW(sender.send(static_cast<Vec&&>(signals)));
+                    EXPECT_NO_THROW(sender.send(std::move(signals)));
 				else
-					EXPECT_THROW(sender.send(static_cast<Vec&&>(signals)),exception);
+                    EXPECT_THROW(sender.send(std::move(signals)),exception);
 				if(orderstatistics<n)
 					EXPECT_EQ(orderstatistics,out->value());
 				else
@@ -111,11 +111,11 @@ TEST(SignalSortAndSelect2,BaseTest){
 						signals.push_back(v);
 					else
 						signals.insert(signals.begin()+size_t(indexr())%(signals.size()+1),v);
-				if(orderstatistics<n)
-					EXPECT_NO_THROW(sender.send(static_cast<Vec&&>(signals)));
+                if(orderstatistics<n)
+                    EXPECT_NO_THROW(sender.send(std::move(signals)));
 				else
-					EXPECT_THROW(sender.send(static_cast<Vec&&>(signals)),exception);
-				if(orderstatistics<n){
+                    EXPECT_THROW(sender.send(std::move(signals)),exception);
+                if(orderstatistics<n){
 					EXPECT_TRUE(out1->value()>=0);
 					EXPECT_TRUE(out1->value()<signals.size());
 					EXPECT_EQ(orderstatistics,out2->value());
@@ -203,7 +203,7 @@ TEST(SignalSort,Base){
 					if(signals.size()==0)signals.push_back(V);
 					else signals.insert(signals.begin()+size_t(indexr())%(signals.size()+1),V);
 				}
-				sender.send(static_cast<Vec&&>(signals));
+                sender.send(std::move(signals));
 				size_t f=outcnt;if(f>n){f=n;}
 				for(size_t i=0;i<f;i++)
 					EXPECT_EQ(i*c,out[i]->value());
@@ -233,12 +233,13 @@ TEST(SignalSort2,Base){
 				if(signals.size()==0)signals.push_back(V);
 				else signals.insert(signals.begin()+size_t(indexr())%(signals.size()+1),V);
 			}
-			sender.send(static_cast<Vec&&>(signals));
+            const auto signals_copy = signals;
+            sender.send(std::move(signals));
 			for(size_t i=0;i<f;i++){
 				double val=out[i*2+1]->value(),ind=out[i*2]->value();
 				EXPECT_EQ(c*i,val);
 				size_t trueindex=n;
-				for(size_t i=0;i<n;i++)if(signals[i]==val)trueindex=i;
+                for(size_t i=0;i<n;i++)if(signals_copy[i]==val)trueindex=i;
 				EXPECT_TRUE(trueindex<n);
 				EXPECT_EQ(trueindex,ind);
 			}

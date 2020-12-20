@@ -59,7 +59,7 @@ namespace RectangularScintillator{
 			virtual void AcceptEventStart()override;
 			virtual void AcceptSignalValue(const double&signal)override;
 			virtual void AcceptEventEnd()override;
-			const double Value()const;
+            double Value()const;
 		private:
 			std::shared_ptr<AbstractMultiInput>master;
 			double m_value;
@@ -105,7 +105,7 @@ namespace RectangularScintillator{
 		AbstractMultiOutput&operator>>(const std::shared_ptr<SignalAcceptor>output);
 	protected:
 		void SendEventStart();
-		const size_t GetOutSlotsCount();
+        size_t GetOutSlotsCount();
 		void SendSignalValue(const size_t i,const double&signal);
 		void SendEventEnd();
 	private:
