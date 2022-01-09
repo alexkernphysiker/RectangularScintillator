@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 project(RectangularScintillator)
 if(DEFINED MATH_H_INC)
     include_directories(${MATH_H_INC})
